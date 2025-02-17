@@ -258,7 +258,7 @@ ORDER BY {order}";
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
                 string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],[InputLen],[InputLenSort]
-      ,[InputLenAvg],[InputData],[InputDataShort]
+      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart
 FROM [dbo].[RepresentativesInput] AS ri
 {where}
 ORDER BY {order}";
@@ -394,7 +394,7 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
                     SqlParameter tvpParam = addCommand.Parameters.AddWithValue("@UpdateIsomorphics", isonorphicTable);
                     tvpParam.SqlDbType = SqlDbType.Structured;
                     tvpParam.TypeName = "dbo.UpdateIsomorphicType";
-                    SqlParameter tvpParam2 = addCommand.Parameters.AddWithValue("@IsBipart0", isBipart);
+                    SqlParameter tvpParam2 = addCommand.Parameters.AddWithValue("@IsBipart", isBipart);
                     tvpParam2.SqlDbType = SqlDbType.Bit;
                     await addCommand.ExecuteNonQueryAsync();
                 }
