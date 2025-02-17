@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BinaryNumbersEnumeration\" />
+    <Folder Include="BinaryTreeEnumeration\BranchAndBound\" />
+    <Folder Include="Greedy\" />
+    <Folder Include="Model\" />
+    <Folder Include="TriangleEnumeration\BranchAndBound\" />
+    <Folder Include="TriangleEnumeration\SelectElement\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Statistics\StatisticsStorage\StatisticsStorage.csproj" />
+    <ProjectReference Include="..\..\Base\BaseContract\BaseContract.csproj" />
+    <ProjectReference Include="..\..\Base\BaseLibrary\BaseLibrary.csproj" />
+  </ItemGroup>
+
+</Project>

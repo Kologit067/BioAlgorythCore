@@ -1,0 +1,95 @@
+﻿<Window x:Class="BioAlgorithm.BioAlgorithmView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BioAlgorithm"
+        xmlns:v="clr-namespace:BioAlgorithmViewModel.BipartiteGraphModel;assembly=BioAlgorithmViewModel"
+        xmlns:ac="clr-namespace:BioAlgorithm.Core.Representatives"
+        mc:Ignorable="d"
+        Title="Bio Algorithms" Height="800" Width="1000"
+        Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.Resources>
+        <local:VisibilityConverter x:Key="visibilityConverter"/>
+        <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}"/>
+        <DataTemplate DataType="{x:Type v:BipartiteGraphLeftVertexViewModel}">
+            <DataTemplate.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="15"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </DataTemplate.Resources>
+            <Canvas Background="#DD00AA" Width="0" Left="0" HorizontalAlignment="Left">
+                <Ellipse Fill="{Binding RectangleFill}" Stroke="Black" StrokeThickness="{Binding StrokeThickness}"  
+                           Canvas.Left="{Binding Path=Left}" Canvas.Top="{Binding Path=Top}"
+                           Height="{Binding Path=Height}" Width="{Binding Path=Width}" >
+                </Ellipse>
+                <TextBlock Margin="0"  Text="{Binding Path=VertexNumber}" 
+                           Canvas.Left="{Binding Path=Left}" 
+                           Canvas.Top="{Binding Path=Top}"
+                          Height="{Binding Path=Height}" Width="{Binding Path=Width}" Padding="0"/>
+                <TextBlock Margin="3,2,2,7"  Text="{Binding Path=AdjacentsAsString}" 
+                           Canvas.Left="{Binding Path=AdjacentVerticesLeftPosition}"
+                           Canvas.Top="{Binding Path=Top}" Height="{Binding Path=Height}" />
+            </Canvas>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type v:BipartiteGraphRightVertexViewModel}">
+            <DataTemplate.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="15"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </DataTemplate.Resources>
+            <Canvas Background="#DD00AA" Width="0" Left="0" HorizontalAlignment="Left">
+                <Ellipse Fill="{Binding RectangleFill}" Stroke="Black" StrokeThickness="{Binding StrokeThickness}"  
+                           Canvas.Left="{Binding Path=Left}" Canvas.Top="{Binding Path=Top}"
+                           Height="{Binding Path=Height}" Width="{Binding Path=Width}" >
+                </Ellipse>
+                <TextBlock Margin="0"  Text="{Binding Path=VertexNumber}" 
+                           Canvas.Left="{Binding Path=Left}" 
+                           Canvas.Top="{Binding Path=Top}"
+                          Height="{Binding Path=Height}" Width="{Binding Path=Width}" Padding="0"/>
+                <TextBlock Margin="3,2,2,7"  Text="{Binding Path=AdjacentsAsString}" 
+                           Canvas.Left="{Binding Path=AdjacentVerticesLeftPosition}" 
+                           Canvas.Top="{Binding Path=Top}" Height="{Binding Path=Height}" />
+            </Canvas>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type v:BipartiteGraphEdgeViewModel}">
+            <Canvas Background="#DD00AA" Width="0" Left="0" HorizontalAlignment="Left" >
+                <Polyline   Points="{Binding Path=Points}"    Stroke="Black"   StrokeThickness="2" />
+            </Canvas>
+        </DataTemplate>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="59*"/>
+            <ColumnDefinition Width="941*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.ColumnSpan="2" SelectedIndex="{Binding Representatives.SelectedTab}">
+            <TabItem Header="Representative Performance">
+                <ac:RepresentativeControl DataContext="{Binding Representatives.RepresentativePerformance}"/>
+            </TabItem>
+            <TabItem Header="Alg Repr List">
+                <ac:RepresentativeAlgorithmControl DataContext="{Binding Representatives.RepresentativePerformanceAlgorithm}"/>
+            </TabItem>
+            <TabItem Header="Dim Group Alg Repr List">
+                <ac:RepresentativeAlgorithmGroupControl DataContext="{Binding Representatives.RepresentativePerformanceGroup}"/>
+            </TabItem>
+            <TabItem Header="Bipartite Graph">
+                <ac:BipartiteGraphControl DataContext="{Binding Representatives.BipartiteGraph}"/>
+            </TabItem>
+            <TabItem Header="Alg Compare">
+                <ac:RepresentativeAlgorithmCompareControl DataContext="{Binding Representatives.RepresentativePerformanceAlgorithmCompare}"/>
+            </TabItem>
+            <TabItem Header="Alg With group">
+                <ac:RepresentativeAlgorithmWithGroupControl DataContext="{Binding Representatives.RepresentativePerformanceAlgorithmWithGroup}"/>
+            </TabItem>
+            <TabItem Header="Input data">
+                <ac:HittingSetInputDataControl DataContext="{Binding Representatives.HittingSetInput}"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

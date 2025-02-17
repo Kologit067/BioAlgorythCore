@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pictures\cone-16x16.png" />
+    <None Remove="Pictures\deleteTrackFromTheMap.png" />
+    <None Remove="Pictures\DOCL.ICO" />
+    <None Remove="Pictures\document-export.png" />
+    <None Remove="Pictures\drawOnTheMap.png" />
+    <None Remove="Pictures\eraser32.ico" />
+    <None Remove="Pictures\task4.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Algorithm\Exponential\FindingRegulatoryMotifs\FindingRegulatoryMotifs.csproj" />
+    <ProjectReference Include="..\Presentation\BioAlgorithmViewModel\BioAlgorithmViewModel.csproj" />
+    <ProjectReference Include="..\Statistics\StatisticsStorage\StatisticsStorage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Pictures\cone-16x16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\deleteTrackFromTheMap.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\DOCL.ICO">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\document-export.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\drawOnTheMap.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\eraser32.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\task4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

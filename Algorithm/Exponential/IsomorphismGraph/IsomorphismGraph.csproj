@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Data\BioAlgorithm.Data.Contract\BioAlgorithm.Data.Contract.csproj" />
+    <ProjectReference Include="..\..\Base\BaseLibrary\BaseLibrary.csproj" />
+  </ItemGroup>
+
+</Project>

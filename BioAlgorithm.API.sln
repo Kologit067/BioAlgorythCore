@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.API", "BioAlgorithm.API\BioAlgorithm.API.csproj", "{B77B9336-5091-4FFD-9E86-51EED9F10123}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{BE722B06-33C2-4E99-890F-2F2D87F3AE94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{6EB36043-407D-4765-82DB-42328E99A7F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.Data", "Data\BioAlgorithm.Data\BioAlgorpthm.Data.csproj", "{6FB44BD4-B5F0-4308-9540-9010AEDC4C86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.Data.Contract", "Data\BioAlgorithm.Data.Contract\BioAlgorithm.Data.Contract.csproj", "{C0849F85-0D8E-4731-96EA-F370C4236C62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.Services", "Services\BioAlgorithm.Services\BioAlgorithm.Services.csproj", "{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.Services.Contract", "Services\BioAlgorithm.Services.Contract\BioAlgorithm.Services.Contract.csproj", "{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B77B9336-5091-4FFD-9E86-51EED9F10123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B77B9336-5091-4FFD-9E86-51EED9F10123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B77B9336-5091-4FFD-9E86-51EED9F10123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B77B9336-5091-4FFD-9E86-51EED9F10123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB44BD4-B5F0-4308-9540-9010AEDC4C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB44BD4-B5F0-4308-9540-9010AEDC4C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB44BD4-B5F0-4308-9540-9010AEDC4C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB44BD4-B5F0-4308-9540-9010AEDC4C86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0849F85-0D8E-4731-96EA-F370C4236C62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0849F85-0D8E-4731-96EA-F370C4236C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0849F85-0D8E-4731-96EA-F370C4236C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0849F85-0D8E-4731-96EA-F370C4236C62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6FB44BD4-B5F0-4308-9540-9010AEDC4C86} = {BE722B06-33C2-4E99-890F-2F2D87F3AE94}
+		{C0849F85-0D8E-4731-96EA-F370C4236C62} = {BE722B06-33C2-4E99-890F-2F2D87F3AE94}
+		{72A45721-1DD2-46EC-BCB5-6A8E774AFF7D} = {6EB36043-407D-4765-82DB-42328E99A7F0}
+		{545E1D1E-46ED-4BD6-AD3C-079F6F8D12AE} = {6EB36043-407D-4765-82DB-42328E99A7F0}
+	EndGlobalSection
+EndGlobal

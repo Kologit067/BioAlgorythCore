@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BipartiteGraph\" />
+    <Folder Include="Common\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Mappings\" />
+    <Folder Include="Representatives\Messages\" />
+    <Folder Include="Representatives\Dto\" />
+    <Folder Include="Utility\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Data\BioAlgorithm.Data.Contract\BioAlgorithm.Data.Contract.csproj" />
+    <ProjectReference Include="..\..\Data\BioAlgorithm.Data\BioAlgorithm.Data.csproj" />
+    <ProjectReference Include="..\..\Services\BioAlgorithm.Services\BioAlgorithm.Services.csproj" />
+    <ProjectReference Include="..\BioAlgorithmModel\BioAlgorithmModel.csproj" />
+  </ItemGroup>
+
+</Project>
