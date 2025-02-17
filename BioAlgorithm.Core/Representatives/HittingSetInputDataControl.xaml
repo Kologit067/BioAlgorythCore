@@ -104,6 +104,8 @@
                     <DataGridTextColumn Header="InputLenAvg" Binding="{Binding InputLenAvg}" MinWidth="50"></DataGridTextColumn>
                     <DataGridTextColumn Header="InputData" Binding="{Binding InputData}" MinWidth="200"></DataGridTextColumn>
                     <DataGridTextColumn Header="InputDataShort" Binding="{Binding InputDataShort}" MinWidth="200"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Isomorphic" Binding="{Binding Isomorphic}" MinWidth="200"></DataGridTextColumn>
+                    <DataGridTextColumn Header="IsomorphicBipart" Binding="{Binding IsomorphicBipart}" MinWidth="200"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
