@@ -7,7 +7,7 @@ namespace IsomorphismGraph
     //--------------------------------------------------------------------------------------
     // class IsomorphismUnorderedGrapf
     //--------------------------------------------------------------------------------------
-    public class IsomorphismUnorderedGrapf : EnumerateSetOnPosition<int, int>
+    public class IsomorphismUnorderedGraph : EnumerateSetOnPosition<int, int>
     {
         protected int _fSize;
         private Graph<CVertex> _graph1;
@@ -15,7 +15,7 @@ namespace IsomorphismGraph
         List<List<int>> references;
         private bool isSatisfied = true;
         //--------------------------------------------------------------------------------------
-        public IsomorphismUnorderedGrapf(Graph<CVertex> graph1, Graph<CVertex> graph2) : base(graph1.Vertices.Count)
+        public IsomorphismUnorderedGraph(Graph<CVertex> graph1, Graph<CVertex> graph2) : base(graph1.Vertices.Count)
         {
             _fBreakElement = -1;
             _fSize = graph1.Vertices.Count;

@@ -12,7 +12,6 @@
     <Folder Include="Common\" />
     <Folder Include="Helpers\" />
     <Folder Include="Mappings\" />
-    <Folder Include="Representatives\Messages\" />
     <Folder Include="Representatives\Dto\" />
     <Folder Include="Utility\" />
   </ItemGroup>

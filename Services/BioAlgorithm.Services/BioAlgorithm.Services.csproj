@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Algorithm\Exponential\IsomorphismGraph\IsomorphismGraph.csproj" />
+    <ProjectReference Include="..\..\Algorithm\Set\RepresentativesSet\RepresentativesSet.csproj" />
     <ProjectReference Include="..\..\Data\BioAlgorithm.Data.Contract\BioAlgorithm.Data.Contract.csproj" />
     <ProjectReference Include="..\..\Data\BioAlgorithm.Data\BioAlgorithm.Data.csproj" />
   </ItemGroup>

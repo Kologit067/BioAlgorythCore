@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
+using BaseContract.Interfaces;
 
 namespace RepresentativesSet.Greedy
 {
-    public class RepresentativesGreedyImprove : RepresentativesGreedy
+    public class RepresentativesGreedyImprove : RepresentativesGreedy, IHittingSetAlgorithm
     {
         public RepresentativesGreedyImprove() : base()
         {
@@ -20,9 +18,11 @@ namespace RepresentativesSet.Greedy
             while (listOfSet.Where(s => s.Count() > 0).Count() > 0)
             {
                 int maxCount = elements.Max(e => e.Count);
+                // all elements with weight = max count
                 List<(List<int> e, int i)> maxList = elements.Select((e, i) => (e, i)).Where(s => s.e.Count() == maxCount).ToList();
                 (List<int> e, int i) max = maxList.First();
                 StatisticAccumulator.IterationCountInc();
+                // if > 1 take NOT random - Min sum elements in all corresponding sets
                 if (maxList.Count > 1)
                 {
                     StatisticAccumulator.IterationCountInc();

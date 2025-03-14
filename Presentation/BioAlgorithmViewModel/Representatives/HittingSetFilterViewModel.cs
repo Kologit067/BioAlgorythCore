@@ -2,7 +2,7 @@
 
 namespace BioAlgorithmViewModel.Representatives
 {
-    public class HittingSetFilterViewModel : ViewModelBase
+    public class HittingSetFilterViewModel : CaseDefinitionViewModel
     {
         private int? top;
         public int? Top
@@ -15,58 +15,6 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 top = value;
                 OnPropertyChanged(nameof(Top));
-            }
-        }
-        private string algorithm;
-        public string Algorithm
-        {
-            get
-            {
-                return algorithm;
-            }
-            set
-            {
-                algorithm = value;
-                OnPropertyChanged(nameof(Algorithm));
-            }
-        }
-        private int? numberOfSet;
-        public int? NumberOfSet
-        {
-            get
-            {
-                return numberOfSet;
-            }
-            set
-            {
-                numberOfSet = value;
-                OnPropertyChanged(nameof(NumberOfSet));
-            }
-        }
-        private int? dimension;
-        public int? Dimension
-        {
-            get
-            {
-                return dimension;
-            }
-            set
-            {
-                dimension = value;
-                OnPropertyChanged(nameof(Dimension));
-            }
-        }
-        private long? step;
-        public long? Step
-        {
-            get
-            {
-                return step;
-            }
-            set
-            {
-                step = value;
-                OnPropertyChanged(nameof(Step));
             }
         }
         private string inputLen;

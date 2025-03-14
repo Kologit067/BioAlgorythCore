@@ -1,10 +1,12 @@
 ﻿
+using BaseContract.Interfaces;
+
 namespace RepresentativesSet
 {
     //--------------------------------------------------------------------------------------
     // class RepresentativesBranchAndBound
     //--------------------------------------------------------------------------------------
-    public class RepresentativesBranchAndBound : RepresentativesBranchAndBoundByValue
+    public class RepresentativesBranchAndBound : RepresentativesBranchAndBoundByValue, IHittingSetAlgorithm
     {
 //        protected int[][] listOfSetAsBinary;
         protected List<int>[] listOfElements;
@@ -20,7 +22,7 @@ namespace RepresentativesSet
         public override void Execute(int[][] pListOfSet)
         {
             listOfSet = pListOfSet;
-            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbders.ElementNumbersToLongAsBinaryVector(s)).ToArray();
+            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbers.ElementNumbersToLongAsBinaryVector(s)).ToArray();
             if (listOfSet.Any(s => s.Any(e => e >= _fSize)))
                 throw new ArgumentException("Element of set can not be > Length.");
             numberOfElement = pListOfSet.Max(x => x.Max())+1;

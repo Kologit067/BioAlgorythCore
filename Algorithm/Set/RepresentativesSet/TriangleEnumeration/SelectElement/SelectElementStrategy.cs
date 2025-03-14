@@ -1,5 +1,4 @@
 ﻿using RepresentativesSet.Model;
-using System.Collections.Generic;
 
 namespace RepresentativesSet.TriangleEnumeration.SelectElement
 {

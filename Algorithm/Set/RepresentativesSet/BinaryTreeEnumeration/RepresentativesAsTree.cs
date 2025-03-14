@@ -7,7 +7,7 @@ namespace RepresentativesSet
     //--------------------------------------------------------------------------------------
     // class RepresentativesAsTree
     //--------------------------------------------------------------------------------------
-    public class RepresentativesAsTree : EnumerateReverseBinVectors
+    public class RepresentativesAsTree : EnumerateReverseBinVectors, IHittingSetAlgorithm
     {
         protected int[][] listOfSet;
         protected long[] listOfSetAsNumber;
@@ -51,7 +51,7 @@ namespace RepresentativesSet
         public virtual void Execute(int[][] pListOfSet)
         {
             listOfSet = pListOfSet;
-            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbders.ElementNumbersToLongAsBinaryVector(s)).ToArray();
+            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbers.ElementNumbersToLongAsBinaryVector(s)).ToArray();
             if (listOfSet.Any(s => s.Any(e => e >= _fSize)))
                 throw new ArgumentException("Element of set can not be > Length.");
             _fCurrentOptimalSet = _fCurrentSet.ToList();
@@ -102,6 +102,21 @@ namespace RepresentativesSet
                     result.Add(i);
             }
             _fOptimalSets.Add(string.Join(",", result));
+        }
+        //--------------------------------------------------------------------------------------
+        protected override void IterationAction()
+        {
+            StatisticAccumulator.IterationCountInc();
+        }
+        protected override void TerminalAction()
+        {
+            StatisticAccumulator.TerminalCountInc();
+        }
+        //-----------------------------------------------------------------------------------
+        protected override void PostAction()
+        {
+            StatisticAccumulator.SaveStatisticData(ElapsedTicks, DurationMilliSeconds, DateTime.Now,
+                IsComplete, CurrentSetAsString, _fOptimalSets, currentMinimum);
         }
         //--------------------------------------------------------------------------------------
     }

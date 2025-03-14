@@ -10,7 +10,7 @@ namespace RepresentativesSet.TriangleEnumeration
     //--------------------------------------------------------------------------------------
     // class RepresentativesTriangleStrategy 
     //--------------------------------------------------------------------------------------
-    public class RepresentativesTriangleStrategy : EnumerateIntegerTrangleOrdered
+    public class RepresentativesTriangleStrategy : EnumerateIntegerTrangleOrdered, IHittingSetAlgorithm
     {
         protected int[][] listOfSet;
         protected long[] listOfSetAsNumber;
@@ -105,7 +105,7 @@ namespace RepresentativesSet.TriangleEnumeration
         public virtual void Execute(int[][] pListOfSet)
         {
             listOfSet = pListOfSet;
-            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbders.ElementNumbersToLongAsBinaryVector(s)).ToArray();
+            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbers.ElementNumbersToLongAsBinaryVector(s)).ToArray();
             if (listOfSet.Any(s => s.Any(e => e >= _fSize)))
                 throw new ArgumentException("Element of set can not be > Length.");
             _fCurrentOptimalSet = _fCurrentSet.ToList();

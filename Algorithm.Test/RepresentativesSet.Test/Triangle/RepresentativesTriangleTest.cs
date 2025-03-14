@@ -128,7 +128,7 @@ namespace RepresentativesSetTest.Triangle
             // arrange
             // 6, 9, 12, 17, 24
             List<int> list = new List<int>() { 6, 9, 12, 17, 24 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedyImprove representativesGreedy = new RepresentativesGreedyImprove();
             string expectedResult = "0,1,3";
 

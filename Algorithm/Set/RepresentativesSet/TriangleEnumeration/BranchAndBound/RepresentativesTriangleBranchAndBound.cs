@@ -1,10 +1,11 @@
-﻿
+﻿using BaseContract.Interfaces;
+
 namespace RepresentativesSet.BranchAndBound
 {
     //--------------------------------------------------------------------------------------
     // class RepresentativesTriangleBranchAndBound 
     //--------------------------------------------------------------------------------------
-    public class RepresentativesTriangleBranchAndBound : RepresentativesTriangle
+    public class RepresentativesTriangleBranchAndBound : RepresentativesTriangle, IHittingSetAlgorithm
     {
  
         //--------------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 ﻿using BioAlgorithm.Services.Contract;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Representatives.Data.Contract;
@@ -6,6 +7,7 @@ using WebApi.OutputCache.V2;
 
 namespace BioAlgorythm.API.Controllers
 {
+//    [EnableCors("AllowAngular")]
     public class HittingSetController : Controller
     {
         private readonly IRepresentativeService _representativeService;

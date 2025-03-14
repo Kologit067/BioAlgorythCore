@@ -21,7 +21,7 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract.Interfaces
 
 
         Task<List<RepresentativesPerfomanceCompare>> GetRepresentativePerformanceCompareListAsync(RepresentativesPerfomanceCompareFilter representativesPerfomanceCompareFilter);
-        Task<string> UpdateIsomorphicAsync(long representativesInputId, string inputData, bool isBipart = false);
+        Task<string> UpdateIsomorphicAsync(long representativesInputId, string inputData, string result, bool isBipart = false);
 
         Task<string> CompleteUpdateIsomorphicAsync(bool isBipart = false);
 

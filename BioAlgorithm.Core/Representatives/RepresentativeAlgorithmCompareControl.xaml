@@ -28,6 +28,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -120,6 +121,8 @@
             </DataGrid.Columns>
 
         </DataGrid>
-
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="4">
+            <TextBlock Text="{Binding ExecutionState}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

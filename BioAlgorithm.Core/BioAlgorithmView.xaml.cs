@@ -18,12 +18,19 @@ namespace BioAlgorithm
         {
             InitializeComponent();
             Messenger.Default.Register<AlgorithmGroupOpenWindowMessage>(this, OnAlgorithmGroupOpenWindowMessageReceived, typeof(AlgorithmGroupOpenWindowMessage));
+            Messenger.Default.Register<StartTaskMessage>(this, OnStartTaskMessageMessageReceived, typeof(StartTaskMessage));
 
         }
 
         private void OnAlgorithmGroupOpenWindowMessageReceived(AlgorithmGroupOpenWindowMessage message)
         {
             RepresentativeAlgorithmWindow window = new(message);
+            window.Show();
+        }
+
+        private void OnStartTaskMessageMessageReceived(StartTaskMessage message)
+        {
+            PrepareAndExecuteWindow window = new(message);
             window.Show();
         }
 

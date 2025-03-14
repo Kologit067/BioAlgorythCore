@@ -112,7 +112,10 @@ namespace IsomorphismGraph
                     }
                 }
                 if (!isIncluded)
+                {
+                    isSatisfied = true;
                     return i;
+                }
             }
             return -1;
         }

@@ -27,6 +27,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//builder.Services.AddCors(options => options.AddPolicy("AllowAngular", builder => builder
+//                    .WithOrigins("https://localhost:4200")
+//                    .AllowAnyHeader()
+//                    .AllowAnyMethod())
+//               );
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +46,9 @@ app.UseOutputCache();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseRouting();
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); 
 
 app.MapControllers();
 

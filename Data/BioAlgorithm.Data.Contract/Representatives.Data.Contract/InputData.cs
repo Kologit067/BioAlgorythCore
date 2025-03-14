@@ -15,5 +15,7 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
         public string InputDataShort { get; set; }
         public string Isomorphic { get; set; }
         public string IsomorphicBipart { get; set; }
+        public string IsomorphismResult { get; set; }
+        public string IsomorphismBipartResult { get; set; }
     }
 }

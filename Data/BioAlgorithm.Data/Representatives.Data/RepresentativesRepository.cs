@@ -52,6 +52,15 @@ namespace BioAlgorithm.Data.Representatives.Data
                 tvpParam.SqlDbType = SqlDbType.Int;
                 SqlParameter tvpParam4 = addCommand.Parameters.AddWithValue("@Step", step);
                 tvpParam4.SqlDbType = SqlDbType.BigInt;
+
+                //             SqlCommand addCommand = new SqlCommand(@"DELETE s
+                //FROM [dbo].[RepresentativesSolution] s
+                //INNER JOIN[dbo].[RepresentativesPerfomance] p
+                //ON (s.RepresentativesPerfomanceId = p.RepresentativesPerfomanceId)
+                //INNER JOIN 	[RepresentativesInput] i
+                //ON i.RepresentativesInputId = p.RepresentativesInputId
+                //WHERE i.[Dimension] = 4 AND i.[NumberOfSet] = 4 AND i.[Step] = 1 AND p.[Algorithm] = 'BruteForceRepresentativesBinaryNumbers';", connection);
+
                 await addCommand.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
@@ -347,11 +356,11 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             return representativesPerfomancesCompare;
         }
         private int updateIsomorphicBufferSize = 1000;
-        private Dictionary<long, string> updateIsomorphicDict = new Dictionary<long, string>();
-        public async Task<string> UpdateIsomorphicAsync(long representativesInputId, string inputData, bool isBipart = false)
+        private Dictionary<long, (string,string)> updateIsomorphicDict = new Dictionary<long, (string,string)>();
+        public async Task<string> UpdateIsomorphicAsync(long representativesInputId, string inputData, string result, bool isBipart = false)
         {
             string error = string.Empty;
-            updateIsomorphicDict.Add(representativesInputId, inputData);
+            updateIsomorphicDict.Add(representativesInputId, (inputData, result));
 
             if (updateIsomorphicDict.Count >= updateIsomorphicBufferSize)
             {
@@ -368,7 +377,7 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             return error;
         }
 
-        private async Task<string> SaveUpdateIsomorphicAsync(Dictionary<long, string> updateIsomorphicDict, bool isBipart = false)
+        private async Task<string> SaveUpdateIsomorphicAsync(Dictionary<long, (string, string)> updateIsomorphicDict, bool isBipart = false)
         {
             string error = string.Empty;
             try
@@ -377,11 +386,12 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
                 DataTable isonorphicTable = new DataTable();
                 isonorphicTable.Columns.Add("Id", System.Type.GetType("System.Int64"));
                 isonorphicTable.Columns.Add("InputData", System.Type.GetType("System.String"));
+                isonorphicTable.Columns.Add("Result", System.Type.GetType("System.String"));
 
 
                 foreach (var ui in updateIsomorphicDict)
                 {
-                    isonorphicTable.Rows.Add(ui.Key, ui.Value);
+                    isonorphicTable.Rows.Add(ui.Key, ui.Value.Item1, ui.Value.Item2);
                 }
 
                 SqlConnection connection = new SqlConnection(_connectionString);
@@ -436,14 +446,14 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
                 if (!isBipart)
                 {
                     query = $@"UPDATE [dbo].[RepresentativesInput]
-SET [Isomorphic] = NULL
+SET [Isomorphic] = NULL, [IsomorphismResult] = NULL
 {where}
 ";
                 }
                 else
                 {
                     query = $@"UPDATE [dbo].[RepresentativesInput]
-SET [IsomorphicBipart] = NULL
+SET [IsomorphicBipart] = NULL, [IsomorphismBipartResult] = NULL
 {where}
 ";
                 }

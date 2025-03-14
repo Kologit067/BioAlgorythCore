@@ -34,6 +34,7 @@
                 <Label Grid.Row="0" Grid.Column="2" Content="Top" Margin="2"/>
                 <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding HittingSetFilter.Top}" Margin="2" VerticalContentAlignment="Center"/>
                 <Button Grid.Column="4" Content="Refresh" Command="{Binding RefreshRepresentativeInputListCommand}"/>
+                <Button Grid.Column="5" Content="Run Task" Command="{Binding RunTaskCommand}" Width="90"/>
                 <Label Grid.Column="0" Content="Sort" Margin="2"/>
                 <ComboBox Grid.Column="1" Name="cbRPOrder"  ItemsSource="{Binding InputDataSortItems}"
                                   SelectedItem="{Binding SelectedInputDataSort}" IsEditable="true" IsReadOnly="true"/>
@@ -96,6 +97,19 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Button ToolTip="Test Bipartate graph isomorphism" Margin="1" Padding="1" 
+                                            Command="{Binding Path=DataContext.TestIsomorphismBipartCommand, ElementName=InputDataGrid}" 
+                                            CommandParameter="{Binding}">
+                                        <Image Width="25" Height="25" Source="/Pictures/task4.png" />
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="NumberOfSet" Binding="{Binding NumberOfSet}" MinWidth="50"></DataGridTextColumn>
                     <DataGridTextColumn Header="Dimension" Binding="{Binding Dimension}" MinWidth="50"></DataGridTextColumn>
                     <DataGridTextColumn Header="Step" Binding="{Binding Step}" MinWidth="80"></DataGridTextColumn>
@@ -106,6 +120,8 @@
                     <DataGridTextColumn Header="InputDataShort" Binding="{Binding InputDataShort}" MinWidth="200"></DataGridTextColumn>
                     <DataGridTextColumn Header="Isomorphic" Binding="{Binding Isomorphic}" MinWidth="200"></DataGridTextColumn>
                     <DataGridTextColumn Header="IsomorphicBipart" Binding="{Binding IsomorphicBipart}" MinWidth="200"></DataGridTextColumn>
+                    <DataGridTextColumn Header="IsomorphismResult" Binding="{Binding IsomorphismResult}" MinWidth="200"></DataGridTextColumn>
+                    <DataGridTextColumn Header="IsomorphismBipartResult" Binding="{Binding IsomorphismBipartResult}" MinWidth="200"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">

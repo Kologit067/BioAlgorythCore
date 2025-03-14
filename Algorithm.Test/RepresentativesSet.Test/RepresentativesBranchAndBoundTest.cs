@@ -256,7 +256,7 @@ namespace RepresentativesSetTest
     {
         private List<string> _result = new List<string>();
         private readonly RepresentativesStatisticAccumulator _statisticAccumulator;
-        private readonly BruteForceRepresentativesBinaryNumbders bruteForce;
+        private readonly BruteForceRepresentativesBinaryNumbers bruteForce;
         private readonly RepresentativesBranchAndBound branchAndBound;
         //--------------------------------------------------------------------------------------
         public List<string> Result
@@ -273,7 +273,7 @@ namespace RepresentativesSetTest
             _fBreakElement = 0;
             _fCardinality = pCardinality;
             _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 1, 1000);
-            bruteForce = new BruteForceRepresentativesBinaryNumbders();
+            bruteForce = new BruteForceRepresentativesBinaryNumbers();
             //                BruteForceRepresentatives bruteForceVer2 = new BruteForceRepresentatives();
             //                BruteForceRepresentativesAsTree bruteForceAsTree = new BruteForceRepresentativesAsTree(_fCardinality);
             branchAndBound = new RepresentativesBranchAndBound(_fCardinality)

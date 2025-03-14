@@ -3,7 +3,7 @@
 namespace IsomorphismGraph.Tests
 {
     [TestClass()]
-    public class IsomorphismUnorderedGrapfTests
+    public class IsomorphismUnorderedGraphTests
     {
         [TestMethod()]
         public void IsIsomorphicTest()
@@ -34,7 +34,7 @@ namespace IsomorphismGraph.Tests
             graph2.AddEdge(5,7);
             graph2.AddEdge(3,5);
             graph2.AddEdge(2,5);
-            IsomorphismUnorderedGrapf algorithm = new IsomorphismUnorderedGrapf(graph1, graph2);
+            IsomorphismUnorderedGraph algorithm = new IsomorphismUnorderedGraph(graph1, graph2);
             string expectedPermitation = "1,0,6,7,4,3,5,2";
 
             // act
@@ -74,7 +74,7 @@ namespace IsomorphismGraph.Tests
             graph2.AddEdge(5, 7);
 //            graph2.AddEdge(3, 5);
             graph2.AddEdge(2, 5);
-            IsomorphismUnorderedGrapf algorithm = new IsomorphismUnorderedGrapf(graph1, graph2);
+            IsomorphismUnorderedGraph algorithm = new IsomorphismUnorderedGraph(graph1, graph2);
 
             // act
             bool result = algorithm.IsIsomorphic();
@@ -112,7 +112,7 @@ namespace IsomorphismGraph.Tests
             graph2.AddEdge(5, 7);
             graph2.AddEdge(3, 5);
             graph2.AddEdge(2, 5);
-            IsomorphismUnorderedGrapf algorithm = new IsomorphismUnorderedGrapf(graph1, graph2);
+            IsomorphismUnorderedGraph algorithm = new IsomorphismUnorderedGraph(graph1, graph2);
             string expectedPermitation = "1,0,6,7,4,3,5,2";
 
             // act
@@ -152,7 +152,7 @@ namespace IsomorphismGraph.Tests
             graph2.AddEdge(5, 7);
             graph2.AddEdge(3, 5);
             graph2.AddEdge(2, 5);
-            IsomorphismUnorderedGrapf algorithm = new IsomorphismUnorderedGrapf(graph1, graph2);
+            IsomorphismUnorderedGraph algorithm = new IsomorphismUnorderedGraph(graph1, graph2);
             string expectedPermitation = "1,0,6,7,4,3,5,2";
 
             // act

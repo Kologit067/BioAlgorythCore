@@ -1,6 +1,4 @@
 ﻿using RepresentativesSet.Model;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace RepresentativesSet.TriangleEnumeration.SelectElement
 {

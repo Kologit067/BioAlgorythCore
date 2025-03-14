@@ -1,4 +1,5 @@
 ﻿
+using BaseContract.Interfaces;
 using BaseLibrary.Helpers;
 
 namespace RepresentativesSet
@@ -6,7 +7,7 @@ namespace RepresentativesSet
     //--------------------------------------------------------------------------------------
     // class BruteForceRepresentativesAsTree
     //--------------------------------------------------------------------------------------
-    public class BruteForceRepresentativesAsTree : RepresentativesAsTree
+    public class BruteForceRepresentativesAsTree : RepresentativesAsTree, IHittingSetAlgorithm
     {
         //--------------------------------------------------------------------------------------
         public BruteForceRepresentativesAsTree(int pLength)

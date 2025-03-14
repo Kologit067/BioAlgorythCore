@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using BioAlgorithm.Data.Representatives.Data;
 using Representatives.Data.Contract;
-using RepresentativeServices;
 
 namespace BioAlgorithmViewModel.Representatives
 {

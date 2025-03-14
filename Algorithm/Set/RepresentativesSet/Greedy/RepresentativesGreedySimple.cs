@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
+using BaseContract.Interfaces;
 
 namespace RepresentativesSet.Greedy
 {
-    public class RepresentativesGreedySimple : RepresentativesGreedy
+    public class RepresentativesGreedySimple : RepresentativesGreedy, IHittingSetAlgorithm
     {
         public RepresentativesGreedySimple() : base()
         {

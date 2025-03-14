@@ -1,27 +1,47 @@
-﻿using BaseLibrary;
+﻿using BaseContract.Interfaces;
+using BaseLibrary;
+using StatisticsStorage.Accumulators;
 
 namespace RepresentativesSet.BinaryTreeEnumeration
 {
     //--------------------------------------------------------------------------------------
-    public class BruteForceRepresentativesAsTreeDirect : EnumerateBinVectors
+    public class BruteForceRepresentativesAsTreeDirect : EnumerateBinVectors, IHittingSetAlgorithm
     {
         private int[][] listOfSet;
         private int currentMinimum;
+        protected long[] listOfSetAsNumber;
         protected List<int> _fCurrentOptimalSet;		    // текущий оптимальный набор элементов
         protected List<string> _fOptimalSets;		        // 
+        public IRepresentativesStatisticAccumulator StatisticAccumulator { get; set; }
+        protected string _inputDataShort;
+        public string InputDataShort
+        {
+            get
+            {
+                return _inputDataShort;
+            }
+        }
         //--------------------------------------------------------------------------------------
         public BruteForceRepresentativesAsTreeDirect(int pLength)  : base(pLength)
         {
+            StatisticAccumulator = new FakeRepresentativesStatisticAccumulator();
+        }
+        //-----------------------------------------------------------------------------------
+        protected override void SupplementInitial()
+        {
+            StatisticAccumulator.CreateStatistics(listOfSet, _inputDataShort, AlgorithmName);
         }
         //-----------------------------------------------------------------------------------
         public virtual void Execute(int[][] pListOfSet)
         {
             listOfSet = pListOfSet;
+            listOfSetAsNumber = listOfSet.Select(s => BruteForceRepresentativesBinaryNumbers.ElementNumbersToLongAsBinaryVector(s)).ToArray();
             if (listOfSet.Any(s => s.Any(e => e >= _fSize)))
                 throw new ArgumentException("Element of set can not be > Length.");
             _fCurrentOptimalSet = _fCurrentSet.ToList();
             currentMinimum = _fSize;
             _fOptimalSets = new List<string>();
+            _inputDataShort = (Newtonsoft.Json.JsonConvert.SerializeObject(listOfSetAsNumber));
 
             Execute();
         }
@@ -60,6 +80,7 @@ namespace RepresentativesSet.BinaryTreeEnumeration
                                 result.Add(i);
                         }
                         _fOptimalSets.Add(string.Join(",", result));
+                        StatisticAccumulator.UpdateOptcountInc();
                     }
                 }
             }
@@ -92,6 +113,20 @@ namespace RepresentativesSet.BinaryTreeEnumeration
             }
         }
         //--------------------------------------------------------------------------------------
+        protected override void IterationAction()
+        {
+            StatisticAccumulator.IterationCountInc();
+        }
+        protected override void TerminalAction()
+        {
+            StatisticAccumulator.TerminalCountInc();
+        }
+        //-----------------------------------------------------------------------------------
+        protected override void PostAction()
+        {
+            StatisticAccumulator.SaveStatisticData(ElapsedTicks, DurationMilliSeconds, DateTime.Now,
+                IsComplete, CurrentSetAsString, _fOptimalSets, currentMinimum);
+        }
     }
     //--------------------------------------------------------------------------------------
 }

@@ -275,7 +275,7 @@ namespace BioAlgorithmViewModel.Representatives
                 "1 > 2",
                 "1 < 2",
                 "1 <> 2",
-                "1 == 2"
+                "1 = 2"
             };
             PropertyChanged += RepresentativePerformanceAlgorithmCompareViewModel_PropertyChanged;
             this.representativesRepository = representativesRepository;
@@ -284,6 +284,7 @@ namespace BioAlgorithmViewModel.Representatives
             SelectedcbNumberIterationCompare = "N/A";
             SelectedDurationCompare = "N/A";
             SelectedElemenationCountCompare = "N/A";
+            refreshRepresentativeCompareListEnable = false;
             Task<List<RepresentativeAlgorithWithDimension>> task = representativesRepository.GetRepresentativeAlgorithmWithDimensionsAsync();
             task.ContinueWith(antedecent =>
             {
@@ -292,6 +293,7 @@ namespace BioAlgorithmViewModel.Representatives
                 NumberOfSetItems = list.ToObservable<int>();
                 if (NumberOfSetItems.Count > 0)
                     SelectedNumberOfSet = NumberOfSetItems[0];
+                refreshRepresentativeCompareListEnable = true;
             });
             //List<RepresentativeAlgorithWithDimension> list = representativesRepository.GetRepresentativeAlgorithmWithDimensionsAsync();
 
@@ -348,6 +350,7 @@ namespace BioAlgorithmViewModel.Representatives
                 if (AlgorithmItems.Count > 0)
                     SelectedAlgorithm2 = AlgorithmItems[0];
         }
+        private bool refreshRepresentativeCompareListEnable = true;
         //----------------------------------------------------------------------------------------------------------------------
         private ICommand refreshRepresentativeCompareListCommand;
         public ICommand RefreshRepresentativeCompareListCommand
@@ -364,6 +367,9 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         private async void RefreshRepresentativeCompareListAction()
         {
+            ExecutionState = "Query running...";
+            refreshRepresentativeCompareListEnable = false;
+            RepresentativesPerfomanceCompareList?.Clear();
             RepresentativesPerfomanceCompareFilter representativesPerfomanceCompareFilter = new RepresentativesPerfomanceCompareFilter()
             {
                 Algorithm1 = SelectedAlgorithm1,
@@ -378,11 +384,13 @@ namespace BioAlgorithmViewModel.Representatives
             };
             List<RepresentativesPerfomanceCompare> items = await representativesRepository.GetRepresentativePerformanceCompareListAsync(representativesPerfomanceCompareFilter);
             RepresentativesPerfomanceCompareList = items.ToObservable();
+            ExecutionState = "Query completed.";
+            refreshRepresentativeCompareListEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanRefreshRepresentativeCompareListAction()
         {
-            return true;
+            return refreshRepresentativeCompareListEnable;
         }
         //----------------------------------------------------------------------------------------------------------------------
     }

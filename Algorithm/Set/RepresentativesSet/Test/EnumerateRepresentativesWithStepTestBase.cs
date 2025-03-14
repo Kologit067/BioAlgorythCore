@@ -1,12 +1,16 @@
-﻿using BaseLibrary.Helpers;
-using RepresentativesSet;
+﻿
 
-namespace RepresentativesSetTest.Base
+using BaseLibrary.Helpers;
+using RepresentativesSet.Greedy;
+using StatisticsStorage.Accumulators;
+
+namespace RepresentativesSet.Test
 {
+ 
     //--------------------------------------------------------------------------------------
-    // class EnumerateRepresentativesAdvStepTestBase
+    // class EnumerateRepresentativesWithStepTestBase
     //--------------------------------------------------------------------------------------
-    public class EnumerateRepresentativesAdvStepTestBase
+    public class EnumerateRepresentativesWithStepTestBase
     {
         protected int _fLimit;
         protected int _fSize;
@@ -77,6 +81,17 @@ namespace RepresentativesSetTest.Base
             }
             return listOfSet;
         }
+        //--------------------------------------------------------------------------------------
+        public virtual string ShowString
+        {
+            get
+            {
+                if (_fCurrentSet != null && _fCurrentSet.Length > 0)
+                    return string.Join(",", _fCurrentSet.Select(i => i));
+                return "Empty";
+            }
+        }
+        //--------------------------------------------------------------------------------------
     }
     //--------------------------------------------------------------------------------------
 }

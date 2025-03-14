@@ -12,7 +12,7 @@ namespace StatisticsStorage.Savers
         public RepresentativesSaver()
         {
  //           _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["bioalgorithm"].ConnectionString;
-            _connectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=BioAlgorithm;Integrated Security=true";
+            _connectionString = "Data Source=LAPTOP-8098K11E\\SQLEXPRESS;Initial Catalog=BioAlgorithm;Integrated Security=true;TrustServerCertificate=True";
             _representativesRepository = new RepresentativesRepository(_connectionString);
         }
 

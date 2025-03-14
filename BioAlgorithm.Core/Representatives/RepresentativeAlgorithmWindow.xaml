@@ -10,6 +10,6 @@
         Loaded="Window_Loaded"
         Title="RepresentativeAlgorithmWindow" Height="450" Width="800">
     <Grid>
-        <!--<ac:RepresentativeControl DataContext="{Binding}"/>-->
+        <ac:RepresentativeControl DataContext="{Binding}"/>
     </Grid>
 </Window>

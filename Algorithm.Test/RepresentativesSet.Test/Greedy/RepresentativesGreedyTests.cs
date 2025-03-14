@@ -14,7 +14,7 @@ namespace RepresentativesSet.Greedy.Tests
         {
             // arrange
             List<int> list = new List<int>() { 3, 5, 6, 7, 16 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedy representativesGreedy = new RepresentativesGreedySimple();
 
             // act
@@ -31,7 +31,7 @@ namespace RepresentativesSet.Greedy.Tests
         {
             // arrange
             List<int> list = new List<int>() { 3, 5, 7, 10, 24 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedyImprove representativesGreedy = new RepresentativesGreedyImprove();
             string solutionAsStringExpected = "0,3";
 
@@ -50,7 +50,7 @@ namespace RepresentativesSet.Greedy.Tests
         {
             // arrange
             List<int> list = new List<int>() { 5, 11, 12, 18, 21 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedy representativesGreedy = new RepresentativesGreedyImprove();
             string solutionAsStringExpected = "1,2";
 
@@ -69,7 +69,7 @@ namespace RepresentativesSet.Greedy.Tests
         {
             // arrange
             List<int> list = new List<int>() { 3, 5, 7, 10, 20 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedy representativesGreedy = new RepresentativesGreedySimple();
             string solutionAsStringExpected = "1,2";
 
@@ -88,7 +88,7 @@ namespace RepresentativesSet.Greedy.Tests
         {
             // arrange
             List<int> list = new List<int>() { 6, 7, 9, 10, 20 };
-            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, 5).ToArray()).ToArray();
+            int[][] listOfSet = list.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, 5).ToArray()).ToArray();
             RepresentativesGreedy representativesGreedy = new RepresentativesGreedyImproveRD();
             string solutionAsStringExpected = "2,3";
 

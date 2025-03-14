@@ -15,7 +15,7 @@ namespace BioAlgorithmViewModel.Mappings
                     Algorithm = input.Algorithm,
                     NumberOfSet = input.NumberOfSet,
                     Dimension = input.Dimension,
-                    Step = input.Step,
+                    Step = input.MaxCount,
                     InputLen = input.InputLen,
                     InputLenSort = input.InputLenSort,
                     NumberOfIterationFrom = input.NumberOfIterationFrom,

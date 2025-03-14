@@ -70,7 +70,7 @@ namespace RepresentativesSetTest.Base
             if (_fCurrentPosition == _fSize - 1)
             {
                 // arrange
-                int[][] listOfSet = _fCurrentSet.Select(t => BruteForceRepresentativesBinaryNumbders.GetAsElementNumbers(t, _fCardinality).ToArray()).ToArray();
+                int[][] listOfSet = _fCurrentSet.Select(t => BruteForceRepresentativesBinaryNumbers.GetAsElementNumbers(t, _fCardinality).ToArray()).ToArray();
                 int count = listOfSet.SelectMany(l => l).Distinct().Count();
                 string listAsString = listOfSet.AsString();
                 if (_fCardinality != count)
@@ -99,7 +99,7 @@ namespace RepresentativesSetTest.Base
             if (pPosition == 0)
                 return 3;
             int first = _fCurrentSet[pPosition - 1] + _forwardAdditive;
-            while (BruteForceRepresentativesBinaryNumbders.DefineSumOfBitVer2(first) == 1 && (first < _fLimit))
+            while (BruteForceRepresentativesBinaryNumbers.DefineSumOfBitVer2(first) == 1 && (first < _fLimit))
                 first += _forwardAdditive;
             return first;
         }
@@ -108,10 +108,10 @@ namespace RepresentativesSetTest.Base
         {
             if (_fCurrentSet[pPosition] >= _fLimit)
                 return false;
-            if (BruteForceRepresentativesBinaryNumbders.DefineSumOfBitVer2(_fCurrentSet[pPosition]) == 1)
+            if (BruteForceRepresentativesBinaryNumbers.DefineSumOfBitVer2(_fCurrentSet[pPosition]) == 1)
                 return false;
             _fCurrentSet[pPosition]++;
-            if (BruteForceRepresentativesBinaryNumbders.DefineSumOfBitVer2(_fCurrentSet[pPosition]) == 1)
+            if (BruteForceRepresentativesBinaryNumbers.DefineSumOfBitVer2(_fCurrentSet[pPosition]) == 1)
                 _fCurrentSet[pPosition]++;
             return true;
         }

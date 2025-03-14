@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Diagnostics;
+using BaseContract.Interfaces;
+using StatisticsStorage.Accumulators;
 
 namespace RepresentativesSet
 {
     //--------------------------------------------------------------------------------------
-    // class BruteForceRepresentatives
+    // class BruteForceRepresentativesBinaryNumders
     //--------------------------------------------------------------------------------------
-    public class BruteForceRepresentativesBinaryNumbders
+    public class BruteForceRepresentativesBinaryNumbers : IHittingSetAlgorithm
     {
         int[][] jaggedArray2 = {
     new int[] { 1, 3, 5, 7, 9 },
@@ -15,27 +15,43 @@ namespace RepresentativesSet
     new int[] { 11, 12 }
 };
 
-        protected List<string> _fOptimalSets;		        // 
+        protected List<string> _fOptimalSets;               // 
+        private int maxNumber;
+        private long[] listOfSetAsBinary;
+        public IRepresentativesStatisticAccumulator StatisticAccumulator { get; set; }
+        public BruteForceRepresentativesBinaryNumbers()
+        {
+            StatisticAccumulator = new FakeRepresentativesStatisticAccumulator();
+            _fOptimalSets = new List<string>();
+        }
+        public virtual void Execute(int[][] pListOfSet)
+        {
+            ExecuteByBinary(pListOfSet);
+        }
         //--------------------------------------------------------------------------------------
         // pListOfSubSet - subsets is presented as list of numbers of element of Set that included into subset
         public List<int> ExecuteByBinary(int[][] pListOfSubSet)
         {
-            _fOptimalSets = new List<string>();
-            int maxNumber = pListOfSubSet.Max(s => s.Max()) + 1;
-
-            long[] listOfSetAsBinary = pListOfSubSet.Select(s => BruteForceRepresentativesBinaryNumbders.ElementNumbersToLongAsBinaryVector(s)).ToArray();
-
+            Prepare(pListOfSubSet);
             return ExecuteByLongAsBinaryVector(listOfSetAsBinary, maxNumber);
         }
         //--------------------------------------------------------------------------------------
         public List<int> ExecuteByBinaryVer2(int[][] pListOfSubSet)
         {
-            _fOptimalSets = new List<string>();
-            int maxNumber = pListOfSubSet.Max(s => s.Max()) + 1;
-
-            long[] listOfSetAsBinary = pListOfSubSet.Select(s => BruteForceRepresentativesBinaryNumbders.ElementNumbersToLongAsBinaryVector(s)).ToArray();
+            Prepare(pListOfSubSet);
 
             return ExecuteByLongAsBinaryVectorVer2(listOfSetAsBinary, maxNumber);
+        }
+        //--------------------------------------------------------------------------------------
+        private void Prepare(int[][] pListOfSubSet)
+        {
+            _fOptimalSets.Clear();
+            maxNumber = pListOfSubSet.Max(s => s.Max()) + 1;
+
+            listOfSetAsBinary = pListOfSubSet.Select(s => BruteForceRepresentativesBinaryNumbers.ElementNumbersToLongAsBinaryVector(s)).ToArray();
+            string inputDataShort = (Newtonsoft.Json.JsonConvert.SerializeObject(listOfSetAsBinary));
+            StatisticAccumulator.CreateStatistics(pListOfSubSet.Select(l => l.ToArray()).ToArray(), inputDataShort, AlgorithmName);
+
         }
         //--------------------------------------------------------------------------------------
         private List<int> ExecuteByLongAsBinaryVector(long[] listOfSetAsBinary, int maxNumber)
@@ -57,24 +73,30 @@ namespace RepresentativesSet
         //--------------------------------------------------------------------------------------
         private List<int> ExecuteByLongAsBinaryVectorVer2(long[] listOfSetAsBinary, int maxNumber)
         {
-            return ExecuteByLongAsBinaryVectorGeneric(listOfSetAsBinary, maxNumber, (l,i) => l.All(s => (s & i) != 0));
+            return ExecuteByLongAsBinaryVectorGeneric(listOfSetAsBinary, maxNumber, (l, i) => l.All(s => (s & i) != 0));
         }
         //--------------------------------------------------------------------------------------
         private List<int> ExecuteByLongAsBinaryVectorGeneric(long[] listOfSetAsBinary, int maxNumber, Func<long[], int, bool> IsIntersect)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             long limit = 1 << maxNumber;
             long currentMinimumSet = limit - 1;
             int currentMinimum = maxNumber;
             for (int i = 0; i < limit; i++)
             {
+                StatisticAccumulator.IterationCountInc();
                 bool isIntersect = IsIntersect(listOfSetAsBinary, i);
                 if (isIntersect)
                 {
                     int candidatValue = DefineSumOfBit(i, limit, currentMinimum);
                     if (candidatValue <= currentMinimum)
                     {
+                        StatisticAccumulator.IterationCountInc();
                         if (candidatValue < currentMinimum)
                         {
+                            StatisticAccumulator.IterationCountInc();
+                            StatisticAccumulator.UpdateOptcountInc();
                             currentMinimum = candidatValue;
                             currentMinimumSet = i;
                             _fOptimalSets.Clear();
@@ -83,12 +105,17 @@ namespace RepresentativesSet
                     }
                 }
             }
-            List<int> result = GetAsElementNumbers(currentMinimumSet, maxNumber);
+            stopwatch.Stop();
+            long elapsedTicks = stopwatch.ElapsedTicks;
+            long durationMilliSeconds = stopwatch.ElapsedMilliseconds; List<int> result = GetAsElementNumbers(currentMinimumSet, maxNumber);
+            string SolutionAsString = string.Join(",", result);
+            StatisticAccumulator.SaveStatisticData(elapsedTicks, durationMilliSeconds, DateTime.Now,
+                false, SolutionAsString, new List<string> { SolutionAsString }, result.Count);
             return result;
         }
         //--------------------------------------------------------------------------------------
         // long type representation of binary vector --> array of number psition with value 1(true) (kind of subset representaion)
-        public static List<int> GetAsElementNumbers(long currentMinimumSet,int maxNumber)
+        public static List<int> GetAsElementNumbers(long currentMinimumSet, int maxNumber)
         {
             List<int> result = new List<int>();
             for (int i = 0; i < maxNumber; i++)
@@ -106,7 +133,7 @@ namespace RepresentativesSet
             foreach (int pos in numberElements)
                 result |= 1L << pos;
             return result;
-        }        
+        }
         //--------------------------------------------------------------------------------------
         public static int DefineSumOfBit(int numberAsSet, long limit, int curMin)
         {
@@ -125,9 +152,9 @@ namespace RepresentativesSet
         {
             int n = 1 << cardinality;
             int k = length;
-            int n_k = n-k;
+            int n_k = n - k;
             long result = 1;
-            for(int i = n-1; i >= n_k; i--)
+            for (int i = n - 1; i >= n_k; i--)
             {
                 result *= i;
             }
@@ -148,7 +175,7 @@ namespace RepresentativesSet
             result = (result & 0x00000000FFFFFFFF) + ((result >> 32) & 0x00000000FFFFFFFF);
 
             return result;
-        }        
+        }
         //--------------------------------------------------------------------------------------
         public List<string> OptimalSets
         {
@@ -160,6 +187,24 @@ namespace RepresentativesSet
             {
                 _fOptimalSets = value;
             }
+        }
+        //--------------------------------------------------------------------------------------
+        public virtual string AlgorithmName
+        {
+            get
+            {
+                return GetType().Name;
+            }
+        }        
+        //--------------------------------------------------------------------------------------
+    }
+    //--------------------------------------------------------------------------------------
+    public class BruteForceRepresentativesBinaryNumbersVer2 : BruteForceRepresentativesBinaryNumbers
+    {
+        //--------------------------------------------------------------------------------------
+        public override void Execute(int[][] pListOfSet)
+        {
+            ExecuteByBinaryVer2(pListOfSet);
         }
         //--------------------------------------------------------------------------------------
     }

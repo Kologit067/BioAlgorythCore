@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using BaseContract.Interfaces;
 
 namespace RepresentativesSet
 {
     //--------------------------------------------------------------------------------------
     // class RepresentativesBranchAndBoundByValue
     //--------------------------------------------------------------------------------------
-    public class RepresentativesBranchAndBoundByValue : RepresentativesAsTree
+    public class RepresentativesBranchAndBoundByValue : RepresentativesAsTree, IHittingSetAlgorithm
     {
         protected int _currentCardinality;
         //--------------------------------------------------------------------------------------
@@ -69,13 +70,6 @@ namespace RepresentativesSet
         protected virtual bool IsCompleteByCardinality()
         {
             return _currentCardinality > currentMinimum;
-        }
-
-        //-----------------------------------------------------------------------------------
-        protected override void PostAction()
-        {
-            StatisticAccumulator.SaveStatisticData(ElapsedTicks, DurationMilliSeconds, DateTime.Now,
-                IsComplete, CurrentSetAsString, _fOptimalSets, currentMinimum);
         }
         //--------------------------------------------------------------------------------------
         public List<int> Result

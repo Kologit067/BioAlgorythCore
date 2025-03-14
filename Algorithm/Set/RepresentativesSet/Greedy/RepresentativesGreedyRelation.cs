@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
+using BaseContract.Interfaces;
 
 namespace RepresentativesSet.Greedy
 {
-    public class RepresentativesGreedyRelation : RepresentativesGreedy
+    public class RepresentativesGreedyRelation : RepresentativesGreedy, IHittingSetAlgorithm
     {
         public RepresentativesGreedyRelation() : base()
         {
@@ -15,9 +13,11 @@ namespace RepresentativesSet.Greedy
             base.Execute(pListOfSet);
             stopwatch = new Stopwatch();
             stopwatch.Start();
+            StatisticAccumulator.CreateStatistics(listOfSet.Select(l => l.ToArray()).ToArray(), _inputDataShort, AlgorithmName);
             while (listOfSet.Where(s => s.Count() > 0).Count() > 0)
             {
-                var max = elements.Select((e, i) => (e, i)).OrderBy(o => 1.0 * o.e.Sum(k => listOfSet[k].Count()) / o.e.Count).First();
+                // minimum relation sum elements in all corresponding sets to count of set
+                var max = elements.Where(e => e.Count > 0).Select((e, i) => (e, i)).OrderBy(o => 1.0 * o.e.Sum(k => listOfSet[k].Count()) / o.e.Count).First();
 
                 Solution.Add(max.i);
                 var deletedSets = max.e.ToList();
