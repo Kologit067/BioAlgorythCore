@@ -115,29 +115,97 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>-->
-                    <DataGridTextColumn Header="CountSet" Binding="{Binding NumberOfSet}" MinWidth="20"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Dim" Binding="{Binding Dimension}" MinWidth="20"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Step" Binding="{Binding Step}" MinWidth="80"></DataGridTextColumn>
-                    <DataGridTextColumn Header="InputLen" Binding="{Binding InputLen}" MinWidth="100"></DataGridTextColumn>
-                    <DataGridTextColumn Header="InputLenSort" Binding="{Binding InputLenSort}" MinWidth="100"></DataGridTextColumn>
-                    <DataGridTextColumn Header="LenAvg" Binding="{Binding InputLenAvg}" MinWidth="40"></DataGridTextColumn>
-                    <DataGridTextColumn Header="InputData" Binding="{Binding InputData}" MinWidth="200"></DataGridTextColumn>
-                    <DataGridTextColumn Header="InputDataShort" Binding="{Binding InputDataShort}" MinWidth="200"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Task Type" Binding="{Binding TypeTask}" MinWidth="50"></DataGridTextColumn>
-
-                    <DataGridTemplateColumn  MinWidth="50" Header="Task Type">
+                    <DataGridTemplateColumn  MinWidth="20" Header="CountSet">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <!--<StackPanel Background="Azure" VerticalAlignment="Stretch" >-->
-                                <Label Content="{Binding TypeTask}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" Background="White"/>
-                                <!--</StackPanel>-->
+                                <Label Content="{Binding NumberOfSet}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Isomorphic" Binding="{Binding Isomorphic}" MinWidth="200"></DataGridTextColumn>
-                    <DataGridTextColumn Header="IsomorphicBipart" Binding="{Binding IsomorphicBipart}" MinWidth="200"></DataGridTextColumn>
-                    <DataGridTextColumn Header="IsomorphismResult" Binding="{Binding IsomorphismResult}" MinWidth="200"></DataGridTextColumn>
-                    <DataGridTextColumn Header="IsomorphismBipartResult" Binding="{Binding IsomorphismBipartResult}" MinWidth="200"></DataGridTextColumn>
+                    <DataGridTemplateColumn  MinWidth="20" Header="Dim">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Dimension}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="80" Header="Step">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Step}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="100" Header="InputLen">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding InputLen}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="100" Header="InputLenSort">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding InputLenSort}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="40" Header="LenAvg">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding InputLenAvg}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="InputData">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding InputData}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="InputDataShort">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding InputDataShort}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="50" Header="Task Type">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding TypeTask}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" Background="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="Isomorphic">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Isomorphic}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="IsomorphicBipart">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding IsomorphicBipart}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="IsomorphismResult">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding IsomorphismResult}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="200" Header="IsomorphismBipartResult">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding IsomorphismBipartResult}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">

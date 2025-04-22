@@ -273,7 +273,7 @@ ORDER BY {order}";
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
                 string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],[InputLen],[InputLenSort]
-      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, TypeTask
+      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, IsomorphismResult, IsomorphismBipartResult, TypeTask
 FROM [dbo].[RepresentativesInput] AS ri
 {where}
 ORDER BY {order}";
