@@ -27,11 +27,13 @@ namespace BioAlgorithm.Data.Representatives.Data
             }
         }
 
-        public async Task DeleteRepresentativeAlgorithmGroupAsync(RepresentativeAlgorithmGroupDimension selectedAlgorithmGroup)
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string?> DeleteRepresentativeAlgorithmGroupAsync(RepresentativeAlgorithmGroupDimension selectedAlgorithmGroup)
         {
-            await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.Step);
+            return await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.Step);
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? step = null)
         {
             string? error = null;
@@ -75,10 +77,10 @@ namespace BioAlgorithm.Data.Representatives.Data
 
         }
 
-
-        public async Task DeleteRepresentativeAlgorithmAsync(RepresentativeAlgorithmGroup selectedAlgorithm)
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string?> DeleteRepresentativeAlgorithmAsync(RepresentativeAlgorithmGroup selectedAlgorithm)
         {
-            await DeleteAsync(selectedAlgorithm.Algorithm);
+            return await DeleteAsync(selectedAlgorithm.Algorithm);
         }
         public async Task<List<RepresentativeAlgorithmGroupDimension>> GetRepresentativeAlgorithmGroupDimensionsAsync(string algorithmGroupListSort)
         {
@@ -91,14 +93,16 @@ namespace BioAlgorithm.Data.Representatives.Data
 FROM [dbo].[RepresentativesPerfomance] AS rp
 INNER JOIN [dbo].[RepresentativesInput] AS ri
 ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
-GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]
-ORDER BY {algorithmGroupListSort}
+GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]";
+                if (!string.IsNullOrEmpty(algorithmGroupListSort))
+                    sql += $@"ORDER BY {algorithmGroupListSort}
 ";
                 algorithmGroups = (await db.QueryAsync<RepresentativeAlgorithmGroupDimension>(sql, commandTimeout: 180)).ToList();
             }
             return algorithmGroups;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithWithDimension>> GetRepresentativeAlgorithmWithDimensionsAsync()
         {
             List<RepresentativeAlgorithWithDimension> algorithmWithDimensions = new List<RepresentativeAlgorithWithDimension>();
@@ -115,6 +119,7 @@ GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]
             return algorithmWithDimensions;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithmGroup>> GetAlgorithmsAsync()
         {
             List<RepresentativeAlgorithmGroup> algorithmGroups = new List<RepresentativeAlgorithmGroup>();
@@ -141,6 +146,7 @@ GROUP BY [Algorithm]";
             return algorithmGroups;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativesPerfomance>> GetRepresentativePerformanceListAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
         {
             string top = "";
@@ -229,7 +235,7 @@ ORDER BY {order}";
             return representativesPerfomances;
         }
 
-
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
         {
             string top = "";
@@ -267,7 +273,7 @@ ORDER BY {order}";
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
                 string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],[InputLen],[InputLenSort]
-      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart
+      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, TypeTask
 FROM [dbo].[RepresentativesInput] AS ri
 {where}
 ORDER BY {order}";
@@ -277,6 +283,7 @@ ORDER BY {order}";
             return representativesInputs;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativesPerfomanceCompare>> GetRepresentativePerformanceCompareListAsync(RepresentativesPerfomanceCompareFilter representativesPerfomanceCompareFilter)
         {
             string top = "";
@@ -357,6 +364,7 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
         }
         private int updateIsomorphicBufferSize = 1000;
         private Dictionary<long, (string,string)> updateIsomorphicDict = new Dictionary<long, (string,string)>();
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<string> UpdateIsomorphicAsync(long representativesInputId, string inputData, string result, bool isBipart = false)
         {
             string error = string.Empty;
@@ -370,6 +378,22 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             return error;
         }
 
+        private int updateTaskTypeBufferSize = 1000;
+        private Dictionary<long, int> updateTaskTypeDict = new Dictionary<long, int>();
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string> UpdateTypeTaskAsync(long representativesInputId, int typeTask)
+        {
+            string error = string.Empty;
+            updateTaskTypeDict.Add(representativesInputId, typeTask);
+
+            if (updateTaskTypeDict.Count >= updateTaskTypeBufferSize)
+            {
+                error = await SaveUpdateTypeTaskAsync(updateTaskTypeDict);
+                updateTaskTypeDict.Clear();
+            }
+            return error;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<string> CompleteUpdateIsomorphicAsync(bool isBipart = false)
         {
             string error = await SaveUpdateIsomorphicAsync(updateIsomorphicDict, isBipart);
@@ -377,6 +401,14 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             return error;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string> CompleteUpdateTypeTaskAsync()
+        {
+            string error = await SaveUpdateTypeTaskAsync(updateTaskTypeDict);
+            updateIsomorphicDict.Clear();
+            return error;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private async Task<string> SaveUpdateIsomorphicAsync(Dictionary<long, (string, string)> updateIsomorphicDict, bool isBipart = false)
         {
             string error = string.Empty;
@@ -420,6 +452,48 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             return error;
         }
 
+
+        //----------------------------------------------------------------------------------------------------------------------
+        private async Task<string> SaveUpdateTypeTaskAsync(Dictionary<long, int> updateTypeTaskDict)
+        {
+            string error = string.Empty;
+            try
+            {
+
+                DataTable typeTaskTable = new DataTable();
+                typeTaskTable.Columns.Add("Id", System.Type.GetType("System.Int64"));
+                typeTaskTable.Columns.Add("TypeTask", System.Type.GetType("System.Int32"));
+
+
+                foreach (var ui in updateTypeTaskDict)
+                {
+                    typeTaskTable.Rows.Add(ui.Key, ui.Value);
+                }
+
+                SqlConnection connection = new SqlConnection(_connectionString);
+                connection.Open();
+                try
+                {
+                    SqlCommand addCommand = new SqlCommand("dbo.spUpdateTypeTask", connection);
+                    addCommand.CommandType = CommandType.StoredProcedure;
+                    addCommand.CommandTimeout = 300;
+                    SqlParameter tvpParam = addCommand.Parameters.AddWithValue("@UpdateTypeTask", typeTaskTable);
+                    tvpParam.SqlDbType = SqlDbType.Structured;
+                    tvpParam.TypeName = "dbo.UpdateTypeTaskType";
+                    await addCommand.ExecuteNonQueryAsync();
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex.ToString();
+            }
+            return error;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task ClearIsomorphicAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, bool isBipart = false)
         {
             string where = "";
@@ -461,6 +535,38 @@ SET [IsomorphicBipart] = NULL, [IsomorphismBipartResult] = NULL
             }
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task ClearTaskTypeAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter)
+        {
+            string where = "";
+            List<string> whereList = new List<string>();
+            if (representativesPerfomanceFilter.NumberOfSet.HasValue)
+            {
+                whereList.Add($"[NumberOfSet] = {representativesPerfomanceFilter.NumberOfSet}");
+            }
+            if (representativesPerfomanceFilter.Dimension.HasValue)
+            {
+                whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
+            }
+            if (representativesPerfomanceFilter.Step.HasValue)
+            {
+                whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
+            }
+            if (whereList.Count > 0)
+            {
+                where = "WHERE " + string.Join(" AND ", whereList);
+            }
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                string query = string.Empty;
+                query = $@"UPDATE [dbo].[RepresentativesInput]
+SET [TypeTask] = NULL
+{where}
+";
+                await db.ExecuteAsync(query);
+            }
+            //----------------------------------------------------------------------------------------------------------------------
+        }
+        //----------------------------------------------------------------------------------------------------------------------
     }
-
 }

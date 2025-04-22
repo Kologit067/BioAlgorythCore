@@ -1,7 +1,7 @@
 using BioAlgorithm.Data.Contract.Representatives.Data.Contract.Interfaces;
 using BioAlgorithm.Data.Representatives.Data;
 using BioAlgorithm.Services.Contract;
-using RepresentativeServices;
+using BioAlgorithm.Services.HittingSet;
 
 var builder = WebApplication.CreateBuilder(args);
 if ( builder == null)

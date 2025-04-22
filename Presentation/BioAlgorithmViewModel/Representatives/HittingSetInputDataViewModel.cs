@@ -188,7 +188,7 @@ namespace BioAlgorithmViewModel.Representatives
         {
             HittingSetFilter.Dimension = algorithmGroupToFilterMessage.Dimension;
             HittingSetFilter.NumberOfSet = algorithmGroupToFilterMessage.NumberOfSet;
-            HittingSetFilter.MaxCount = algorithmGroupToFilterMessage.Step;
+            HittingSetFilter.Step = algorithmGroupToFilterMessage.Step;
             RefreshRepresentativeInputListAction();
         }
         protected override void FillAlgorithmGroupToFilterMessage(AlgorithmGroupToFilterMessage message)
@@ -229,6 +229,96 @@ namespace BioAlgorithmViewModel.Representatives
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanRunTaskAction()
+        {
+            return refreshRepresentativeAlgorithmGroupEnable;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runIsomorphismTaskCommand;
+        public ICommand RunIsomorphismTaskCommand
+        {
+            get
+            {
+                if (runIsomorphismTaskCommand == null)
+                {
+                    runIsomorphismTaskCommand = new DelegateCommand(RunIsomorphismTaskAction, CanRunIsomorphismTaskAction);
+                }
+                return runIsomorphismTaskCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunIsomorphismTaskAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.Isomorphism,
+                Dimension = null,
+                NumberOfSet = null,
+                Step = null
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunIsomorphismTaskAction()
+        {
+            return refreshRepresentativeAlgorithmGroupEnable;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runIsomorphismBipartTaskCommand;
+        public ICommand RunIsomorphismBipartTaskCommand
+        {
+            get
+            {
+                if (runIsomorphismBipartTaskCommand == null)
+                {
+                    runIsomorphismBipartTaskCommand = new DelegateCommand(RunIsomorphismBipartTaskAction, CanRunIsomorphismBipartTaskAction);
+                }
+                return runIsomorphismBipartTaskCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunIsomorphismBipartTaskAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.IsomorphismByPart,
+                Dimension = null,
+                NumberOfSet = null,
+                Step = null
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunIsomorphismBipartTaskAction()
+        {
+            return refreshRepresentativeAlgorithmGroupEnable;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runDefineTypeTaskCommand;
+        public ICommand RunDefineTypeTaskCommand
+        {
+            get
+            {
+                if (runDefineTypeTaskCommand == null)
+                {
+                    runDefineTypeTaskCommand = new DelegateCommand(RunDefineTypeTaskAction, CanRunDefineTypeTaskAction);
+                }
+                return runDefineTypeTaskCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunDefineTypeTaskAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.DefineTypeTask,
+                Dimension = null,
+                NumberOfSet = null,
+                Step = null
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunDefineTypeTaskAction()
         {
             return refreshRepresentativeAlgorithmGroupEnable;
         }

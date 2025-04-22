@@ -50,7 +50,7 @@
                             <DataTemplate>
                                 <StackPanel>
                                     <Button ToolTip="Delete" Margin="1" Padding="1" 
-                                        Command="{Binding Path=DataContext.DeleteGroupCommand, ElementName=AlgGrid}" 
+                                        Command="{Binding Path=DataContext.DeleteAlgorithmCommand, ElementName=AlgGrid}" 
                                         CommandParameter="{Binding}">
                                         <Image Width="25" Height="25" Source="/Pictures/deleteTrackFromTheMap.png" />
                                     </Button>

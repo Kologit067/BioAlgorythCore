@@ -27,22 +27,23 @@ namespace BioAlgorythm.API.Controllers
             if (!_memoryCache.TryGetValue("Algorithms", out List<RepresentativeAlgorithmGroup>? result))
             { 
                 result = await _representativeService.GetAlgorithmsAsync();
-                _memoryCache.Set("Algorithms", result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(15)));
+                _memoryCache.Set("Algorithms", result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
             }
             return Json(result);
         }
         // GET: api/HittingSet/Algorithms
         [HttpGet]
-        [Route("/api/HittingSet/GroupAlgorithms")]
+        [Route("/api/HittingSet/GroupAlgorithms/{order}")]
         [CacheOutput]
         public async Task<ActionResult> GroupAlgorithms(string order)
         {
-            if (!_memoryCache.TryGetValue("GroupAlgorithms", out List<RepresentativeAlgorithmGroupDimension>? result))
+            string cacheKey = $"GroupAlgorithms-{order}";
+            if (!_memoryCache.TryGetValue(cacheKey, out List<RepresentativeAlgorithmGroupDimension>? result))
             {
                 result = await _representativeService.GetRepresentativeAlgorithmGroupDimensionsAsync(order);
-                _memoryCache.Set("GroupAlgorithms", result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(15)));
+                _memoryCache.Set(cacheKey, result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
             }
-            return Json(result);
+             return Json(result);
         }
 
     }

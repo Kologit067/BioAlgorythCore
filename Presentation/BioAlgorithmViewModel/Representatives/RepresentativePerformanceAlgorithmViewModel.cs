@@ -150,7 +150,18 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         private async void DeleteAlgorithmAction()
         {
-            await representativesRepository.DeleteRepresentativeAlgorithmAsync(SelectedAlgorithm);
+            ExecutionState = "Operation running...";
+            refreshRepresentativeAlgorithmListEnable = false;
+            string? result = await representativesRepository.DeleteRepresentativeAlgorithmAsync(SelectedAlgorithm);
+            if (string.IsNullOrEmpty(result))
+            {
+                RepresentativeAlgorithmGroups.Remove(SelectedAlgorithm);
+                ExecutionState = "Operation completed";
+            }
+            {
+                ExecutionState = $"Operation failed: {result}";
+            }
+            refreshRepresentativeAlgorithmListEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanDeleteAlgorithmAction()

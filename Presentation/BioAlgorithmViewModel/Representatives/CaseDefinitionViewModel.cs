@@ -49,7 +49,7 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         private long? step;
-        public long? MaxCount
+        public long? Step
         {
             get
             {
@@ -58,7 +58,7 @@ namespace BioAlgorithmViewModel.Representatives
             set
             {
                 step = value;
-                OnPropertyChanged(nameof(MaxCount));
+                OnPropertyChanged(nameof(Step));
             }
         }
     }

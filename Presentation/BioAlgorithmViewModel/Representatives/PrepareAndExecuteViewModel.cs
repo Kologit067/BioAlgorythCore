@@ -84,7 +84,7 @@ namespace BioAlgorithmViewModel.Representatives
             }
             if (message.MaxCount != null)
             {
-                MaxCount = message.MaxCount;
+                Step = message.MaxCount;
             }
             representativesRepository = new RepresentativesRepository();
             AlgorithmItems = new ObservableCollection<string>()
@@ -155,7 +155,7 @@ namespace BioAlgorithmViewModel.Representatives
 
             RepresentativeService representativeService = new RepresentativeService(representativesRepository);
             if (Dimension.HasValue && NumberOfSet.HasValue)
-                await representativeService.ExecuteAlgorithmAsync(Algorithm, AlgorithmDetail, Dimension.Value, NumberOfSet.Value, MaxCount ?? 1);
+                await representativeService.ExecuteAlgorithmAsync(Algorithm, AlgorithmDetail, Dimension.Value, NumberOfSet.Value, Step ?? 1);
 
             ExecutionState = "Task completed.";
             ExecuteAlgorithmEnable = true;

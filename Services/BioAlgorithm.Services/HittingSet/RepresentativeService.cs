@@ -12,7 +12,6 @@ using RepresentativesSet.BinaryTreeEnumeration;
 using RepresentativesSet.Greedy;
 using RepresentativesSet.TriangleEnumeration;
 using RepresentativesSet.TriangleEnumeration.SelectElement;
-using Microsoft.Identity.Client;
 
 namespace BioAlgorithm.Services.HittingSet
 {
@@ -102,6 +101,46 @@ namespace BioAlgorithm.Services.HittingSet
                     }
                 }
                 error = await representativesRepository.CompleteUpdateIsomorphicAsync(isBipart);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+            return error;
+        }
+
+        public async Task<string> DefineTaskTypeAsync(string algorithmName, int dimension, int numberOfSet, long step)
+        {
+            string error = string.Empty;
+            try
+            {
+                RepresentativesPerfomanceFilter representativesPerfomanceFilterDto = new RepresentativesPerfomanceFilter
+                {
+                    Algorithm = algorithmName,
+                    Dimension = dimension,
+                    NumberOfSet = numberOfSet,
+                    Step = step
+                };
+                await representativesRepository.ClearTaskTypeAsync(representativesPerfomanceFilterDto);
+                List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
+                items.ForEach(item =>
+                {
+                    item.TypeTask = 0;
+                });
+                for (int i = 0; i < items.Count; i++)
+                {
+                    RepresentativesInput itemOut = items[i];
+                    MultiGraph graph = new MultiGraph(itemOut.InputData);
+//                    BipartiteGraph bipartiteGraph1 = new BipartiteGraph(itemOut.InputData);
+                    int taskType = graph.DefineType();
+                    items[i].TypeTask = taskType;
+                    error = await representativesRepository.UpdateTypeTaskAsync(items[i].RepresentativesInputId, items[i].TypeTask);
+                     if (!string.IsNullOrEmpty(error))
+                    {
+                        return error;
+                    }
+                }
+                error = await representativesRepository.CompleteUpdateTypeTaskAsync();
             }
             catch (Exception e)
             {
