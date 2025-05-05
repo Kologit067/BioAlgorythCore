@@ -25,7 +25,8 @@ namespace BioAlgorithmViewModel.Mappings
                     IsComplete = input.IsComplete,
                     CountTerminalFrom = input.CountTerminalFrom,
                     CountTerminalTo = input.CountTerminalTo,
-                    BestValue = input.BestValue
+                    BestValue = input.BestValue,
+                    TaskTypeFilterType = input.TaskTypeFilterType
                 };
         }
 

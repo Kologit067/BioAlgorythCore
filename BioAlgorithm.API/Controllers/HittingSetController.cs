@@ -40,8 +40,15 @@ namespace BioAlgorythm.API.Controllers
             string cacheKey = $"GroupAlgorithms-{order}";
             if (!_memoryCache.TryGetValue(cacheKey, out List<RepresentativeAlgorithmGroupDimension>? result))
             {
-                result = await _representativeService.GetRepresentativeAlgorithmGroupDimensionsAsync(order);
-                _memoryCache.Set(cacheKey, result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
+                try
+                {
+                    result = await _representativeService.GetRepresentativeAlgorithmGroupDimensionsAsync(order);
+                    _memoryCache.Set(cacheKey, result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
              return Json(result);
         }

@@ -18,5 +18,7 @@ namespace Representatives.Data.Contract
         public int? CountTerminalFrom { get; set; }
         public int? CountTerminalTo { get; set; }
         public int? BestValue { get; set; }
+        public int TaskTypeFilter { get; set; }
+        public string TaskTypeFilterType { get; set; }
     }
 }

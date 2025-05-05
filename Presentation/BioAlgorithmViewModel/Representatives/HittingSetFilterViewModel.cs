@@ -148,6 +148,20 @@ namespace BioAlgorithmViewModel.Representatives
                 OnPropertyChanged(nameof(BestValue));
             }
         }
+        private string taskTypeFilterType;
+        public string TaskTypeFilterType
+        {
+            get
+            {
+                return taskTypeFilterType;
+            }
+            set
+            {
+                taskTypeFilterType = value;
+                OnPropertyChanged(nameof(TaskTypeFilterType));
+            }
+        }
+
         public HittingSetFilterViewModel()
         {
 

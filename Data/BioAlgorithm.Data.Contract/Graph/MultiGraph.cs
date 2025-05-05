@@ -1,4 +1,5 @@
-﻿using BaseLibrary.Helpers;
+﻿using System.Linq;
+using BaseLibrary.Helpers;
 
 
 namespace GraphLib
@@ -47,6 +48,8 @@ namespace GraphLib
             var components = GetComponents();
             if (components.Count > 1)
                 graphType |= 16;
+            if (Vertices.Any(v1 => Vertices.Any(v2 => v1 != v2 && v1.Edges.All(e1 => v2.Edges.Any(e2 => e1 == e2)))))
+                graphType |= 32;
             return graphType;
         }
 

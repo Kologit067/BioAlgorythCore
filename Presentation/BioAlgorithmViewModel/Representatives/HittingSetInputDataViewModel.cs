@@ -70,6 +70,109 @@ namespace BioAlgorithmViewModel.Representatives
                 OnPropertyChanged(nameof(InputDataSortItems));
             }
         }
+        //---------------------------------------------------------------------------------------------------------------------- 
+        public List<string> TaskTypeFilterTypeSource
+        {
+            get => new List<string>() { "Or", "And" };
+        }
+        //private string taskTypeFilterType;
+        //public string TaskTypeFilterType
+        //{
+        //    get
+        //    {
+        //        return taskTypeFilterType;
+        //    }
+        //    set
+        //    {
+        //        taskTypeFilterType = value;
+        //        OnPropertyChanged(nameof(TaskTypeFilterType));
+        //    }
+        //}
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter1;
+        public bool TaskTypeFilter1
+        {
+            get
+            {
+                return taskTypeFilter1;
+            }
+            set
+            {
+                taskTypeFilter1 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter1));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter2;
+        public bool TaskTypeFilter2
+        {
+            get
+            {
+                return taskTypeFilter2;
+            }
+            set
+            {
+                taskTypeFilter2 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter2));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter4;
+        public bool TaskTypeFilter4
+        {
+            get
+            {
+                return taskTypeFilter4;
+            }
+            set
+            {
+                taskTypeFilter4 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter4));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter8;
+        public bool TaskTypeFilter8
+        {
+            get
+            {
+                return taskTypeFilter8;
+            }
+            set
+            {
+                taskTypeFilter8 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter8));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter16;
+        public bool TaskTypeFilter16
+        {
+            get
+            {
+                return taskTypeFilter16;
+            }
+            set
+            {
+                taskTypeFilter16 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter16));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool taskTypeFilter32;
+        public bool TaskTypeFilter32
+        {
+            get
+            {
+                return taskTypeFilter32;
+            }
+            set
+            {
+                taskTypeFilter32 = value;
+                OnPropertyChanged(nameof(TaskTypeFilter32));
+            }
+        }
+
         //----------------------------------------------------------------------------------------------------------------------
         public HittingSetInputDataViewModel(RepresentativesRepository representativesRepository) : base(representativesRepository)
         {
@@ -82,6 +185,7 @@ namespace BioAlgorithmViewModel.Representatives
                 "NumberOfSet, Dimension, Step, RepresentativesInputId"
             };
             SelectedInputDataSort = InputDataSortItems[0];
+            HittingSetFilter.TaskTypeFilterType = TaskTypeFilterTypeSource[0];
             Messenger.Default.Register<AlgorithmGroupToFilterInputDataMessage>(this, OnAlgorithmGroupToFilterInputDataMessageReceived, typeof(AlgorithmGroupToFilterInputDataMessage));
         }
         private bool refreshRepresentativeAlgorithmGroupEnable = true;
@@ -105,7 +209,22 @@ namespace BioAlgorithmViewModel.Representatives
             refreshRepresentativeAlgorithmGroupEnable = false;
 
             InputDataList.Clear();
+            int taskTypeFilter = 0;
+            if (TaskTypeFilter1)
+                taskTypeFilter = taskTypeFilter | 1;
+            if (TaskTypeFilter2)
+                taskTypeFilter = taskTypeFilter | 2;
+            if (TaskTypeFilter4)
+                taskTypeFilter = taskTypeFilter | 4;
+            if (TaskTypeFilter8)
+                taskTypeFilter = taskTypeFilter | 8;
+            if (TaskTypeFilter16)
+                taskTypeFilter = taskTypeFilter | 16;
+            if (TaskTypeFilter32)
+                taskTypeFilter = taskTypeFilter | 32;
             RepresentativesPerfomanceFilter? representativesPerfomanceFilterDto = HittingSetFilter.Map();
+            if (representativesPerfomanceFilterDto != null)
+                representativesPerfomanceFilterDto.TaskTypeFilter = taskTypeFilter;
             List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, SelectedInputDataSort);
             foreach (RepresentativesInput item in items)
                 InputDataList.Add(item);

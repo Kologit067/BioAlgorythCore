@@ -84,22 +84,31 @@ namespace BioAlgorithm.Data.Representatives.Data
         }
         public async Task<List<RepresentativeAlgorithmGroupDimension>> GetRepresentativeAlgorithmGroupDimensionsAsync(string algorithmGroupListSort)
         {
-            List<RepresentativeAlgorithmGroupDimension> algorithmGroups = new List<RepresentativeAlgorithmGroupDimension>();
-            using (IDbConnection db = new SqlConnection(_connectionString))
+            try
             {
-                string sql = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [Step], COUNT(*) as TotalCount, 
+                List<RepresentativeAlgorithmGroupDimension> algorithmGroups = new List<RepresentativeAlgorithmGroupDimension>();
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    string sql = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [Step], COUNT(*) as TotalCount, 
        SUM([NumberOfIteration]) as NumberOfIteration, SUM([Duration]) as TotalDuration,
 	   SUM([Duration])/COUNT(*) as AverageDuration
 FROM [dbo].[RepresentativesPerfomance] AS rp
 INNER JOIN [dbo].[RepresentativesInput] AS ri
 ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
 GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]";
-                if (!string.IsNullOrEmpty(algorithmGroupListSort))
-                    sql += $@"ORDER BY {algorithmGroupListSort}
+                    if (!string.IsNullOrEmpty(algorithmGroupListSort))
+                        sql += $@"ORDER BY {algorithmGroupListSort}
 ";
-                algorithmGroups = (await db.QueryAsync<RepresentativeAlgorithmGroupDimension>(sql, commandTimeout: 180)).ToList();
+                    algorithmGroups = (await db.QueryAsync<RepresentativeAlgorithmGroupDimension>(sql, commandTimeout: 180)).ToList();
+                }
+                return algorithmGroups;
             }
-            return algorithmGroups;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+                //return new List<RepresentativeAlgorithmGroupDimension>();
+            }
         }
 
         //----------------------------------------------------------------------------------------------------------------------
@@ -264,6 +273,14 @@ ORDER BY {order}";
             if (!string.IsNullOrWhiteSpace(representativesPerfomanceFilter.InputLenSort))
             {
                 whereList.Add($"[InputLenSort] = '{representativesPerfomanceFilter.InputLenSort}'");
+            }
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Or")
+            {
+                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0");
+            }
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "And")
+            {
+                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter}");
             }
             if (whereList.Count > 0)
             {
