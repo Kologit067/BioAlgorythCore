@@ -1,4 +1,5 @@
-﻿using BioAlgorithm.Services.Contract;
+﻿using BioAlgorithm.Data.Contract.Representatives.Data.Contract;
+using BioAlgorithm.Services.Contract;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -7,7 +8,10 @@ using WebApi.OutputCache.V2;
 
 namespace BioAlgorythm.API.Controllers
 {
-//    [EnableCors("AllowAngular")]
+    //    [EnableCors("AllowAngular")]
+    //----------------------------------------------------------------------------------------------------------------------
+    // class HittingSetController
+    //----------------------------------------------------------------------------------------------------------------------
     public class HittingSetController : Controller
     {
         private readonly IRepresentativeService _representativeService;
@@ -17,7 +21,7 @@ namespace BioAlgorythm.API.Controllers
             _representativeService = representativeService;
             _memoryCache = cache;
         }
-
+        //----------------------------------------------------------------------------------------------------------------------
         // GET: api/HittingSet/Algorithms
         [HttpGet]
         [Route("/api/HittingSet/Algorithms")]
@@ -31,6 +35,7 @@ namespace BioAlgorythm.API.Controllers
             }
             return Json(result);
         }
+        //----------------------------------------------------------------------------------------------------------------------
         // GET: api/HittingSet/Algorithms
         [HttpGet]
         [Route("/api/HittingSet/GroupAlgorithms/{order}")]
@@ -52,7 +57,30 @@ namespace BioAlgorythm.API.Controllers
             }
              return Json(result);
         }
-
+        //----------------------------------------------------------------------------------------------------------------------
+        // GET: api/HittingSet/Inputs
+        [HttpPost]
+        [Route("/api/HittingSet/Inputs/{order}")]
+        [CacheOutput]
+        public async Task<ActionResult> GetRepresentativeInputsAsync([FromBody] RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
+        {
+            string cacheKey = $"HittingSetInputs-{representativesPerfomanceFilter.GetStringKey()}-{order}";
+            if (!_memoryCache.TryGetValue(cacheKey, out List<RepresentativeAlgorithmGroupDimension>? result))
+            {
+                try
+                {
+                    var list = await _representativeService.GetRepresentativeInputsAsync(representativesPerfomanceFilter, order);
+                    _memoryCache.Set(cacheKey, result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(30)));
+                    return Json(list);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return Json(null);
+        }
+        //----------------------------------------------------------------------------------------------------------------------
     }
+    //----------------------------------------------------------------------------------------------------------------------
 }
- 

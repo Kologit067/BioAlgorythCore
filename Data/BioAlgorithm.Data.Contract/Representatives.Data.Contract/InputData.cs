@@ -8,6 +8,7 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
         public int NumberOfSet { get; set; }
         public int Dimension { get; set; }
         public long Step { get; set; }
+        public long MaxCount { get; set; }
         public string InputLen { get; set; }
         public string InputLenSort { get; set; }
         public int InputLenAvg { get; set; }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BioAlgorithmViewModel.Common;
+﻿using BioAlgorithmViewModel.Common;
 
 namespace BioAlgorithmViewModel.Representatives
 {
@@ -59,6 +54,19 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 step = value;
                 OnPropertyChanged(nameof(Step));
+            }
+        }
+        private long? maxCount;
+        public long? MaxCount
+        {
+            get
+            {
+                return maxCount;
+            }
+            set
+            {
+                maxCount = value;
+                OnPropertyChanged(nameof(MaxCount));
             }
         }
     }

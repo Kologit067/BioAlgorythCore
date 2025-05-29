@@ -8,6 +8,7 @@ namespace Representatives.Data.Contract
         public long TotalCount { get; set; }
         public long CountByDimension { get; set; }
         public long Step { get; set; }
+        public long MaxCount { get; set; }
 
         public long NumberOfIteration { get; set; }
 

@@ -43,8 +43,10 @@
                 <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding RepresentativesPerfomanceFilter.Dimension}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="4" Content="NumberOfSet" Margin="2"/>
                 <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding RepresentativesPerfomanceFilter.NumberOfSet}" Margin="2" VerticalContentAlignment="Center"/>
-                <Label Grid.Row="1" Grid.Column="6" Content="Step" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding RepresentativesPerfomanceFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
+                <Label Grid.Row="1" Grid.Column="6" Content="MaxCount" Margin="2"/>
+                <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding RepresentativesPerfomanceFilter.MaxCount}" Margin="2" VerticalContentAlignment="Center"/>
+                <Label Grid.Row="2" Grid.Column="6" Content="Step" Margin="2"/>
+                <TextBox Grid.Row="2" Grid.Column="7" Text="{Binding RepresentativesPerfomanceFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="2" Grid.Column="0" Content="InputLen" Margin="2"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RepresentativesPerfomanceFilter.InputLen}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="2" Grid.Column="2" Content="InputLenSort" Margin="2"/>
@@ -86,6 +88,7 @@
                     <DataGridTextColumn Header="Algorithm" Binding="{Binding Algorithm}" MinWidth="200"></DataGridTextColumn>
                     <DataGridTextColumn Header="NumberOfSet" Binding="{Binding NumberOfSet}" MinWidth="50"></DataGridTextColumn>
                     <DataGridTextColumn Header="Dimension" Binding="{Binding Dimension}" MinWidth="50"></DataGridTextColumn>
+                    <DataGridTextColumn Header="MaxCount" Binding="{Binding MaxCount}" MinWidth="80"></DataGridTextColumn>
                     <DataGridTextColumn Header="Step" Binding="{Binding Step}" MinWidth="80"></DataGridTextColumn>
                     <DataGridTextColumn Header="InputLen" Binding="{Binding InputLen}" MinWidth="100"></DataGridTextColumn>
                     <DataGridTextColumn Header="InputLenSort" Binding="{Binding InputLenSort}" MinWidth="100"></DataGridTextColumn>

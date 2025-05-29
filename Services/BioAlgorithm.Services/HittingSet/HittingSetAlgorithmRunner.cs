@@ -1,7 +1,4 @@
-﻿
-using RepresentativesSet.Greedy;
-using RepresentativesSet;
-using RepresentativesSetTest.Base;
+﻿using RepresentativesSetTest.Base;
 using StatisticsStorage.Accumulators;
 using StatisticsStorage.Savers;
 using BaseContract.Interfaces;
@@ -29,7 +26,7 @@ namespace BioAlgorithm.Services.HittingSet
         //--------------------------------------------------------------------------------------
         public async Task ExecuteAsync()
         {
-            await _statisticAccumulator.DeleteAsync(hittingSetAlgorithm.AlgorithmName, _fSize , _fCardinality, 1);
+            await _statisticAccumulator.DeleteAsync(hittingSetAlgorithm.AlgorithmName, _fSize , _fCardinality, 0);
             Execute();
         }
         //--------------------------------------------------------------------------------------

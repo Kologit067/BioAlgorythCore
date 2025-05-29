@@ -41,6 +41,7 @@
                 <StackPanel Grid.Column="4" Grid.ColumnSpan="6" Orientation="Horizontal">
                     <Button  Content="Refresh" Command="{Binding RefreshRepresentativeInputListCommand}"  Width="90" Margin="2"/>
                     <Button  Content="Run Task" Command="{Binding RunTaskCommand}" Width="90" Margin="2"/>
+                    <Button  Content="Run TaskStep" Command="{Binding RunTaskStepCommand}" Width="90" Margin="2"/>
                     <Button  Content="Isomorphism" Command="{Binding RunIsomorphismTaskCommand}" Width="90" Margin="2"/>
                     <Button  Content="Isomorphism 2" Command="{Binding RunIsomorphismBipartTaskCommand}" Width="90" Margin="2"/>
                     <Button  Content="Type task" Command="{Binding RunDefineTypeTaskCommand}" Width="90" Margin="2"/>
@@ -52,8 +53,10 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HittingSetFilter.Dimension}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="2" Content="NumberOfSet" Margin="2"/>
                 <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding HittingSetFilter.NumberOfSet}" Margin="2" VerticalContentAlignment="Center"/>
-                <Label Grid.Row="1" Grid.Column="4" Content="Step" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding HittingSetFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
+                <Label Grid.Row="1" Grid.Column="4" Content="MaxCount" Margin="2"/>
+                <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding HittingSetFilter.MaxCount}" Margin="2" VerticalContentAlignment="Center"/>
+                <Label Grid.Row="2" Grid.Column="2" Content="Step" Margin="2"/>
+                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding HittingSetFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="6" Content="InputLen" Margin="2"/>
                 <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding HittingSetFilter.InputLen}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="8" Content="InputLenSort" Margin="2"/>
@@ -141,6 +144,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Content="{Binding Dimension}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="80" Header="MaxCount">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding MaxCount}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

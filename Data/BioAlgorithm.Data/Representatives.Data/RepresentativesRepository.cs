@@ -30,11 +30,17 @@ namespace BioAlgorithm.Data.Representatives.Data
         //----------------------------------------------------------------------------------------------------------------------
         public async Task<string?> DeleteRepresentativeAlgorithmGroupAsync(RepresentativeAlgorithmGroupDimension selectedAlgorithmGroup)
         {
-            return await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.Step);
+            return await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.TotalCount);
         }
 
         //----------------------------------------------------------------------------------------------------------------------
-        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? step = null)
+        public async Task<string?> DeleteHittingSetInputGroupAsync(HittingSetInputGroup selectedAlgorithmGroup)
+        {
+            return await DeleteInputAsync(selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.TotalCount);
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? maxCount = null)
         {
             string? error = null;
 
@@ -52,16 +58,42 @@ namespace BioAlgorithm.Data.Representatives.Data
                 tvpParam3.SqlDbType = SqlDbType.VarChar;
                 SqlParameter tvpParam = addCommand.Parameters.AddWithValue("@NumberOfSet", numberOfSet);
                 tvpParam.SqlDbType = SqlDbType.Int;
-                SqlParameter tvpParam4 = addCommand.Parameters.AddWithValue("@Step", step);
+                SqlParameter tvpParam4 = addCommand.Parameters.AddWithValue("@MaxCount", maxCount);
                 tvpParam4.SqlDbType = SqlDbType.BigInt;
 
-                //             SqlCommand addCommand = new SqlCommand(@"DELETE s
-                //FROM [dbo].[RepresentativesSolution] s
-                //INNER JOIN[dbo].[RepresentativesPerfomance] p
-                //ON (s.RepresentativesPerfomanceId = p.RepresentativesPerfomanceId)
-                //INNER JOIN 	[RepresentativesInput] i
-                //ON i.RepresentativesInputId = p.RepresentativesInputId
-                //WHERE i.[Dimension] = 4 AND i.[NumberOfSet] = 4 AND i.[Step] = 1 AND p.[Algorithm] = 'BruteForceRepresentativesBinaryNumbers';", connection);
+                await addCommand.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                error = ex.ToString();
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return error;
+
+        }
+
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string?> DeleteInputAsync(int? numberOfSet = null, int? dimension = null, decimal? maxCount = null)
+        {
+            string? error = null;
+
+
+            SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            try
+            {
+                SqlCommand addCommand = new SqlCommand("dbo.deleteRepresentativesInput", connection);
+                addCommand.CommandType = CommandType.StoredProcedure;
+                addCommand.CommandTimeout = 300;
+                SqlParameter tvpParam2 = addCommand.Parameters.AddWithValue("@Dimension", dimension);
+                tvpParam2.SqlDbType = SqlDbType.Int;
+                SqlParameter tvpParam = addCommand.Parameters.AddWithValue("@NumberOfSet", numberOfSet);
+                tvpParam.SqlDbType = SqlDbType.Int;
+                SqlParameter tvpParam4 = addCommand.Parameters.AddWithValue("@MaxCount", maxCount);
+                tvpParam4.SqlDbType = SqlDbType.BigInt;
 
                 await addCommand.ExecuteNonQueryAsync();
             }
@@ -89,13 +121,13 @@ namespace BioAlgorithm.Data.Representatives.Data
                 List<RepresentativeAlgorithmGroupDimension> algorithmGroups = new List<RepresentativeAlgorithmGroupDimension>();
                 using (IDbConnection db = new SqlConnection(_connectionString))
                 {
-                    string sql = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [Step], COUNT(*) as TotalCount, 
+                    string sql = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [MaxCount], COUNT(*) as TotalCount, 
        SUM([NumberOfIteration]) as NumberOfIteration, SUM([Duration]) as TotalDuration,
 	   SUM([Duration])/COUNT(*) as AverageDuration
 FROM [dbo].[RepresentativesPerfomance] AS rp
 INNER JOIN [dbo].[RepresentativesInput] AS ri
 ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
-GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]";
+GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]";
                     if (!string.IsNullOrEmpty(algorithmGroupListSort))
                         sql += $@"ORDER BY {algorithmGroupListSort}
 ";
@@ -111,17 +143,41 @@ GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]";
             }
         }
 
+        public async Task<List<HittingSetInputGroup>> GetHittingSetInputGroupAsync(string algorithmGroupListSort)
+        {
+            try
+            {
+                List<HittingSetInputGroup> groups = new List<HittingSetInputGroup>();
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    string sql = $@"SELECT [NumberOfSet], [Dimension], [MaxCount], COUNT(*) as TotalCount 
+FROM [dbo].[RepresentativesInput] AS ri
+GROUP BY [NumberOfSet], [Dimension], [MaxCount] ";
+                    if (!string.IsNullOrEmpty(algorithmGroupListSort))
+                        sql += $@"ORDER BY {algorithmGroupListSort}
+";
+                    groups = (await db.QueryAsync<HittingSetInputGroup>(sql, commandTimeout: 180)).ToList();
+                }
+                return groups;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
+
         //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithWithDimension>> GetRepresentativeAlgorithmWithDimensionsAsync()
         {
             List<RepresentativeAlgorithWithDimension> algorithmWithDimensions = new List<RepresentativeAlgorithWithDimension>();
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                string query = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [Step]
+                string query = $@"SELECT [Algorithm], [NumberOfSet], [Dimension], [MaxCount]
 FROM [BioAlgorithm].[dbo].[RepresentativesPerfomance] AS rp
 INNER JOIN [dbo].[RepresentativesInput] AS ri
 ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
-GROUP BY [Algorithm], [NumberOfSet], [Dimension], [Step]
+GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]
 ";
                 algorithmWithDimensions = ( await db.QueryAsync<RepresentativeAlgorithWithDimension>(query)).ToList();
             }
@@ -181,6 +237,10 @@ GROUP BY [Algorithm]";
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
+            if (representativesPerfomanceFilter.MaxCount.HasValue)
+            {
+                whereList.Add($"[MaxCount] = {representativesPerfomanceFilter.MaxCount}");
+            }
             if (!string.IsNullOrWhiteSpace(representativesPerfomanceFilter.InputLen))
             {
                 whereList.Add($"[InputLen] = '{representativesPerfomanceFilter.InputLen}'");
@@ -229,7 +289,7 @@ GROUP BY [Algorithm]";
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
                 string query = $@"SELECT {top} [RepresentativesPerfomanceId]
-      ,[NumberOfSet],[Dimension],[Step],[InputLen],[InputLenSort]
+      ,[NumberOfSet],[Dimension],[Step],MaxCount,[InputLen],[InputLenSort]
       ,[InputLenAvg],[InputData],[InputDataShort],[Algorithm],[NumberOfIteration]
 	  ,[Duration],[DurationMilliSeconds],[DateComplete],[IsComplete]
       ,[LastRoute],[OptimalRoute],[CountTerminal],[BestValue]
@@ -266,6 +326,10 @@ ORDER BY {order}";
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
+            if (representativesPerfomanceFilter.MaxCount.HasValue)
+            {
+                whereList.Add($"[MaxCount] = {representativesPerfomanceFilter.MaxCount}");
+            }
             if (!string.IsNullOrWhiteSpace(representativesPerfomanceFilter.InputLen))
             {
                 whereList.Add($"[InputLen] = '{representativesPerfomanceFilter.InputLen}'");
@@ -289,7 +353,7 @@ ORDER BY {order}";
             List<RepresentativesInput> representativesInputs = new List<RepresentativesInput>();
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],[InputLen],[InputLenSort]
+                string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],MaxCount,[InputLen],[InputLenSort]
       ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, IsomorphismResult, IsomorphismBipartResult, TypeTask
 FROM [dbo].[RepresentativesInput] AS ri
 {where}
@@ -323,6 +387,10 @@ ORDER BY {order}";
             {
                 whereList.Add($"ra.[Step] = {representativesPerfomanceCompareFilter.Step}");
             }
+            if (representativesPerfomanceCompareFilter.MaxCount.HasValue)
+            {
+                whereList.Add($"ra.[MaxCount] = {representativesPerfomanceCompareFilter.MaxCount}");
+            }
             if (!string.IsNullOrWhiteSpace(representativesPerfomanceCompareFilter.BestValueCompare) && representativesPerfomanceCompareFilter.BestValueCompare != "N/A")
             {
                 whereList.Add($"(ra.BestValue {representativesPerfomanceCompareFilter.BestValueCompare.Replace("1", "").Replace("2", "")} rb.BestValue OR ra.BestValue IS NULL OR rb.BestValue IS NULL )");
@@ -346,7 +414,7 @@ ORDER BY {order}";
             List<RepresentativesPerfomanceCompare> representativesPerfomancesCompare = new List<RepresentativesPerfomanceCompare>();
             string query = $@"WITH ra AS
 (
-SELECT ria.[NumberOfSet], ria.[Dimension], ria.[InputData], ria.[InputDataShort], ria.Step,
+SELECT ria.[NumberOfSet], ria.[Dimension], ria.[InputData], ria.[InputDataShort], ria.Step, ria.MaxCount,
        rpa.Algorithm, rpa.BestValue, rpa.OptimalRoute, rpa.[NumberOfIteration],rpa.[Duration], rpa.ElemenationCount
 FROM [BioAlgorithm].[dbo].[RepresentativesPerfomance] AS rpa
 INNER JOIN [dbo].[RepresentativesInput] AS ria
@@ -354,13 +422,13 @@ ON (rpa.RepresentativesInputId = ria.RepresentativesInputId)
 ),
 rb AS
 (
-SELECT rib.[NumberOfSet], rib.[Dimension], rib.[InputData], rib.[InputDataShort], rib.Step,
+SELECT rib.[NumberOfSet], rib.[Dimension], rib.[InputData], rib.[InputDataShort], rib.Step, rib.MaxCount,
        rpb.Algorithm, rpb.BestValue, rpb.OptimalRoute, rpb.[NumberOfIteration], rpb.[Duration], rpb.ElemenationCount
 FROM [BioAlgorithm].[dbo].[RepresentativesPerfomance] AS rpb
 INNER JOIN [dbo].[RepresentativesInput] AS rib
 ON (rpb.RepresentativesInputId = rib.RepresentativesInputId)
 )
-SELECT ra.[NumberOfSet], ra.[Dimension], ra.[InputData], ra.[InputDataShort], ra.Step,
+SELECT ra.[NumberOfSet], ra.[Dimension], ra.[InputData], ra.[InputDataShort], ra.Step, ra.MaxCount,
        ra.Algorithm as Algorithm1, rb.Algorithm as Algorithm2, 
        ra.BestValue as BestValue1, rb.BestValue as BestValue2, 
 	   ra.OptimalRoute as OptimalRoute1, rb.OptimalRoute as OptimalRoute2,
@@ -527,6 +595,10 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
+            if (representativesPerfomanceFilter.MaxCount.HasValue)
+            {
+                whereList.Add($"[MaxCount] = {representativesPerfomanceFilter.MaxCount}");
+            }
             if (whereList.Count > 0)
             {
                 where = "WHERE " + string.Join(" AND ", whereList);
@@ -568,6 +640,10 @@ SET [IsomorphicBipart] = NULL, [IsomorphismBipartResult] = NULL
             if (representativesPerfomanceFilter.Step.HasValue)
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
+            }
+            if (representativesPerfomanceFilter.MaxCount.HasValue)
+            {
+                whereList.Add($"[MaxCount] = {representativesPerfomanceFilter.MaxCount}");
             }
             if (whereList.Count > 0)
             {

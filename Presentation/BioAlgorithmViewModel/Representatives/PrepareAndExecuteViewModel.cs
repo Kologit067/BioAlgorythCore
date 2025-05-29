@@ -12,8 +12,8 @@ namespace BioAlgorithmViewModel.Representatives
     //----------------------------------------------------------------------------------------------------------------------
     public class PrepareAndExecuteViewModel : CaseDefinitionViewModel
     {
-        protected readonly RepresentativesRepository representativesRepository;
-        private string algorithmDetail;
+        protected RepresentativesRepository representativesRepository;
+        protected string algorithmDetail;
         public string AlgorithmDetail
         {
             get
@@ -27,7 +27,7 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private ObservableCollection<string> algorithmItems;
+        protected ObservableCollection<string> algorithmItems;
         public ObservableCollection<string> AlgorithmItems
         {
             get
@@ -41,7 +41,7 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private ObservableCollection<string> algorithmDetailItems;
+        protected ObservableCollection<string> algorithmDetailItems;
         public ObservableCollection<string> AlgorithmDetailItems
         {
             get
@@ -54,7 +54,7 @@ namespace BioAlgorithmViewModel.Representatives
                 OnPropertyChanged(nameof(AlgorithmDetailItems));
             }
         }
-        private bool algorithmDetailReadOnly;
+        protected bool algorithmDetailReadOnly;
         public bool AlgorithmDetailReadOnly
         {
             get
@@ -68,6 +68,10 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
+        public PrepareAndExecuteViewModel()
+        {
+
+        }
         public PrepareAndExecuteViewModel(StartTaskMessage message)
         {
             if (message.Algorithm != null && (algorithmItems?.Contains(message.Algorithm) ?? false))
@@ -82,11 +86,14 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 Dimension = message.Dimension;
             }
-            if (message.MaxCount != null)
-            {
-                Step = message.MaxCount;
-            }
             representativesRepository = new RepresentativesRepository();
+            FillAlgorithm();
+            PropertyChanged += PrepareAndExecuteViewModel_PropertyChanged;
+        }
+
+        protected void FillAlgorithm()
+        {
+
             AlgorithmItems = new ObservableCollection<string>()
             {
                 "BruteForceRepresentativesBinaryNumbers",
@@ -114,11 +121,8 @@ namespace BioAlgorithmViewModel.Representatives
             Algorithm = AlgorithmItems[0];
             AlgorithmDetail = AlgorithmDetailItems[0];
             AlgorithmDetailReadOnly = true;
-
-            PropertyChanged += PrepareAndExecuteViewModel_PropertyChanged;
         }
-
-        private void PrepareAndExecuteViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected void PrepareAndExecuteViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Algorithm))
             {
@@ -133,7 +137,7 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
 
-        private bool ExecuteAlgorithmEnable = true;
+        protected bool ExecuteAlgorithmEnable = true;
         //----------------------------------------------------------------------------------------------------------------------
         private ICommand executeAlgorithmCommand;
         public ICommand ExecuteAlgorithmCommand
@@ -148,20 +152,20 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private async void ExecuteAlgorithmAction()
+        protected async void ExecuteAlgorithmAction()
         {
             ExecutionState = "Task running...";
             ExecuteAlgorithmEnable = false;
 
             RepresentativeService representativeService = new RepresentativeService(representativesRepository);
             if (Dimension.HasValue && NumberOfSet.HasValue)
-                await representativeService.ExecuteAlgorithmAsync(Algorithm, AlgorithmDetail, Dimension.Value, NumberOfSet.Value, Step ?? 1);
+                await representativeService.ExecuteAlgorithmAsync(Algorithm, AlgorithmDetail, Dimension.Value, NumberOfSet.Value);
 
             ExecutionState = "Task completed.";
             ExecuteAlgorithmEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private bool CanExecuteAlgorithmAction()
+        protected bool CanExecuteAlgorithmAction()
         {
             return ExecuteAlgorithmEnable && Dimension.HasValue && NumberOfSet.HasValue;
         }

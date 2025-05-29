@@ -26,9 +26,17 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 Dimension = message.Dimension;
             }
-            if (message.Step != null)
+            //if (message.Step != null)
+            //{
+            //    Step = message.Step;
+            //}
+            if (message.MaxCount != null)
             {
-                Step = message.Step;
+                MaxCount = message.MaxCount;
+            }
+            else
+            {
+                MaxCount = 0;
             }
             representativesRepository = new RepresentativesRepository();
 
@@ -65,21 +73,21 @@ namespace BioAlgorithmViewModel.Representatives
                         error = await representativeService.TestIsomorphismAsync(string.Empty,
                             Dimension.Value,
                             NumberOfSet.Value,
-                            Step ?? 1, false);
+                            MaxCount ?? 0, false);
                         ExecutionState = !string.IsNullOrEmpty(error) ? $"Test calculation failed: {error}" : "Test calculation completed";
                         break;
                     case KindOfInputTaskEnum.IsomorphismByPart:
                         error = await representativeService.TestIsomorphismAsync(string.Empty,
                             Dimension.Value,
                             NumberOfSet.Value,
-                            Step ?? 1, true);
+                            MaxCount ?? 0, true);
                         ExecutionState = !string.IsNullOrEmpty(error) ? $"Test calculation failed: {error}" : "Test calculation completed";
                         break;
                     case KindOfInputTaskEnum.DefineTypeTask:
                         error = await representativeService.DefineTaskTypeAsync(string.Empty,
                             Dimension.Value,
                             NumberOfSet.Value,
-                            Step ?? 1);
+                            MaxCount ?? 0);
                         ExecutionState = !string.IsNullOrEmpty(error) ? $"Task failed: {error}" : "Task completed";
                         break;
                 }

@@ -261,7 +261,7 @@ namespace BioAlgorithmViewModel.Representatives
             string error = await representativeService.TestIsomorphismAsync(string.Empty,
                 SelectedInputItem.Dimension,
                 SelectedInputItem.NumberOfSet,
-                SelectedInputItem.Step, false);
+                SelectedInputItem.MaxCount, false);
             ExecutionState = !string.IsNullOrEmpty(error) ? $"Test calculation failed: {error}" : "Test calculation completed";
             testIsomorphismEnable = true;
         }
@@ -293,7 +293,7 @@ namespace BioAlgorithmViewModel.Representatives
             string error = await representativeService.TestIsomorphismAsync(string.Empty,
                 SelectedInputItem.Dimension,
                 SelectedInputItem.NumberOfSet,
-                SelectedInputItem.Step, true);
+                SelectedInputItem.MaxCount, true);
             ExecutionState = !string.IsNullOrEmpty(error) ? $"Test calculation failed: {error}" : "Test calculation completed";
             testIsomorphismEnable = true;
         }
@@ -307,7 +307,7 @@ namespace BioAlgorithmViewModel.Representatives
         {
             HittingSetFilter.Dimension = algorithmGroupToFilterMessage.Dimension;
             HittingSetFilter.NumberOfSet = algorithmGroupToFilterMessage.NumberOfSet;
-            HittingSetFilter.Step = algorithmGroupToFilterMessage.Step;
+            HittingSetFilter.MaxCount = algorithmGroupToFilterMessage.MaxCount;
             RefreshRepresentativeInputListAction();
         }
         protected override void FillAlgorithmGroupToFilterMessage(AlgorithmGroupToFilterMessage message)
@@ -315,6 +315,7 @@ namespace BioAlgorithmViewModel.Representatives
             message.Dimension = SelectedInputItem.Dimension;
             message.NumberOfSet = SelectedInputItem.NumberOfSet;
             message.Step = SelectedInputItem.Step;
+            message.MaxCount = SelectedInputItem.MaxCount;
         }
         protected override string GetGraphData()
         {
@@ -352,6 +353,37 @@ namespace BioAlgorithmViewModel.Representatives
             return refreshRepresentativeAlgorithmGroupEnable;
         }
         //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runTaskStepCommand;
+        public ICommand RunTaskStepCommand
+        {
+            get
+            {
+                if (runTaskStepCommand == null)
+                {
+                    runTaskStepCommand = new DelegateCommand(RunTaskStepAction, CanRunTaskStepAction);
+                }
+                return runTaskStepCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunTaskStepAction()
+        {
+            // RepresentativeAlgorithmWindow window
+            Messenger.Default.Send<StartTaskStepMessage>(new StartTaskStepMessage()
+            {
+                Algorithm = null,
+                Dimension = null,
+                NumberOfSet = null,
+                MaxCount = null
+            }, typeof(StartTaskStepMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunTaskStepAction()
+        {
+            return refreshRepresentativeAlgorithmGroupEnable;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private ICommand runIsomorphismTaskCommand;
         public ICommand RunIsomorphismTaskCommand
         {
@@ -372,7 +404,8 @@ namespace BioAlgorithmViewModel.Representatives
                 KindOfInputTask = KindOfInputTaskEnum.Isomorphism,
                 Dimension = null,
                 NumberOfSet = null,
-                Step = null
+                Step = null,
+                MaxCount = null
             }, typeof(StartInputTaskMessage));
 
         }
@@ -402,7 +435,8 @@ namespace BioAlgorithmViewModel.Representatives
                 KindOfInputTask = KindOfInputTaskEnum.IsomorphismByPart,
                 Dimension = null,
                 NumberOfSet = null,
-                Step = null
+                Step = null,
+                MaxCount = null
             }, typeof(StartInputTaskMessage));
 
         }
@@ -432,7 +466,8 @@ namespace BioAlgorithmViewModel.Representatives
                 KindOfInputTask = KindOfInputTaskEnum.DefineTypeTask,
                 Dimension = null,
                 NumberOfSet = null,
-                Step = null
+                Step = null, 
+                MaxCount = null
             }, typeof(StartInputTaskMessage));
 
         }

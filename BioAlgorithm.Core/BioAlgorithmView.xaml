@@ -78,6 +78,9 @@
             <TabItem Header="Dim Group Alg Repr List">
                 <ac:RepresentativeAlgorithmGroupControl DataContext="{Binding Representatives.RepresentativePerformanceGroup}"/>
             </TabItem>
+            <TabItem Header="Dim Group Input List">
+                <ac:HittingSetInputGroupControl DataContext="{Binding Representatives.HittingSetInputGroup}"/>
+            </TabItem>
             <TabItem Header="Bipartite Graph">
                 <ac:BipartiteGraphControl DataContext="{Binding Representatives.BipartiteGraph}"/>
             </TabItem>

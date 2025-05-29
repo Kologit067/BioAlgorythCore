@@ -29,6 +29,7 @@ namespace StatisticsStorage.Savers
                 performance.Columns.Add("NumberOfSet", System.Type.GetType("System.Int32"));
                 performance.Columns.Add("Dimension", System.Type.GetType("System.Int32"));
                 performance.Columns.Add("Step", System.Type.GetType("System.Decimal"));
+                performance.Columns.Add("MaxCount", System.Type.GetType("System.Decimal"));
                 performance.Columns.Add("InputLen", System.Type.GetType("System.String"));
                 performance.Columns.Add("InputLenSort", System.Type.GetType("System.String"));
                 performance.Columns.Add("InputLenAvg", System.Type.GetType("System.Decimal"));
@@ -61,6 +62,7 @@ namespace StatisticsStorage.Savers
                         ps.NumberOfSet, 
                         ps.Dimension,
                         ps.Step,
+                        ps.MaxCount,
                         ps.InputLen,
                         ps.InputLenSort,
                         (decimal)ps.InputLenAvg,
@@ -116,9 +118,9 @@ namespace StatisticsStorage.Savers
 
         }
 
-        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? step = null)
+        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? maxCount = null)
         {
-            return await _representativesRepository.DeleteAsync(algorithm, numberOfSet, dimension, step);
+            return await _representativesRepository.DeleteAsync(algorithm, numberOfSet, dimension, maxCount);
         }
 
     }

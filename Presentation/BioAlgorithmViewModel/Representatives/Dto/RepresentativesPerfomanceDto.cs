@@ -8,6 +8,7 @@ namespace BioAlgorithmViewModel.Representatives.Dto
         public int NumberOfSet { get; set; }
         public int Dimension { get; set; }
         public long Step { get; set; }
+        public long MaxCount { get; set; }
         public string InputLen { get; set; }
         public string InputLenSort { get; set; }
         public string InputLenAvg { get; set; }

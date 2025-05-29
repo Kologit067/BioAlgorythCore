@@ -155,6 +155,7 @@ namespace BioAlgorithmViewModel.Representatives
             RepresentativesPerfomanceFilter.Dimension = algorithmGroupToFilterMessage.Dimension;
             RepresentativesPerfomanceFilter.NumberOfSet = algorithmGroupToFilterMessage.NumberOfSet;
             RepresentativesPerfomanceFilter.Step = algorithmGroupToFilterMessage.Step;
+            RepresentativesPerfomanceFilter.MaxCount = algorithmGroupToFilterMessage.MaxCount;
             //RefreshRepresentativePerformanceListAction();
         }
 
@@ -164,6 +165,7 @@ namespace BioAlgorithmViewModel.Representatives
             RepresentativesPerfomanceFilter.Dimension = null;
             RepresentativesPerfomanceFilter.NumberOfSet = null;
             RepresentativesPerfomanceFilter.Step = null;
+            RepresentativesPerfomanceFilter.MaxCount = null;
             //RefreshRepresentativePerformanceListAction();
         }
         private bool refreshRepresentativeAlgorithmGroupEnable = true;

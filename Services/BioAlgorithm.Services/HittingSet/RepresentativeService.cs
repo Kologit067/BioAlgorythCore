@@ -15,14 +15,19 @@ using RepresentativesSet.TriangleEnumeration.SelectElement;
 
 namespace BioAlgorithm.Services.HittingSet
 {
+    //----------------------------------------------------------------------------------------------------------------------
+    // class RepresentativeService
+    //----------------------------------------------------------------------------------------------------------------------
     public class RepresentativeService : IRepresentativeService
     {
         private readonly IRepresentativesRepository representativesRepository;
+        //----------------------------------------------------------------------------------------------------------------------
         public RepresentativeService(IRepresentativesRepository representativesRepository)
         {
             this.representativesRepository = representativesRepository;
         }
-        public async Task<string> TestIsomorphismAsync(string algorithmName, int dimension, int numberOfSet, long step, bool isBipart = false)
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string> TestIsomorphismAsync(string algorithmName, int dimension, int numberOfSet, long maxCount, bool isBipart = false)
         {
             string error = string.Empty;
             try
@@ -32,7 +37,7 @@ namespace BioAlgorithm.Services.HittingSet
                     Algorithm = algorithmName,
                     Dimension = dimension,
                     NumberOfSet = numberOfSet,
-                    Step = step
+                    MaxCount = maxCount
                 };
                 await representativesRepository.ClearIsomorphicAsync(representativesPerfomanceFilterDto, isBipart);
                 List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
@@ -108,8 +113,8 @@ namespace BioAlgorithm.Services.HittingSet
             }
             return error;
         }
-
-        public async Task<string> DefineTaskTypeAsync(string algorithmName, int dimension, int numberOfSet, long step)
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string> DefineTaskTypeAsync(string algorithmName, int dimension, int numberOfSet, long maxCount)
         {
             string error = string.Empty;
             try
@@ -119,7 +124,7 @@ namespace BioAlgorithm.Services.HittingSet
                     Algorithm = algorithmName,
                     Dimension = dimension,
                     NumberOfSet = numberOfSet,
-                    Step = step
+                    MaxCount = maxCount
                 };
                 await representativesRepository.ClearTaskTypeAsync(representativesPerfomanceFilterDto);
                 List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
@@ -149,22 +154,50 @@ namespace BioAlgorithm.Services.HittingSet
             return error;
         }
 
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithmGroup>> GetAlgorithmsAsync()
         {
             return await representativesRepository.GetAlgorithmsAsync();
         }
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithmGroupDimension>> GetRepresentativeAlgorithmGroupDimensionsAsync(string order)
         {
             return await representativesRepository.GetRepresentativeAlgorithmGroupDimensionsAsync(order);
         }
 
-        public async Task ExecuteAlgorithmAsync(string algorithm, string algorithmDetail, int dimension, int numberOfSet, long maxCount)
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string SelectedInputDataSort)
+        {
+            List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilter, SelectedInputDataSort);
+            return items;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task ExecuteAlgorithmAsync(string algorithm, string algorithmDetail, int dimension, int numberOfSet)
         {
             int сardinality = dimension;
             int length = numberOfSet;
-            IHittingSetAlgorithm hittingSetAlgorithm = new {algorithm, algorithmDetail } switch
+            IHittingSetAlgorithm hittingSetAlgorithm = GetAlgorithm(algorithm, algorithmDetail, dimension);
+            HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithm, сardinality, length, 1000);
+            await enumeration.ExecuteAsync();
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task ExecuteAlgorithmStepAsync(string algorithm, string algorithmDetail, string CalculationStep, string CombinationType,
+            int dimension, int numberOfSet, long maxCount)
+        {
+            int сardinality = dimension;
+            int length = numberOfSet;
+            IHittingSetAlgorithm hittingSetAlgorithm = GetAlgorithm(algorithm, algorithmDetail, dimension);
+           
+            HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithm, CalculationStep, CombinationType, CalculationStep, CombinationType,  сardinality, length, maxCount, 1000);
+            await enumerationStep.ExecuteAsync();
+            
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private IHittingSetAlgorithm GetAlgorithm(string algorithm, string algorithmDetail, int dimension)
+        {
+            IHittingSetAlgorithm hittingSetAlgorithm = new { algorithm, algorithmDetail } switch
             {
-                { algorithm: "BruteForceRepresentativesBinaryNumbers", algorithmDetail: _ }  => new BruteForceRepresentativesBinaryNumbers(),
+                { algorithm: "BruteForceRepresentativesBinaryNumbers", algorithmDetail: _ } => new BruteForceRepresentativesBinaryNumbers(),
                 { algorithm: "BruteForceRepresentativesBinaryNumbersVer2", algorithmDetail: _ } => new BruteForceRepresentativesBinaryNumbersVer2(),
                 { algorithm: "BruteForceRepresentativesAsTree", algorithmDetail: _ } => new BruteForceRepresentativesAsTree(dimension),
                 { algorithm: "BruteForceRepresentativesAsTreeDirect", algorithmDetail: _ } => new BruteForceRepresentativesAsTreeDirect(dimension),
@@ -181,17 +214,10 @@ namespace BioAlgorithm.Services.HittingSet
                 { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementRelationStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementRelationStrategy()),
                 { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementImproveStrategy()),
                 { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveRDStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementImproveRDStrategy()),
-};
-            if (maxCount == 1)
-            {
-                HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithm, сardinality, length, 1000);
-                await enumeration.ExecuteAsync();
-            }
-            else
-            {
-                HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithm, сardinality, length, maxCount, 1000);
-                await enumerationStep.ExecuteAsync();
-            }
+            };
+            return hittingSetAlgorithm;
         }
+        //----------------------------------------------------------------------------------------------------------------------
     }
+    //----------------------------------------------------------------------------------------------------------------------
 }

@@ -9,6 +9,7 @@ namespace Representatives.Data.Contract
         public int NumberOfSet { get; set; }
         public int Dimension { get; set; }
         public long Step { get; set; }
+        public long MaxCount { get; set; }
         public string InputData { get; set; }
         public string InputDataShort { get; set; }
         //public string InputLen { get; set; }

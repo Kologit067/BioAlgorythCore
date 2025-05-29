@@ -57,6 +57,20 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
+        private HittingSetInputGroupViewModel hittingSetInputGroup;
+        public HittingSetInputGroupViewModel HittingSetInputGroup
+        {
+            get
+            {
+                return hittingSetInputGroup;
+            }
+            set
+            {
+                hittingSetInputGroup = value;
+                OnPropertyChanged(nameof(HittingSetInputGroup));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private RepresentativePerformanceAlgorithmCompareViewModel representativePerformanceAlgorithmCompare;
         public RepresentativePerformanceAlgorithmCompareViewModel RepresentativePerformanceAlgorithmCompare
         {
@@ -133,6 +147,7 @@ namespace BioAlgorithmViewModel.Representatives
             RepresentativePerformance = new RepresentativePerformanceViewModel(representativesRepository);
             RepresentativePerformanceAlgorithm = new RepresentativePerformanceAlgorithmViewModel(representativesRepository);
             RepresentativePerformanceGroup = new RepresentativePerformanceGroupViewModel(representativesRepository);
+            HittingSetInputGroup = new HittingSetInputGroupViewModel(representativesRepository);
             RepresentativePerformanceAlgorithmCompare = new RepresentativePerformanceAlgorithmCompareViewModel(representativesRepository);
             RepresentativePerformanceAlgorithmWithGroup = new RepresentativePerformanceAlgorithmWithGroupViewModel(representativesRepository);
             HittingSetInput = new HittingSetInputDataViewModel(representativesRepository);

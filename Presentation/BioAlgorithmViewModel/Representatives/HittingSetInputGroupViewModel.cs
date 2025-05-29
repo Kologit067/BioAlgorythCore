@@ -1,160 +1,126 @@
-﻿using BioAlgorithmViewModel.Common;
+﻿using System.Collections.ObjectModel;
+using BioAlgorithm.Data.Representatives.Data;
+using BioAlgorithmViewModel.Common;
 using BioAlgorithmViewModel.Mappings;
 using BioAlgorithmViewModel.Representatives.Messages;
 using BioAlgorithmViewModel.Representatives.Utility;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using BioAlgorithm.Data.Representatives.Data;
 using Representatives.Data.Contract;
+using System.Windows.Input;
+using BioAlgorithm.Data.Contract.Representatives.Data.Contract;
 
 namespace BioAlgorithmViewModel.Representatives
 {
     //----------------------------------------------------------------------------------------------------------------------
-    // class RepresentativePerformanceGroupViewModel
+    // class HittingSetInputGroupViewModel
     //----------------------------------------------------------------------------------------------------------------------
-    public class RepresentativePerformanceGroupViewModel : HittingSetBaseViewModel
+    public class HittingSetInputGroupViewModel : HittingSetBaseViewModel
     {
         //----------------------------------------------------------------------------------------------------------------------
-        private ObservableCollection<RepresentativeAlgorithmGroupDimension> representativeAlgorithmGroupByDimensions;
-        public ObservableCollection<RepresentativeAlgorithmGroupDimension> RepresentativeAlgorithmGroupByDimensions
+        private ObservableCollection<HittingSetInputGroup> hittingSetInputGroups;
+        public ObservableCollection<HittingSetInputGroup> HittingSetInputGroups
         {
             get
             {
-                return representativeAlgorithmGroupByDimensions;
+                return hittingSetInputGroups;
             }
             set
             {
-                representativeAlgorithmGroupByDimensions = value;
-                OnPropertyChanged(nameof(RepresentativeAlgorithmGroupByDimensions));
+                hittingSetInputGroups = value;
+                OnPropertyChanged(nameof(HittingSetInputGroups));
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private RepresentativeAlgorithmGroupDimension selectedAlgorithmGroup;
-        public RepresentativeAlgorithmGroupDimension SelectedAlgorithmGroup
+        private HittingSetInputGroup selectedHittingSetInputGroup;
+        public HittingSetInputGroup SelectedHittingSetInputGroup
         {
             get
             {
-                return selectedAlgorithmGroup;
+                return selectedHittingSetInputGroup;
             }
             set
             {
-                selectedAlgorithmGroup = value;
-                OnPropertyChanged(nameof(SelectedAlgorithmGroup));
+                selectedHittingSetInputGroup = value;
+                OnPropertyChanged(nameof(SelectedHittingSetInputGroup));
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private string algorithmGroupListSort;
-        public string AlgorithmGroupListSort
+        private string hittingSetInputGroupSort;
+        public string HittingSetInputGroupSort
         {
             get
             {
-                return algorithmGroupListSort;
+                return hittingSetInputGroupSort;
             }
             set
             {
-                algorithmGroupListSort = value;
-                OnPropertyChanged(nameof(AlgorithmGroupListSort));
+                hittingSetInputGroupSort = value;
+                OnPropertyChanged(nameof(HittingSetInputGroupSort));
             }
         }
 
         //----------------------------------------------------------------------------------------------------------------------
-        private List<string> algorithmGroupSortItems;
-        public List<string> AlgorithmGroupSortItems
+        private List<string> hittingSetInputGroupSortItems;
+        public List<string> HittingSetInputGroupSortItems
         {
             get
             {
-                return algorithmGroupSortItems;
+                return hittingSetInputGroupSortItems;
             }
             set
             {
-                algorithmGroupSortItems = value;
-                OnPropertyChanged(nameof(AlgorithmGroupSortItems));
+                hittingSetInputGroupSortItems = value;
+                OnPropertyChanged(nameof(HittingSetInputGroupSortItems));
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        public RepresentativePerformanceGroupViewModel(RepresentativesRepository representativesRepository) : base(representativesRepository)
+        public HittingSetInputGroupViewModel(RepresentativesRepository representativesRepository) : base(representativesRepository)
         {
-            RepresentativeAlgorithmGroupByDimensions = new ObservableCollection<RepresentativeAlgorithmGroupDimension>();
-            AlgorithmGroupSortItems = new List<string>()
+            HittingSetInputGroups = new ObservableCollection<HittingSetInputGroup>();
+            HittingSetInputGroupSortItems = new List<string>()
             {
-                "Algorithm, Dimension, NumberOfSet",
-                "Algorithm, NumberOfSet, NumberOfSet",
-                "Dimension, NumberOfSet, Algorithm",
-                "NumberOfSet, Dimension, Algorithm"
+                "Dimension, NumberOfSet",
+                "NumberOfSet, Dimension"
             };
-            AlgorithmGroupListSort = AlgorithmGroupSortItems[0];
+            HittingSetInputGroupSort = HittingSetInputGroupSortItems[0];
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private ICommand refreshRepresentativeAlgorithmGroupListCommand;
-        public ICommand RefreshRepresentativeAlgorithmGroupListCommand
+        private ICommand refreshHittingSetGroupListCommand;
+        public ICommand RefreshHittingSetGroupListCommand
         {
             get
             {
-                if (refreshRepresentativeAlgorithmGroupListCommand == null)
+                if (refreshHittingSetGroupListCommand == null)
                 {
-                    refreshRepresentativeAlgorithmGroupListCommand = new DelegateCommand(RefreshRepresentativeAlgorithmGroupListAction, CanRefreshRepresentativeAlgorithmGroupListAction);
+                    refreshHittingSetGroupListCommand = new DelegateCommand(RefreshHittingSetInputGroupListAction, CanRefreshHittingSetInputGroupListAction);
                 }
-                return refreshRepresentativeAlgorithmGroupListCommand;
+                return refreshHittingSetGroupListCommand;
             }
         }
-        private bool refreshRepresentativeAlgorithmGroupEnable = true;
+        private bool refreshHittingSetInputGroupEnable = true;
         //----------------------------------------------------------------------------------------------------------------------
-        private async void RefreshRepresentativeAlgorithmGroupListAction()
+        private async void RefreshHittingSetInputGroupListAction()
         {
             ExecutionState = "Query running...";
-            refreshRepresentativeAlgorithmGroupEnable = false;
+            refreshHittingSetInputGroupEnable = false;
 
-            RepresentativeAlgorithmGroupByDimensions.Clear();
-            List<RepresentativeAlgorithmGroupDimension> algorithms = await representativesRepository.GetRepresentativeAlgorithmGroupDimensionsAsync(AlgorithmGroupListSort);
-            foreach (RepresentativeAlgorithmGroupDimension a in algorithms)
-                RepresentativeAlgorithmGroupByDimensions.Add(a);
+            HittingSetInputGroups.Clear();
+            List<HittingSetInputGroup> algorithms = await representativesRepository.GetHittingSetInputGroupAsync(HittingSetInputGroupSort);
+            foreach (HittingSetInputGroup a in algorithms)
+                HittingSetInputGroups.Add(a);
             ExecutionState = "Query completed.";
-            refreshRepresentativeAlgorithmGroupEnable = true;
+            refreshHittingSetInputGroupEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private bool CanRefreshRepresentativeAlgorithmGroupListAction()
+        private bool CanRefreshHittingSetInputGroupListAction()
         {
-            return refreshRepresentativeAlgorithmGroupEnable;
+            return refreshHittingSetInputGroupEnable;
         }
-        ////----------------------------------------------------------------------------------------------------------------------
-        //private ICommand toFilterCommand;
-        //public ICommand ToFilterCommand
-        //{
-        //    get
-        //    {
-        //        if (toFilterCommand == null)
-        //        {
-        //            toFilterCommand = new DelegateCommand(ToFilterAction, CanToFilterAction);
-        //        }
-        //        return toFilterCommand;
-        //    }
-        //}
-        ////----------------------------------------------------------------------------------------------------------------------
-        //private void ToFilterAction()
-        //{
-        //    Messenger.Default.Send<RepresentativeTabChangeMessage>(new RepresentativeTabChangeMessage()
-        //    {
-        //        RepresentativeTabName = "RepresentativePerformance"
-        //    }, typeof(RepresentativeTabChangeMessage));
-        //    Messenger.Default.Send<AlgorithmGroupToFilterMessage>(new AlgorithmGroupToFilterMessage() {
-        //        Algorithm = SelectedAlgorithmGroup.Algorithm,
-        //        Dimension = SelectedAlgorithmGroup.Dimension,
-        //        NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
-        //        Step = SelectedAlgorithmGroup.Step
-        //    }, typeof( AlgorithmGroupToFilterMessage ));
-        //}
-        ////----------------------------------------------------------------------------------------------------------------------
-        //private bool CanToFilterAction()
-        //{
-        //    return true;
-        //}
         protected override void FillAlgorithmGroupToFilterMessage(AlgorithmGroupToFilterMessage message)
         {
-            message.Algorithm = SelectedAlgorithmGroup.Algorithm;
-            message.Dimension = SelectedAlgorithmGroup.Dimension;
-            message.NumberOfSet = SelectedAlgorithmGroup.NumberOfSet;
-            message.Step = SelectedAlgorithmGroup.Step;
-            message.MaxCount = SelectedAlgorithmGroup.MaxCount;
+            message.Dimension = SelectedHittingSetInputGroup.Dimension;
+            message.NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet;
+            message.Step = SelectedHittingSetInputGroup.Step;
+            message.MaxCount = SelectedHittingSetInputGroup.MaxCount;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private ICommand toFilterInGroupCommand;
@@ -178,11 +144,10 @@ namespace BioAlgorithmViewModel.Representatives
             }, typeof(RepresentativeTabChangeMessage));
             Messenger.Default.Send<AlgorithmGroupToFilterByGroupMessage>(new AlgorithmGroupToFilterByGroupMessage()
             {
-                Algorithm = SelectedAlgorithmGroup.Algorithm,
-                Dimension = SelectedAlgorithmGroup.Dimension,
-                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
-                Step = SelectedAlgorithmGroup.Step,
-                MaxCount = SelectedAlgorithmGroup.MaxCount
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
             }, typeof(AlgorithmGroupToFilterByGroupMessage));
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -212,10 +177,10 @@ namespace BioAlgorithmViewModel.Representatives
             }, typeof(RepresentativeTabChangeMessage));
             Messenger.Default.Send<AlgorithmGroupToFilterInputDataMessage>(new AlgorithmGroupToFilterInputDataMessage()
             {
-                Dimension = SelectedAlgorithmGroup.Dimension,
-                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
-                Step = SelectedAlgorithmGroup.Step,
-                MaxCount = SelectedAlgorithmGroup.MaxCount
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
             }, typeof(AlgorithmGroupToFilterInputDataMessage));
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -241,11 +206,10 @@ namespace BioAlgorithmViewModel.Representatives
         {
             Messenger.Default.Send<AlgorithmGroupOpenWindowMessage>(new AlgorithmGroupOpenWindowMessage()
             {
-                Algorithm = SelectedAlgorithmGroup.Algorithm,
-                Dimension = SelectedAlgorithmGroup.Dimension,
-                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
-                Step = SelectedAlgorithmGroup.Step,
-                MaxCount = SelectedAlgorithmGroup.MaxCount
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
             }, typeof(AlgorithmGroupOpenWindowMessage));
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -270,17 +234,17 @@ namespace BioAlgorithmViewModel.Representatives
         private async void DeleteGroupAction()
         {
             ExecutionState = "Operation running...";
-            refreshRepresentativeAlgorithmGroupEnable = false;
-            string? result = await representativesRepository.DeleteRepresentativeAlgorithmGroupAsync(SelectedAlgorithmGroup);
+            refreshHittingSetInputGroupEnable = false;
+            string? result = await representativesRepository.DeleteHittingSetInputGroupAsync(SelectedHittingSetInputGroup);
             if (string.IsNullOrEmpty(result))
             {
-                RepresentativeAlgorithmGroupByDimensions.Remove(SelectedAlgorithmGroup);
+                HittingSetInputGroups.Remove(SelectedHittingSetInputGroup);
                 ExecutionState = "Operation completed";
             }
             {
                 ExecutionState = $"Operation failed: {result}";
             }
-            refreshRepresentativeAlgorithmGroupEnable = true;
+            refreshHittingSetInputGroupEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanDeleteGroupAction()
@@ -289,5 +253,5 @@ namespace BioAlgorithmViewModel.Representatives
         }
         //----------------------------------------------------------------------------------------------------------------------
     }
-    //----------------------------------------------------------------------------------------------------------------------
+
 }

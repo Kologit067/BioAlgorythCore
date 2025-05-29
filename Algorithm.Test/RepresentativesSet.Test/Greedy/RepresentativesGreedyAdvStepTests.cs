@@ -6,6 +6,8 @@ using RepresentativesSetTest.Base;
 using System.Numerics;
 using System.Diagnostics;
 using BaseLibrary.Helpers;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace RepresentativesSetTest.Greedy
 {
@@ -17,11 +19,11 @@ namespace RepresentativesSetTest.Greedy
         public void CombinationAlgorithmCompareTest()
         {
             // arrange
-            for (int n = 2; n < 256; n++)
-                for (int m = 1; m < n && m < 10; m++)
+            for (int n = 2; n < 90; n++)
+                for (int m = 1; m < n && m < 8; m++)
                 {
                     // act
-                    long combBigNumber = Combinatorics.CombinationByBigNumber(n, m);
+                    long combBigNumber = (long)Combinatorics.BigIntegerCombination(n, m);
                     long combRecrusive = Combinatorics.CombinationRec(n, m);
                     // assert
                     Assert.AreEqual(combBigNumber, combRecrusive);
@@ -30,14 +32,19 @@ namespace RepresentativesSetTest.Greedy
         }
         //--------------------------------------------------------------------------------------
         [TestMethod]
-        public void CombinationAlgorithmCompare_22_19_Test()
+        public void CombinationAlgorithmCompare_22_11_Test()
         {
+            var t1 = (10,2);
+            var t2 = (10,3);
+            var h1 = t1.GetHashCode();
+            var h2 = t2.GetHashCode();
+
             // arrange
             int n = 22;
-            int m = 19;
+            int m = 11;
 
             // act
-            long combBigNumber = Combinatorics.CombinationByBigNumber(n, m);
+            long combBigNumber = (long)Combinatorics.BigIntegerCombination(n, m);
             long combRecrusive = Combinatorics.CombinationRec(n, m);
             // assert
             Assert.AreEqual(combBigNumber, combRecrusive);
@@ -82,7 +89,7 @@ namespace RepresentativesSetTest.Greedy
             enumeration.Execute();
             // assert
             int n = 1 << сardinality;
-            long comb = Combinatorics.CombinationByBigNumber(n, length);
+            long comb = (long)Combinatorics.BigIntegerCombination(n, length);
         }
         //--------------------------------------------------------------------------------------
         [TestMethod]
@@ -147,7 +154,8 @@ namespace RepresentativesSetTest.Greedy
             stopWatch.Start();
             for (BigInteger counter = step; counter < number && i < 10000; counter += step)
             {
-                var currentSet = Combinatorics.SkipEnumerationBigInteger(limit, length, counter);
+                Combinatorics combinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+                var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 i++;
             }
             stopWatch.Stop();
@@ -173,7 +181,8 @@ namespace RepresentativesSetTest.Greedy
             stopWatch.Start();
             for (BigInteger counter = step; counter < number && i < 10000; counter += step)
             {
-                var currentSet = Combinatorics.SkipEnumerationBigInteger(limit, length, counter);
+                Combinatorics combinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+                var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 i++;
             }
             stopWatch.Stop();
@@ -190,7 +199,7 @@ namespace RepresentativesSetTest.Greedy
             int length = 9;
             int limit = 1 << сardinality;
             long maxCount = 100000;
-            long number = Combinatorics.CombinationByBigNumber(limit, length);
+            long number = (long)Combinatorics.BigIntegerCombination(limit, length);
             long step = number/ maxCount;
             Combinatorics.SetCombinationMatrix(limit, length);
             // act
@@ -241,7 +250,8 @@ namespace RepresentativesSetTest.Greedy
             {
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var currentSet = Combinatorics.SkipEnumerationBigInteger(limit, length, counter);
+                Combinatorics combinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+                var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 string showAsString =string.Join(",", currentSet);
                 stopWatch.Stop();
                 long time = stopWatch.ElapsedMilliseconds;
@@ -253,7 +263,8 @@ namespace RepresentativesSetTest.Greedy
 
                 Stopwatch stopWatchNoRec = new Stopwatch();
                 stopWatchNoRec.Start();
-                var currentSetNoRec = Combinatorics.SkipEnumerationNoRecBigInteger(limit, length, counter);
+                Combinatorics noRecCombinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix", limit, length);
+                var currentSetNoRec = noRecCombinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 string showAsStringNoRec = string.Join(",", currentSetNoRec);
                 stopWatchNoRec.Stop();
                 long timeNoRec = stopWatchNoRec.ElapsedMilliseconds;
@@ -265,7 +276,8 @@ namespace RepresentativesSetTest.Greedy
 
                 Stopwatch stopWatchSaveFP = new Stopwatch();
                 stopWatchSaveFP.Start();
-                int[] currentSetSaveFP = Combinatorics.SkipEnumerationSaveFPBigInteger(limit, length, counter);
+                Combinatorics fpCombinatorics = new Combinatorics("SkipEnumerationSaveFPBigInteger", "By Matrix", limit, length);
+                int[] currentSetSaveFP = fpCombinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 string showAsStringSaveFP = string.Join(",", currentSetSaveFP);
                 stopWatchSaveFP.Stop();
                 long timeSaveFP = stopWatchSaveFP.ElapsedMilliseconds;
@@ -277,7 +289,8 @@ namespace RepresentativesSetTest.Greedy
 
                 Stopwatch stopWatchSaveFPImp = new Stopwatch();
                 stopWatchSaveFPImp.Start();
-                int[] currentSetSaveFPImp = Combinatorics.SkipEnumerationSaveFPImpBigInteger(limit, length, counter, startn, startm);
+                Combinatorics impCombinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
+                int[] currentSetSaveFPImp = impCombinatorics.SkipEnumerationBigInteger(limit, length, counter, startn, startm);
                 (startn, startm) = currentSetSaveFPImp.Select((f,ind) => (f,ind)).FirstOrDefault( a => a.f > a.ind+1 );
                 if (startm.HasValue)
                     startm += 1;
@@ -342,10 +355,13 @@ namespace RepresentativesSetTest.Greedy
             {
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var currentSet = Combinatorics.SkipEnumerationBigInteger(limit, length, counter);
+                Combinatorics combinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+                var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
                 string showAsString = string.Join(",", currentSet);
                 stopWatch.Stop();
                 long time = stopWatch.ElapsedMilliseconds;
+
+
                 allTime += time;
                 if (time > maxTime)
                     maxTime = time;
@@ -354,7 +370,8 @@ namespace RepresentativesSetTest.Greedy
 
                 Stopwatch stopWatchSaveFPImp = new Stopwatch();
                 stopWatchSaveFPImp.Start();
-                int[] currentSetSaveFPImp = Combinatorics.SkipEnumerationSaveFPImpBigInteger(limit, length, counter, startn, startm);
+                Combinatorics impcombinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
+                int[] currentSetSaveFPImp = impcombinatorics.SkipEnumerationBigInteger(limit, length, counter, startn, startm);
                 (startn, startm) = currentSetSaveFPImp.Select((f, ind) => (f, ind)).FirstOrDefault(a => a.f > a.ind + 1);
                 if (startm.HasValue)
                     startm += 1;
@@ -394,7 +411,8 @@ namespace RepresentativesSetTest.Greedy
             // act
             BigInteger counter = step;
             counter = BigInteger.Multiply(counter, 973);
-            var currentSet = Combinatorics.SkipEnumerationNoRecBigInteger(limit, length, counter);
+            Combinatorics combinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix",limit,length);
+            var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
             // assert
         }
         //--------------------------------------------------------------------------------------
@@ -407,8 +425,10 @@ namespace RepresentativesSetTest.Greedy
             int limit = 20;
             Combinatorics.SetCombinationBigIntegerMatrix(limit, length);
             // act
-            var countForPosition = Combinatorics.GetCountForPositionBigInteger(limit, length, 11, 4);
-            var countForPositionNoRec = Combinatorics.GetCountForPositionNoRecBigInteger(limit, length, 11, 4);
+            Combinatorics simpleleCombinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+            var countForPosition = simpleleCombinatorics.GetCountForPositionBigInteger(limit, length, 11, 4);
+            Combinatorics noRecCombinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
+            var countForPositionNoRec = noRecCombinatorics.GetCountForPositionNoRecBigInteger(limit, length, 11, 4);
             // assert
             Assert.AreEqual(countForPosition, countForPositionNoRec);
         }
@@ -423,7 +443,8 @@ namespace RepresentativesSetTest.Greedy
             //int limit = 20;
             Combinatorics.SetCombinationBigIntegerMatrix(limit, length);
             Combinatorics.CreateCountForPositionMatrix(limit, length);           // act
-            var s = Combinatorics.SkipEnumerationSaveFPImpBigInteger(limit, length, BigInteger.Parse( "3309232088236359241539" ), null, 1);
+            Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
+            var s = combinatorics.SkipEnumerationBigInteger(limit, length, BigInteger.Parse( "3309232088236359241539" ), null, 1);
             // assert
         }
         //--------------------------------------------------------------------------------------
@@ -437,8 +458,10 @@ namespace RepresentativesSetTest.Greedy
             //int limit = 20;
             Combinatorics.SetCombinationBigIntegerMatrix(limit, length);
             Combinatorics.CreateCountForPositionMatrix(limit, length);           // act
-            var s = Combinatorics.SkipEnumerationSaveFPBigInteger(limit, length, BigInteger.Parse("3309232088236359241539"));
-            var s0 = Combinatorics.SkipEnumerationSaveFPImpBigInteger(limit, length, BigInteger.Parse("3309232088236359241539"), null, 1);
+            Combinatorics fpcombinatorics = new Combinatorics("SkipEnumerationSaveFPBigInteger", "By Matrix", limit, length);
+            var s = fpcombinatorics.SkipEnumerationBigInteger(limit, length, BigInteger.Parse("3309232088236359241539"), null, null);
+            Combinatorics impcombinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
+            var s0 = impcombinatorics.SkipEnumerationBigInteger(limit, length, BigInteger.Parse("3309232088236359241539"), null, 1);
             // assert
             for (int i = 0; i < s.Length; i++)
                 Assert.AreEqual(s[i], s0[i]);
@@ -472,13 +495,13 @@ namespace RepresentativesSetTest.Greedy
             }
         }
         //--------------------------------------------------------------------------------------
-        public EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave, int pMinimumValue = 1, int pForwardAdditive = 1)
+        public EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave)
         {
             _fLimit = (1 << pCardinality) - 1;
             _fSize = pLength;
             _fCardinality = pCardinality;
             _maxCount = maxCount;
-            number = Combinatorics.CombinationByBigNumber(_fLimit, _fSize);
+            number = (long)Combinatorics.BigIntegerCombination(_fLimit, _fSize);
             _step = (long)(number / _maxCount);
 
             representativesGreedy = new RepresentativesGreedySimple();
@@ -656,7 +679,8 @@ namespace RepresentativesSetTest.Greedy
             int? startm = null;
             for (BigInteger counter = _step; counter < number; counter += _step)
             {
-                _fCurrentSet = Combinatorics.SkipEnumerationSaveFPImpBigInteger(_fLimit, _fSize, counter, startn, startm);
+                Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", _fLimit, _fSize);
+                _fCurrentSet = combinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, counter, startn, startm);
                 (startn, startm) = _fCurrentSet.Select((f, ind) => (f, ind)).FirstOrDefault(a => a.f > a.ind + 1);
                 if (startm.HasValue)
                     startm += 1;

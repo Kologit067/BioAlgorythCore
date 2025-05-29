@@ -1,9 +1,6 @@
-﻿using BaseContract;
-using BaseContract.Interfaces;
+﻿using BaseContract.Interfaces;
 using StatisticsStorage.Accumulators.Objects;
 using StatisticsStorage.Savers;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace StatisticsStorage.Accumulators
@@ -20,14 +17,16 @@ namespace StatisticsStorage.Accumulators
         protected int _numberOfSet;
         protected int _dimension;
         protected decimal _step;
+        protected decimal _maxCount;
         Stopwatch stopWatchSave;
         Stopwatch stopWatchCalc;
         //--------------------------------------------------------------------------------------------------------------------
-        public RepresentativesStatisticAccumulator(RepresentativesSaver representativesSaver, int numberOfSet, int dimension, decimal step = 1, int bufferSize = 100)
+        public RepresentativesStatisticAccumulator(RepresentativesSaver representativesSaver, int numberOfSet, int dimension, decimal maxCount = 0, decimal step = 1, int bufferSize = 100)
         {
             _numberOfSet = numberOfSet;
             _dimension = dimension;
             _step = step;
+            _maxCount = maxCount;
             _representativesSaver = representativesSaver;
             _bufferSize = bufferSize;
             _representativesPerfomances = new List<RepresentativesPerfomance>();
@@ -38,7 +37,7 @@ namespace StatisticsStorage.Accumulators
         //--------------------------------------------------------------------------------------------------------------------
         public void CreateStatistics(int[][] listOfSet, string inputDataShort, string algorithm)
         {
-            _currentRepresentativesPerfomance = new RepresentativesPerfomance(_numberOfSet, _dimension, _step, listOfSet, inputDataShort, algorithm);
+            _currentRepresentativesPerfomance = new RepresentativesPerfomance(_numberOfSet, _dimension,_maxCount, _step, listOfSet, inputDataShort, algorithm);
             _representativesPerfomances.Add(_currentRepresentativesPerfomance);
         }
         //--------------------------------------------------------------------------------------------------------------------
@@ -92,9 +91,9 @@ namespace StatisticsStorage.Accumulators
             _representativesPerfomances.Clear();
         }
         //--------------------------------------------------------------------------------------------------------------------
-        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? step = null)
+        public async Task<string?> DeleteAsync(string algorithm, int? numberOfSet = null, int? dimension = null, decimal? maxCount = 0)
         {
-            return await _representativesSaver.DeleteAsync(algorithm, numberOfSet, dimension, step);
+            return await _representativesSaver.DeleteAsync(algorithm, numberOfSet, dimension, maxCount);
         }
 
         public void RemoveLastStatistic()

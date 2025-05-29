@@ -1,7 +1,4 @@
 ﻿using BaseLibrary.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace StatisticsStorage.Accumulators.Objects
 {
@@ -32,6 +29,15 @@ namespace StatisticsStorage.Accumulators.Objects
             get
             {
                 return _step;
+            }
+        }
+        //--------------------------------------------------------------------------------------
+        protected decimal _maxCount;
+        public decimal MaxCount
+        {
+            get
+            {
+                return _maxCount;
             }
         }
         //--------------------------------------------------------------------------------------
@@ -235,7 +241,7 @@ namespace StatisticsStorage.Accumulators.Objects
             _elemenationCount++;
         }
         //--------------------------------------------------------------------------------------
-        public RepresentativesPerfomance(int numberOfSet, int dimension, decimal step, int[][] listOfSet, string inputDataShort, string algorithm)
+        public RepresentativesPerfomance(int numberOfSet, int dimension, decimal maxCount, decimal step, int[][] listOfSet, string inputDataShort, string algorithm)
         {
             string inputData = listOfSet.AsString();
             List<double> lengthArray = listOfSet.Select(l => (double)l.Length).ToList();
@@ -245,6 +251,7 @@ namespace StatisticsStorage.Accumulators.Objects
             _inputDataShort = inputDataShort;
             _algorithm = algorithm;
             _step = step;
+            _maxCount = maxCount;
             _inputLenAvg = lengthArray.Average();
             _inputLen = string.Join(",", lengthArray);
             _inputLenSort = string.Join(",", lengthArray.OrderBy(l => l));

@@ -113,6 +113,20 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
+        private ObservableCollection<long> maxCountItems;
+        public ObservableCollection<long> MaxCountItems
+        {
+            get
+            {
+                return maxCountItems;
+            }
+            set
+            {
+                maxCountItems = value;
+                OnPropertyChanged(nameof(MaxCountItems));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private long selectedStep;
         public long SelectedStep
         {
@@ -124,6 +138,20 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 selectedStep = value;
                 OnPropertyChanged(nameof(SelectedStep));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private long selectedMaxCount;
+        public long SelectedMaxCount
+        {
+            get
+            {
+                return selectedMaxCount;
+            }
+            set
+            {
+                selectedMaxCount = value;
+                OnPropertyChanged(nameof(SelectedMaxCount));
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -305,10 +333,12 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 case "SelectedNumberOfSet":
                     UpdateDimensionItems();
+                    UpdateMaxCountItems();
                     UpdateStepItems();
                     UpdateAlgorithmItems();
                     break;
                 case "SelectedDimension":
+                    UpdateMaxCountItems();
                     UpdateStepItems();
                     UpdateAlgorithmItems();
                     break;
@@ -327,6 +357,17 @@ namespace BioAlgorithmViewModel.Representatives
                     SelectedDimension = DimensionItems[0];
         }
         //----------------------------------------------------------------------------------------------------------------------
+        public void UpdateMaxCountItems()
+        {
+            var listMaxCount = AlgorithmWithDimensions.Where(a => a.NumberOfSet == selectedNumberOfSet
+&& a.Dimension == selectedDimension).GroupBy(a => a.MaxCount).OrderBy(n => n.Key).Select(n => n.Key);
+            MaxCountItems = listMaxCount.ToObservable<long>();
+            if (!MaxCountItems.Contains(SelectedMaxCount))
+                if (MaxCountItems.Count > 0)
+                    SelectedMaxCount = MaxCountItems[0];
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public void UpdateStepItems()
         {
             var listStep = AlgorithmWithDimensions.Where(a => a.NumberOfSet == selectedNumberOfSet
@@ -341,7 +382,7 @@ namespace BioAlgorithmViewModel.Representatives
         public void UpdateAlgorithmItems()
         {
             var listAlgorithm = AlgorithmWithDimensions.Where(a => a.NumberOfSet == SelectedNumberOfSet
-         && a.Dimension == SelectedDimension && a.Step == SelectedStep).GroupBy(a => a.Algorithm).OrderBy(n => n.Key).Select(n => n.Key);
+         && a.Dimension == SelectedDimension && a.MaxCount == selectedMaxCount).GroupBy(a => a.Algorithm).OrderBy(n => n.Key).Select(n => n.Key);
             AlgorithmItems = listAlgorithm.ToObservable();
             if (!AlgorithmItems.Contains(SelectedAlgorithm1))
                 if (AlgorithmItems.Count > 0)
@@ -377,6 +418,7 @@ namespace BioAlgorithmViewModel.Representatives
                 NumberOfSet = SelectedNumberOfSet,
                 Dimension = SelectedDimension,
                 Step = SelectedStep,
+                MaxCount = SelectedMaxCount,
                 BestValueCompare = SelectedBestValueCompare,
                 DurationCompare = SelectedDurationCompare,
                 NumberIterationCompare = SelectedcbNumberIterationCompare,

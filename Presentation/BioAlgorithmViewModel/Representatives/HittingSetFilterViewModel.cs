@@ -1,6 +1,4 @@
-﻿using BioAlgorithmViewModel.Common;
-
-namespace BioAlgorithmViewModel.Representatives
+﻿namespace BioAlgorithmViewModel.Representatives
 {
     public class HittingSetFilterViewModel : CaseDefinitionViewModel
     {

@@ -47,8 +47,11 @@
         <Label Content="Dimension" Grid.Row="0" Grid.Column="2"/>
         <ComboBox Grid.Row="0" Grid.Column="3" Name="cbDimension"  ItemsSource="{Binding DimensionItems}"
                   SelectedItem="{Binding SelectedDimension}" IsEditable="true" IsReadOnly="true"/>
-        <Label Content="Step" Grid.Row="0" Grid.Column="4"/>
-        <ComboBox Grid.Row="0" Grid.Column="5" Name="cbStep"  ItemsSource="{Binding StepItems}"
+        <Label Content="MaxCount" Grid.Row="0" Grid.Column="4"/>
+        <ComboBox Grid.Row="0" Grid.Column="5" Name="cbMaxCount"  ItemsSource="{Binding MaxCountItems}"
+                  SelectedItem="{Binding SelectedMaxCount}" IsEditable="true" IsReadOnly="true"/>
+        <Label Content="Step" Grid.Row="1" Grid.Column="0"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" Name="cbStep"  ItemsSource="{Binding StepItems}"
                   SelectedItem="{Binding SelectedStep}" IsEditable="true" IsReadOnly="true"/>
         <Label Content="Algorithm 1" Grid.Row="1" Grid.Column="4"/>
         <ComboBox Grid.Row="1" Grid.Column="5" Name="cbAlgorithm1"  ItemsSource="{Binding AlgorithmItems}"
@@ -107,6 +110,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="NumberOfSet" Binding="{Binding NumberOfSet}" MinWidth="50"></DataGridTextColumn>
                 <DataGridTextColumn Header="Dimension" Binding="{Binding Dimension}" MinWidth="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="MaxCount" Binding="{Binding MaxCount}" MinWidth="100"></DataGridTextColumn>
                 <DataGridTextColumn Header="Step" Binding="{Binding Step}" MinWidth="100"></DataGridTextColumn>
                 <DataGridTextColumn Header="BestValue1" Binding="{Binding BestValue1}" MinWidth="200"></DataGridTextColumn>
                 <DataGridTextColumn Header="BestValue2" Binding="{Binding BestValue2}" MinWidth="200"></DataGridTextColumn>

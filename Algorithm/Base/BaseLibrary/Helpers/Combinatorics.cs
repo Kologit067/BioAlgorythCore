@@ -1,18 +1,308 @@
-﻿using System;
+﻿using System.Drawing;
 using System.Numerics;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace BaseLibrary.Helpers
 {
     //--------------------------------------------------------------------------------------
     // class Combinatorics
     //--------------------------------------------------------------------------------------
-    public static class Combinatorics
+    public class Combinatorics
     {
         //--------------------------------------------------------------------------------------
-        public static long[,] CombinationMatrix;
-        public static BigInteger[,] BigIntCombinationMatrix;
-        public static BigInteger[,,,] CountForPositionMatrix;
+        public static long[,]? CombinationMatrix;
+        public static BigInteger[,]? BigIntCombinationMatrix;
+        public static Dictionary<(int,int), BigInteger> BigIntCombinationDictionary = new Dictionary<(int, int), BigInteger>();
+        private static BigInteger[,,,]? CountForPositionMatrix;
+        public static Dictionary<(int, int, int, int), BigInteger> CountForPositionDictionary = new Dictionary<(int, int, int, int), BigInteger>();
+        public Func<int, int, BigInteger, int?, int?, int[]> SkipEnumerationBigInteger;
+        private Func<int, int, BigInteger> GetBigIntegerCombination;
+        private Func<int, int, int, int, BigInteger> GetCountForPositionSaveFPBigInteger;
+
+        public Combinatorics(string calculationStep, string combinationType, int limit, int size)
+        {
+            SkipEnumerationBigInteger = calculationStep switch
+            {
+                "SkipEnumerationBigInteger" => SkipEnumerationBigIntegerSimple,
+                "SkipEnumerationNoRecBigInteger" => SkipEnumerationNoRecBigInteger,
+                "SkipEnumerationSaveFPBigInteger" => SkipEnumerationSaveFPBigInteger,              // Not Recursive Save first position
+                "SkipEnumerationSaveFPImpBigInteger" => SkipEnumerationSaveFPImpBigInteger            // Not Recursive Save first position Improve 1
+            };
+            GetBigIntegerCombination = combinationType switch
+            {
+                "By Matrix" => CombinationByMatrixBigInteger,
+                "By Dictionary" => CombinationByDictionaryBigInteger,
+                "Without Matrix" => BigIntegerCombination            
+            };
+            GetCountForPositionSaveFPBigInteger = combinationType switch
+            {
+                "By Matrix" => GetCountForPositionSaveFPBigIntegerByMatrix,
+                "By Dictionary" => GetCountForPositionSaveFPBigIntegerByDictionary,
+                "Without Matrix" => CalculateCountForPositionSaveFPBigInteger
+            };
+            if (combinationType == "By Matrix")
+            {
+                Combinatorics.SetCombinationBigIntegerMatrix(limit, size);
+                Combinatorics.CreateCountForPositionMatrix(limit, size);
+            }
+
+        }
+        //--------------------------------------------------------------------------------------
+        // Matrix
+        //--------------------------------------------------------------------------------------
+        public static void SetCombinationMatrix(int n, int m)
+        {
+            CombinationMatrix = CreateCombinationMatrixByBigInteger(n, m);
+        }
+        //--------------------------------------------------------------------------------------
+        public static long[,] CreateCombinationMatrix(int n, int m)
+        {
+            long[,] matrix = new long[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = Combination(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static long[,] CreateCombinationMatrixByBigInteger(int n, int m)
+        {
+            long[,] matrix = new long[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = (long)BigIntegerCombination(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static long[,] CreateCombinationRecMatrix(int n, int m)
+        {
+            long[,] matrix = new long[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = CombinationRec(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static long[,] CreateCombinationReductionMatrix(int n, int m)
+        {
+            long[,] matrix = new long[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = CombinationReduction(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static long[,] CreateCombinationMatrixByRec(int n, int k)
+        {
+            long[,] matrix = new long[n, k];
+            matrix[0, 0] = 1;
+            for (int i = 1; i < k; i++)
+            {
+                matrix[0, i] = 0;
+            }
+            for (int i = 1; i < n; i++)
+            {
+                matrix[i, 0] = i + 1;
+            }
+            for (int i = 1; i < n; i++)
+                for (int j = 1; j < k; j++)
+                    matrix[i, j] = matrix[i - 1, j - 1] + matrix[i - 1, j];
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger[,] CreateCombinationBigIntegerMatrix(int n, int m)
+        {
+            BigInteger[,] matrix = new BigInteger[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = BigIntegerCombination(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger[,] CreateCombinationRecBigIntegerMatrix(int n, int m)
+        {
+            BigInteger[,] matrix = new BigInteger[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = BigIntegerCombinationRec(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger[,] CreateCombinationReductionBigIntegerMatrix(int n, int m)
+        {
+            BigInteger[,] matrix = new BigInteger[n, m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    matrix[i, j] = BigIntegerCombinationReduction(i + 1, j + 1);
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger[,] CreateCombinationBigIntegerMatrixByRec(int n, int k)
+        {
+            BigInteger[,] matrix = new BigInteger[n, k];
+            matrix[0, 0] = 1;
+            for (int i = 1; i < k; i++)
+            {
+                matrix[0, i] = 0;
+            }
+            for (int i = 1; i < n; i++)
+            {
+                matrix[i, 0] = i + 1;
+            }
+            for (int i = 1; i < n; i++)
+                for (int j = 1; j < k; j++)
+                    matrix[i, j] = matrix[i - 1, j - 1] + matrix[i - 1, j];
+
+            return matrix;
+        }
+        //--------------------------------------------------------------------------------------
+        // Combination
+        //--------------------------------------------------------------------------------------
+        public static long CombinationRec(int n, int k)
+        {
+            if (k > n)
+                return 0;
+            if ( k == n )
+                return 1;
+            if (k == 1 || k == n - 1)
+                return n;
+            if (k > n - k)
+                k = n - k;
+            return CombinationRec(n - 1, k - 1) + CombinationRec(n - 1, k);
+        }
+        //--------------------------------------------------------------------------------------
+        public static long Combination(int n, int k)
+        {
+            checked
+            {
+                if (k > n)
+                    return 0;
+                if (k > n - k)
+                    k = n - k;
+                long numerator = 1;
+                long denominator = 1;
+                for (int i = n - k + 1; i <= n; i++)
+                    numerator *= i;
+                for (int i = 1; i <= k; i++)
+                    denominator *= i;
+
+                return numerator / denominator;
+            }
+        }
+        //--------------------------------------------------------------------------------------
+        public static long CombinationReduction(int n, int k)
+        {
+            checked
+            {
+                if (k > n)
+                    return 0;
+                if (k > n - k)
+                    k = n - k;
+                long numerator = 1;
+                long denominator = 1;
+                List<int> denList = Enumerable.Range(1, k).ToList();
+                for (int i = n - k + 1; i <= n; i++)
+                {
+                    int m = i;
+                    for (int j = denList.Count - 1; j >= 0; j--)
+                    {
+                        if (m % denList[j] == 0)
+                        {
+                            m /= denList[j];
+                            denList.RemoveAt(j);
+                        }
+                        if (m == 1)
+                            break;
+                    }
+                    numerator *= m;
+                }
+                    
+                for (int i = 0; i < denList.Count; i++)
+                    denominator *= denList[i];
+
+                return numerator / denominator;
+            }
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger BigIntegerCombination(int n, int k)
+        {
+            if (k > n)
+                return 0;
+            if (k > n - k)
+                k = n - k;
+            BigInteger numerator = new BigInteger(1);
+            BigInteger denominator = new BigInteger(1);
+            for (int i = n - k + 1; i <= n; i++)
+                numerator = BigInteger.Multiply(numerator, i);
+            for (int i = 1; i <= k; i++)
+                denominator = BigInteger.Multiply(denominator, i);
+
+            return BigInteger.Divide(numerator, denominator);
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger BigIntegerCombinationRec(int n, int k)
+        {
+            if (k > n)
+                return 0;
+            if (k == n)
+                return 1;
+            if (k == 1 || k == n - 1)
+                return n;
+            if (k > n - k)
+                k = n - k;
+            return BigIntegerCombinationRec(n - 1, k - 1) + BigIntegerCombinationRec(n - 1, k);
+        }
+        //--------------------------------------------------------------------------------------
+        public static BigInteger BigIntegerCombinationReduction(int n, int k)
+        {
+            checked
+            {
+                if (k > n)
+                    return 0;
+                if (k > n - k)
+                    k = n - k;
+                BigInteger numerator = 1;
+                BigInteger denominator = 1;
+                List<int> denList = Enumerable.Range(1, k).ToList();
+                for (int i = n - k + 1; i <= n; i++)
+                {
+                    int m = i;
+                    for (int j = denList.Count - 1; j >= 0; j--)
+                    {
+                        if (m % denList[j] == 0)
+                        {
+                            m /= denList[j];
+                            denList.RemoveAt(j);
+                        }
+                        if (m == 1)
+                            break;
+                    }
+                    numerator *= m;
+                }
+
+                for (int i = 0; i < denList.Count; i++)
+                    denominator *= denList[i];
+
+                return numerator / denominator;
+            }
+        }
+        //--------------------------------------------------------------------------------------
+        // Long
+        //--------------------------------------------------------------------------------------
+        public static long CalculateStep(int n, int k, int maxNumber)
+        {
+            BigInteger combinatio = BigIntegerCombination(n, k);
+
+            var result = BigInteger.Divide(combinatio, maxNumber);
+            return (long)result;
+        }
         //--------------------------------------------------------------------------------------
         public static int[] SkipEnumeration(int n, int m, long number)
         {
@@ -110,7 +400,7 @@ namespace BaseLibrary.Helpers
 
         }
         //--------------------------------------------------------------------------------------
-        public static long CombinationByMatrix(int n, int k)
+        private static long CombinationByMatrix(int n, int k)
         {
             return CombinationMatrix[n - 1, k - 1];
         }
@@ -120,92 +410,9 @@ namespace BaseLibrary.Helpers
             return n - (m - j);
         }
         //--------------------------------------------------------------------------------------
-        public static void SetCombinationMatrix(int n, int m)
-        {
-            CombinationMatrix = CreateCombinationMatrixByRec(n, m);
-        }
-        //--------------------------------------------------------------------------------------
-        public static long[,] CreateCombinationMatrix(int n, int m)
-        {
-            long[,] matrix = new long[n, m];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < m; j++)
-                    matrix[i, j] = Combination(i + 1, j + 1);
-
-            return matrix;
-        }
-        //--------------------------------------------------------------------------------------
-        public static long[,] CreateCombinationMatrixByRec(int n, int m)
-        {
-            long[,] matrix = new long[n, m];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < m; j++)
-                    matrix[i, j] = CombinationByBigNumber(i + 1, j + 1);
-
-            return matrix;
-        }
-        //--------------------------------------------------------------------------------------
-        public static long CombinationByBigNumber(int n, int k)
-        {
-            BigInteger numerator = new BigInteger(1);
-            BigInteger denominator = new BigInteger(1);
-            for (int i = n - k + 1; i <= n; i++)
-                numerator = BigInteger.Multiply(numerator, i);
-            for (int i = 1; i <= k; i++)
-                denominator = BigInteger.Multiply(denominator, i);
-
-            var result = BigInteger.Divide(numerator, denominator);
-            return (long)result;
-        }
-        //--------------------------------------------------------------------------------------
-        public static long Combination(int n, int k)
-        {
-            long numerator = 1;
-            long denominator = 1;
-            for (int i = n - k + 1; i <= n; i++)
-                numerator *= i;
-            for (int i = 1; i <= k; i++)
-                denominator *= i;
-
-            return numerator / denominator;
-        }
-        //--------------------------------------------------------------------------------------
-        public static BigInteger BigIntegerCombination(int n, int k)
-        {
-            if (k > n - k)
-                k = n - k;
-            BigInteger numerator = new BigInteger(1);
-            BigInteger denominator = new BigInteger(1);
-            for (int i = n - k + 1; i <= n; i++)
-                numerator = BigInteger.Multiply(numerator, i);
-            for (int i = 1; i <= k; i++)
-                denominator = BigInteger.Multiply(denominator, i);
-
-            return BigInteger.Divide(numerator, denominator);
-        }
-        //--------------------------------------------------------------------------------------
-        public static long CalculateStep(int n, int k, int maxNumber)
-        {
-            BigInteger combinatio = BigIntegerCombination(n, k);
-
-            var result = BigInteger.Divide(combinatio, maxNumber);
-            return (long)result;
-        }
-        //--------------------------------------------------------------------------------------
-        public static long CombinationRec(int n, int k)
-        {
-            if (k == 1)
-                return n;
-            else if (k == n)
-                return 1;
-            else if (k > n)
-                return 0;
-            return CombinationRec(n - 1, k - 1) + CombinationRec(n - 1, k);
-        }
-        //--------------------------------------------------------------------------------------
         // BigInteger
         //--------------------------------------------------------------------------------------
-        public static int[] SkipEnumerationBigInteger(int n, int m, BigInteger number)
+        private int[] SkipEnumerationBigIntegerSimple(int n, int m, BigInteger number, int? curnStart = null, int? curmStart = null)
         {
             int[] result = new int[m];
             BigInteger rest = number;
@@ -239,7 +446,7 @@ namespace BaseLibrary.Helpers
             return result;
         }
         //--------------------------------------------------------------------------------------
-        public static (int, int, BigInteger) GetFirstPositionBigInteger(int n, int m, BigInteger number)
+        private (int, int, BigInteger) GetFirstPositionBigInteger(int n, int m, BigInteger number)
         {
             if (number == 1)
                 return (m, m, 1);
@@ -285,16 +492,6 @@ namespace BaseLibrary.Helpers
             BigIntCombinationMatrix = CreateCombinationBigIntegerMatrix(n, m);
         }
         //--------------------------------------------------------------------------------------
-        public static BigInteger[,] CreateCombinationBigIntegerMatrix(int n, int m)
-        {
-            BigInteger[,] matrix = new BigInteger[n, m];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < m; j++)
-                    matrix[i, j] = BigIntegerCombination(i + 1, j + 1);
-
-            return matrix;
-        }
-        //--------------------------------------------------------------------------------------
         public static void CreateCountForPositionMatrix(int n, int m)
         { 
             CountForPositionMatrix = new BigInteger[n + 1, m + 1, n + 1, m + 1];
@@ -305,7 +502,7 @@ namespace BaseLibrary.Helpers
                             CountForPositionMatrix[i, j, k, l] = -1;
         }
         //--------------------------------------------------------------------------------------
-        public static BigInteger GetCountForPositionBigInteger(int n, int m, int i, int j)
+        public BigInteger GetCountForPositionBigInteger(int n, int m, int i, int j)
         {
             if (j > m)
                 return 0;
@@ -320,21 +517,25 @@ namespace BaseLibrary.Helpers
             else
             {
                 BigInteger prevCount = GetCountForPositionBigInteger(n, m, i - 1, j);
-                BigInteger combi = CombinationByMatrixBigInteger(n - i, m - j);
+                BigInteger combi = GetBigIntegerCombination(n - i, m - j);
                 return prevCount + combi;
             }
 
         }
         //--------------------------------------------------------------------------------------
-        public static BigInteger CombinationByMatrixBigInteger(int n, int k)
+        private static BigInteger CombinationByMatrixBigInteger(int n, int k)
+        {
+            return BigIntegerCombination(n, k);
+        }
+        //--------------------------------------------------------------------------------------
+        private static BigInteger CombinationByDictionaryBigInteger(int n, int k)
         {
             return BigIntCombinationMatrix[n - 1, k - 1];
         }
         //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
         // BigInteger Inproved - Not Recursive
         //--------------------------------------------------------------------------------------
-        public static int[] SkipEnumerationNoRecBigInteger(int n, int m, BigInteger number)
+        private int[] SkipEnumerationNoRecBigInteger(int n, int m, BigInteger number, int? curnStart = null, int? curmStart = null)
         {
             int[] result = new int[m];
             BigInteger rest = number;
@@ -368,7 +569,7 @@ namespace BaseLibrary.Helpers
             return result;
         }
         //--------------------------------------------------------------------------------------
-        public static (int, int, BigInteger) GetFirstPositionNoRecBigInteger(int n, int m, BigInteger number)
+        private (int, int, BigInteger) GetFirstPositionNoRecBigInteger(int n, int m, BigInteger number)
         {
             if (number == 1)
                 return (m, m, 1);
@@ -409,7 +610,7 @@ namespace BaseLibrary.Helpers
             return (0, 0, 0L);
         }
         //--------------------------------------------------------------------------------------
-        public static BigInteger GetCountForPositionNoRecBigInteger(int n, int m, int istart, int jstart)
+        public BigInteger GetCountForPositionNoRecBigInteger(int n, int m, int istart, int jstart)
         {
             if (jstart > m)
                 return 0;
@@ -425,17 +626,16 @@ namespace BaseLibrary.Helpers
                     int iLimit = j == jstart ? istart : LastIndexInCountMatrix(n, m, j);
                     for (int i = j+1; i <= iLimit; i++)
                     {
-                        result = BigInteger.Add( result, CombinationByMatrixBigInteger(n-i, m-j));
+                        result = BigInteger.Add( result, GetBigIntegerCombination(n-i, m-j));
                     }
                 }
                 return result;
             }
         }
         //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
         // BigInteger Inproved - Not Recursive Save first position
         //--------------------------------------------------------------------------------------
-        public static int[] SkipEnumerationSaveFPBigInteger(int n, int m, BigInteger number)
+        private int[] SkipEnumerationSaveFPBigInteger(int n, int m, BigInteger number, int? curnStart = null, int? curmStart = null)
         {
             int[] result = new int[m];
             BigInteger rest = number;
@@ -469,7 +669,7 @@ namespace BaseLibrary.Helpers
             return result;
         }
         //--------------------------------------------------------------------------------------
-        public static (int, int, BigInteger) GetFirstPositionSaveFPBigInteger(int n, int m, BigInteger number)
+        private  (int, int, BigInteger) GetFirstPositionSaveFPBigInteger(int n, int m, BigInteger number)
         {
             if (number == 1)
                 return (m, m, 1);
@@ -510,11 +710,28 @@ namespace BaseLibrary.Helpers
             return (0, 0, 0L);
         }
         //--------------------------------------------------------------------------------------
-        public static BigInteger GetCountForPositionSaveFPBigInteger(int n, int m, int istart, int jstart)
+        private BigInteger GetCountForPositionSaveFPBigIntegerByMatrix(int n, int m, int istart, int jstart)
         {
-            BigInteger result = 0;
             if (CountForPositionMatrix[n,m,istart, jstart] != -1)
                 return CountForPositionMatrix[n,m,istart, jstart];
+            BigInteger result = CalculateCountForPositionSaveFPBigInteger(n, m, istart, jstart);
+            CountForPositionMatrix[n, m, istart, jstart] = result;
+            return result;
+        }
+        //--------------------------------------------------------------------------------------
+        private BigInteger GetCountForPositionSaveFPBigIntegerByDictionary(int n, int m, int istart, int jstart)
+        {
+            BigInteger result;
+            if (CountForPositionDictionary.TryGetValue((n,m,istart,jstart), out result))
+                return result;
+            result = CalculateCountForPositionSaveFPBigInteger(n, m, istart, jstart);
+            CountForPositionDictionary.Add((n, m, istart, jstart), result);
+            return result;
+        }
+        //--------------------------------------------------------------------------------------
+        private BigInteger CalculateCountForPositionSaveFPBigInteger(int n, int m, int istart, int jstart)
+        {
+            BigInteger result = 0;
             if (jstart > m)
                 result = 0;
             else if (istart < jstart)
@@ -529,17 +746,16 @@ namespace BaseLibrary.Helpers
                     int iLimit = j == jstart ? istart : LastIndexInCountMatrix(n, m, j);
                     for (int i = j + 1; i <= iLimit; i++)
                     {
-                        result = BigInteger.Add(result, CombinationByMatrixBigInteger(n - i, m - j));
+                        result = BigInteger.Add(result, GetBigIntegerCombination(n - i, m - j));
                     }
                 }
             }
-            CountForPositionMatrix[n, m, istart, jstart] = result;
             return result;
         }
         //--------------------------------------------------------------------------------------
         // BigInteger Inproved - Not Recursive Save first position Improve 1
         //--------------------------------------------------------------------------------------
-        public static int[] SkipEnumerationSaveFPImpBigInteger(int n, int m, BigInteger number, int? curnStart = null, int? curmStart = null)
+        private int[] SkipEnumerationSaveFPImpBigInteger(int n, int m, BigInteger number, int? curnStart = null, int? curmStart = null)
         {
             int[] result = new int[m];
             BigInteger rest = number;
@@ -573,7 +789,7 @@ namespace BaseLibrary.Helpers
             return result;
         }
         //--------------------------------------------------------------------------------------
-        public static (int, int, BigInteger) GetFirstPositionSaveFPBigImpInteger(int n, int m, BigInteger number, int? curmStart = null)
+        private (int, int, BigInteger) GetFirstPositionSaveFPBigImpInteger(int n, int m, BigInteger number, int? curmStart = null)
         {
             if (number == 1)
                 return (m, m, 1);
