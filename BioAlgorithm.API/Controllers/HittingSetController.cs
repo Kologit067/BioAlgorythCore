@@ -58,14 +58,14 @@ namespace BioAlgorythm.API.Controllers
              return Json(result);
         }
         //----------------------------------------------------------------------------------------------------------------------
-        // GET: api/HittingSet/Inputs
+        // POST: api/HittingSet/Inputs
         [HttpPost]
         [Route("/api/HittingSet/Inputs/{order}")]
         [CacheOutput]
         public async Task<ActionResult> GetRepresentativeInputsAsync([FromBody] RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
         {
             string cacheKey = $"HittingSetInputs-{representativesPerfomanceFilter.GetStringKey()}-{order}";
-            if (!_memoryCache.TryGetValue(cacheKey, out List<RepresentativeAlgorithmGroupDimension>? result))
+            if (!_memoryCache.TryGetValue(cacheKey, out List<RepresentativesInput>? result))
             {
                 try
                 {

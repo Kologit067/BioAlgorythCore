@@ -159,6 +159,19 @@
                 OnPropertyChanged(nameof(TaskTypeFilterType));
             }
         }
+        private string greedyComparisonFilterType;
+        public string GreedyComparisonFilterType
+        {
+            get
+            {
+                return greedyComparisonFilterType;
+            }
+            set
+            {
+                greedyComparisonFilterType = value;
+                OnPropertyChanged(nameof(GreedyComparisonFilterType));
+            }
+        }
 
         public HittingSetFilterViewModel()
         {

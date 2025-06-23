@@ -26,6 +26,7 @@ namespace RepresentativesSet
         {
             _currentCardinality = 0;
             base.Execute(pListOfSet);
+            OptimalSets = OptimalSets.OrderBy(s => s).ToList();
         }
         //--------------------------------------------------------------------------------------
         protected override void RemoveAction(int element)

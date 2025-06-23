@@ -2,7 +2,7 @@
 
 namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
 {
-    public class RepresentativesInput
+    public class RepresentativesInputDao
     {
         public long RepresentativesInputId { get; set; }
         public int NumberOfSet { get; set; }
@@ -19,5 +19,6 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
         public string IsomorphismResult { get; set; }
         public string IsomorphismBipartResult { get; set; }
         public int TypeTask { get; set; }
+        public int GreedyComparison { get; set; }
     }
 }

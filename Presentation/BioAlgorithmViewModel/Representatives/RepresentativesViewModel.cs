@@ -113,6 +113,21 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
+        private HittingSetInputGreedyComparisonViewModel hittingSetInputGreedyComparison;
+        public HittingSetInputGreedyComparisonViewModel HittingSetInputGreedyComparison
+        {
+            get
+            {
+                return hittingSetInputGreedyComparison;
+            }
+            set
+            {
+                hittingSetInputGreedyComparison = value;
+                OnPropertyChanged(nameof(HittingSetInputGreedyComparison));
+            }
+        }
+        
+        //----------------------------------------------------------------------------------------------------------------------
         private BipartiteGraphViewModel bipartiteGraph;
         public BipartiteGraphViewModel BipartiteGraph
         {
@@ -151,6 +166,7 @@ namespace BioAlgorithmViewModel.Representatives
             RepresentativePerformanceAlgorithmCompare = new RepresentativePerformanceAlgorithmCompareViewModel(representativesRepository);
             RepresentativePerformanceAlgorithmWithGroup = new RepresentativePerformanceAlgorithmWithGroupViewModel(representativesRepository);
             HittingSetInput = new HittingSetInputDataViewModel(representativesRepository);
+            HittingSetInputGreedyComparison = new HittingSetInputGreedyComparisonViewModel(representativesRepository);
             BipartiteGraph = new BipartiteGraphViewModel();
             Messenger.Default.Register<RepresentativeTabChangeMessage>(this, OnAlgorithmGroupToFilterMessageReceived, typeof(RepresentativeTabChangeMessage));
         }
@@ -159,10 +175,11 @@ namespace BioAlgorithmViewModel.Representatives
         {
             SelectedTab = message.RepresentativeTabName switch
             {
-                "RepresentativePerformance" => 0,
-                "BipartiteGraph" => 3,
-                "RepresentativePerformanceAsGroup" => 5,
-                "InputData" => 6,
+                "RepresentativePerformance" => 5,
+                "BipartiteGraph" => 8,
+                "RepresentativePerformanceAsGroup" => 7,
+                "InputData" => 3,
+                "InputDataGreedyComparison" => 4,
                 _ => 0
             };
         }

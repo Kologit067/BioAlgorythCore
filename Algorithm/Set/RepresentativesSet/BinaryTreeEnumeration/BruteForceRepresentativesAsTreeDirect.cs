@@ -22,6 +22,14 @@ namespace RepresentativesSet.BinaryTreeEnumeration
             }
         }
         //--------------------------------------------------------------------------------------
+        public string SolutionAsString
+        {
+            get
+            {
+                return (_fOptimalSets?.Count ?? 0) > 0 ? _fOptimalSets[0] : "";
+            }
+        }
+        //--------------------------------------------------------------------------------------
         public BruteForceRepresentativesAsTreeDirect(int pLength)  : base(pLength)
         {
             StatisticAccumulator = new FakeRepresentativesStatisticAccumulator();
@@ -126,6 +134,14 @@ namespace RepresentativesSet.BinaryTreeEnumeration
         {
             StatisticAccumulator.SaveStatisticData(ElapsedTicks, DurationMilliSeconds, DateTime.Now,
                 IsComplete, CurrentSetAsString, _fOptimalSets, currentMinimum);
+        }
+        //--------------------------------------------------------------------------------------
+        public int CurrentMinimum
+        {
+            get
+            {
+                return _fOptimalSets.Count;
+            }
         }
     }
     //--------------------------------------------------------------------------------------

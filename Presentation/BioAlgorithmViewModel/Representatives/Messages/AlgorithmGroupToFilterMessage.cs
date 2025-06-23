@@ -21,4 +21,8 @@ namespace BioAlgorithmViewModel.Mappings
     {
 
     }
+    public class InputDataGreedyComparisonToFilterMessage : AlgorithmGroupToFilterMessageBase
+    {
+
+    }
 }

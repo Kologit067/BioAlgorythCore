@@ -27,7 +27,8 @@ namespace BioAlgorithmViewModel.Mappings
                     CountTerminalFrom = input.CountTerminalFrom,
                     CountTerminalTo = input.CountTerminalTo,
                     BestValue = input.BestValue,
-                    TaskTypeFilterType = input.TaskTypeFilterType
+                    TaskTypeFilterType = input.TaskTypeFilterType,
+                    GreedyComparisonFilterType = input.GreedyComparisonFilterType,
                 };
         }
 

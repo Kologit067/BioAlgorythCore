@@ -2,7 +2,7 @@
 
 namespace BioAlgorithmViewModel.Representatives.Messages
 {
-    public enum KindOfInputTaskEnum { Isomorphism, IsomorphismByPart, DefineTypeTask }
+    public enum KindOfInputTaskEnum { Isomorphism, IsomorphismByPart, DefineTypeTask, DefineGreedyComparison }
     public class StartInputTaskMessage
     {
         public KindOfInputTaskEnum KindOfInputTask { get; set; }

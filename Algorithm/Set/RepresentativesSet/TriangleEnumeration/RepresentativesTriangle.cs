@@ -75,6 +75,14 @@ namespace RepresentativesSet
             }
         }
         //--------------------------------------------------------------------------------------
+        public string SolutionAsString
+        {
+            get
+            {
+                return (_fOptimalSets?.Count ?? 0) > 0 ? _fOptimalSets[0] : "";
+            }
+        }
+        //--------------------------------------------------------------------------------------
         public RepresentativesTriangle(int pLength) : base(pLength, pLength)
         {
             commonCounter = 0;

@@ -107,9 +107,11 @@ namespace BioAlgorithmViewModel.Representatives
                 "RepresentativesGreedyImprove",
                 "RepresentativesGreedyRelation",
                 "RepresentativesGreedyImproveRD",
+                "AllGreedy",
                 "RepresentativesTriangleBranchAndBound",
                 "RepresentativesTriangle",
-                "RepresentativesTriangleStrategy"
+                "RepresentativesTriangleStrategy",
+                "Empty"
             };
             AlgorithmDetailItems = new ObservableCollection<string>()
             {

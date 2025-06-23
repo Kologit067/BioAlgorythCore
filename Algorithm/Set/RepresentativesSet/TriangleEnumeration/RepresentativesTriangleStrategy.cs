@@ -90,6 +90,14 @@ namespace RepresentativesSet.TriangleEnumeration
             }
         }
         //--------------------------------------------------------------------------------------
+        public string SolutionAsString
+        {
+            get
+            {
+                return (_fOptimalSets?.Count ?? 0) > 0 ? _fOptimalSets[0] : "";
+            }
+        }
+        //--------------------------------------------------------------------------------------
         public RepresentativesTriangleStrategy(int pLength, SelectElementStrategy selectElement) : base(pLength, pLength)
         {
             _selectElementStrategy = selectElement;

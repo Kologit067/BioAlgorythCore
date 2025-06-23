@@ -16,6 +16,7 @@ namespace RepresentativesSet.Test
         protected int _fSize;
         protected int _fCardinality;
         protected int[] _fCurrentSet;
+        protected bool _isSave;
         //--------------------------------------------------------------------------------------
         protected int _wrongResultCount = 0;
         public int WrongResultCount

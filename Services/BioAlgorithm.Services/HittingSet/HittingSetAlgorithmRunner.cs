@@ -10,29 +10,49 @@ namespace BioAlgorithm.Services.HittingSet
     //--------------------------------------------------------------------------------------
     public class HittingSetAlgorithmRunner : EnumerateRepresentativesTestBase
     {
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
+        protected List<RepresentativesStatisticAccumulator> _statisticAccumulators;
 
-        private readonly IHittingSetAlgorithm hittingSetAlgorithm;
+        protected readonly List<IHittingSetAlgorithm> hittingSetAlgorithms;
         //--------------------------------------------------------------------------------------
-        public HittingSetAlgorithmRunner(IHittingSetAlgorithm hittingSetAlgorithm, int pCardinality, int pLength, int bufferSize, int pMinimumValue = 1, int pForwardAdditive = 1)
+        public HittingSetAlgorithmRunner(List<IHittingSetAlgorithm> hittingSetAlgorithms, int pCardinality, int pLength, int bufferSize, int pMinimumValue = 1, int pForwardAdditive = 1, bool isSave = true)
             : base(pCardinality, pLength, pMinimumValue, pForwardAdditive)
         {
-            this.hittingSetAlgorithm = hittingSetAlgorithm;
+            _isSave = isSave;
+            this.hittingSetAlgorithms = hittingSetAlgorithms;
+            _statisticAccumulators = new List<RepresentativesStatisticAccumulator>();
+            if (_isSave)
+            {
+                foreach (IHittingSetAlgorithm algorithm in hittingSetAlgorithms)
+                {
+                    IRepresentativesSaver saver = null;
+                    if (algorithm.AlgorithmName == "Empty")
+                    {
+                        saver = new RepresentativesInputSaver();
+                    }
+                    else
+                    {
+                        saver = new RepresentativesSaver();
+                    }
 
-            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 1, bufferSize);
+                    var statisticAccumulator = new RepresentativesStatisticAccumulator(saver, pLength, pCardinality, 0, 1, bufferSize);
 
-            hittingSetAlgorithm.StatisticAccumulator = _statisticAccumulator;
+                    algorithm.StatisticAccumulator = statisticAccumulator;
+                    _statisticAccumulators.Add(statisticAccumulator);
+                }
+            }
         }
         //--------------------------------------------------------------------------------------
         public async Task ExecuteAsync()
         {
-            await _statisticAccumulator.DeleteAsync(hittingSetAlgorithm.AlgorithmName, _fSize , _fCardinality, 0);
+            foreach (IHittingSetAlgorithm algorithm in hittingSetAlgorithms)
+                await algorithm.StatisticAccumulator.DeleteAsync(algorithm.AlgorithmName, _fSize , _fCardinality, 0);
             Execute();
         }
         //--------------------------------------------------------------------------------------
         protected override void ActAction(int[][] listOfSet)
         {
-            hittingSetAlgorithm.Execute(listOfSet);
+            foreach (IHittingSetAlgorithm algorithm in hittingSetAlgorithms)
+                algorithm.Execute(listOfSet);
 
         }
         //--------------------------------------------------------------------------------------
@@ -43,7 +63,8 @@ namespace BioAlgorithm.Services.HittingSet
         //--------------------------------------------------------------------------------------
         protected override void PostAction()
         {
-            _statisticAccumulator.SaveRemain();
+            foreach (IHittingSetAlgorithm algorithm in hittingSetAlgorithms)
+                algorithm.StatisticAccumulator.SaveRemain();
         }
         //--------------------------------------------------------------------------------------
     }

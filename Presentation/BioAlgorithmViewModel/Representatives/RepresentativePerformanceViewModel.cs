@@ -90,8 +90,8 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 "Algorithm, Dimension, NumberOfSet, Step, InputDataShort",
                 "Algorithm, Dimension, NumberOfSet, Step, RepresentativesPerfomanceId",
-                "Algorithm, NumberOfSet, NumberOfSet, Step, InputDataShort",
-                "Algorithm, NumberOfSet, NumberOfSet, Step, RepresentativesPerfomanceId",
+                "Algorithm, NumberOfSet, Dimension, Step, InputDataShort",
+                "Algorithm, NumberOfSet, Dimension, Step, RepresentativesPerfomanceId",
                 "Dimension, NumberOfSet, Algorithm, Step, InputDataShort",
                 "Dimension, NumberOfSet, Algorithm, Step, RepresentativesPerfomanceId",
                 "NumberOfSet, Dimension, Algorithm, Step, InputDataShort",

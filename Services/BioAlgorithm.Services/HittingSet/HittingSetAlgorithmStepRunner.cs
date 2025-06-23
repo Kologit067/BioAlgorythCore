@@ -10,9 +10,9 @@ namespace BioAlgorithm.Services.HittingSet
 
     public class HittingSetAlgorithmStepRunner : EnumerateRepresentativesWithStepTestBase
     {
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
-        private readonly IHittingSetAlgorithm hittingSetAlgorithm;
-        private readonly Combinatorics combinatorics;
+        protected List<RepresentativesStatisticAccumulator> _statisticAccumulators;
+        protected readonly List<IHittingSetAlgorithm> hittingSetAlgorithms;
+        protected readonly Combinatorics combinatorics;
 
         protected BigInteger number;
         //--------------------------------------------------------------------------------------
@@ -34,30 +34,52 @@ namespace BioAlgorithm.Services.HittingSet
             }
         }
         //--------------------------------------------------------------------------------------
-        public HittingSetAlgorithmStepRunner(IHittingSetAlgorithm hittingSetAlgorithm, string calculationStep, string combinationType, string CalculationStep, string CombinationType, int pCardinality, int pLength, long maxCount, int bufferSize, int pMinimumValue = 1, int pForwardAdditive = 1)
+        public HittingSetAlgorithmStepRunner(List<IHittingSetAlgorithm> hittingSetAlgorithms, string calculationStep, 
+            string combinationType, int pCardinality, int pLength, long maxCount, int bufferSize, int pMinimumValue = 1, 
+            int pForwardAdditive = 1, bool isSave = true )
         {
-            this.hittingSetAlgorithm = hittingSetAlgorithm;
+            this.hittingSetAlgorithms = hittingSetAlgorithms;
 
             _fLimit = (1 << pCardinality) - 1;
             _fSize = pLength;
             _fCardinality = pCardinality;
             _maxCount = maxCount;
+            _isSave = isSave;
             number = Combinatorics.BigIntegerCombination(_fLimit, _fSize);
             _step = BigInteger.Divide(number, _maxCount);
 
-            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_maxCount, (decimal)_step, bufferSize);
+            this.hittingSetAlgorithms = hittingSetAlgorithms;
+            _statisticAccumulators = new List<RepresentativesStatisticAccumulator> ();
+            if (_isSave)
+            {
+                foreach (var algorithm in this.hittingSetAlgorithms)
+                {
+                    IRepresentativesSaver saver = null;
+                    if (algorithm.AlgorithmName == "Empty")
+                    {
+                        saver = new RepresentativesInputSaver();
+                    }
+                    else
+                    {
+                        saver = new RepresentativesSaver();
+                    }
 
-            hittingSetAlgorithm.StatisticAccumulator = _statisticAccumulator;
+                    var statisticAccumulator = new RepresentativesStatisticAccumulator(saver, pLength, pCardinality, (decimal)_maxCount, (decimal)_step, bufferSize);
+
+                    algorithm.StatisticAccumulator = statisticAccumulator;
+                    _statisticAccumulators.Add(statisticAccumulator);
+                }
+            }
 
             combinatorics = new Combinatorics(calculationStep, combinationType, _fLimit, _fSize);
         }
         //--------------------------------------------------------------------------------------
         public async Task<bool> ExecuteAsync()
         {
-            await _statisticAccumulator.DeleteAsync(hittingSetAlgorithm.AlgorithmName, _fSize, _fCardinality, (decimal)_maxCount);
+            foreach (var algorithm in this.hittingSetAlgorithms)
+                await algorithm.StatisticAccumulator.DeleteAsync(algorithm.AlgorithmName, _fSize, _fCardinality, (decimal)_maxCount);
             int? startn = null;
             int? startm = null;
-            Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", _fLimit, _fSize);
             for (BigInteger counter = _step; counter < number; counter += _step)
             {
                 _fCurrentSet = combinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, counter, startn, startm);
@@ -77,19 +99,21 @@ namespace BioAlgorithm.Services.HittingSet
             return false;
         }
         //--------------------------------------------------------------------------------------
-        protected void ActAction(int[][] listOfSet)
+        protected virtual void ActAction(int[][] listOfSet)
         {
-            hittingSetAlgorithm.Execute(listOfSet);
+            foreach (var algorithm in this.hittingSetAlgorithms)
+                algorithm.Execute(listOfSet);
         }
         //--------------------------------------------------------------------------------------
-        protected void AssertAction()
+        protected virtual void AssertAction()
         {
 
         }
         //--------------------------------------------------------------------------------------
         protected void PostAction()
         {
-            _statisticAccumulator.SaveRemain();
+            foreach (var algorithm in this.hittingSetAlgorithms)
+                algorithm.StatisticAccumulator.SaveRemain();
         }
         //--------------------------------------------------------------------------------------
     }

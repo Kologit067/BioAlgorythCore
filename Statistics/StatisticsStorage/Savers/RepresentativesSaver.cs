@@ -2,10 +2,11 @@
 using StatisticsStorage.Accumulators.Objects;
 using BioAlgorithm.Data.Representatives.Data;
 using Microsoft.Data.SqlClient;
+using BaseContract.Interfaces;
 
 namespace StatisticsStorage.Savers
 {
-    public class RepresentativesSaver
+    public class RepresentativesSaver : IRepresentativesSaver
     {
         private string _connectionString;
         private readonly RepresentativesRepository _representativesRepository;

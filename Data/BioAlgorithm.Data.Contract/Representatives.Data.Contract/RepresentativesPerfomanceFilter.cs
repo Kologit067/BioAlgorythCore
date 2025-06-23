@@ -21,6 +21,9 @@ namespace Representatives.Data.Contract
         public int? BestValue { get; set; }
         public int TaskTypeFilter { get; set; }
         public string TaskTypeFilterType { get; set; }
+        public int GreedyComparisonFilter { get; set; }
+        public string GreedyComparisonFilterType { get; set; }
+
         public string GetStringKey()
         {
             string key = "I";
@@ -59,6 +62,8 @@ namespace Representatives.Data.Contract
             key += $"TaskTypeFilter-{TaskTypeFilter.ToString()}";
             if (!string.IsNullOrEmpty(TaskTypeFilterType))
                 key += $"TaskTypeFilterType-{TaskTypeFilterType}";
+            if (!string.IsNullOrEmpty(GreedyComparisonFilterType))
+                key += $"GreedyComparisonFilterType-{GreedyComparisonFilterType}";
             return key;
         }
     }

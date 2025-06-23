@@ -30,13 +30,13 @@ namespace BioAlgorithm.Data.Representatives.Data
         //----------------------------------------------------------------------------------------------------------------------
         public async Task<string?> DeleteRepresentativeAlgorithmGroupAsync(RepresentativeAlgorithmGroupDimension selectedAlgorithmGroup)
         {
-            return await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.TotalCount);
+            return await DeleteAsync(selectedAlgorithmGroup.Algorithm, selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.MaxCount);
         }
 
         //----------------------------------------------------------------------------------------------------------------------
         public async Task<string?> DeleteHittingSetInputGroupAsync(HittingSetInputGroup selectedAlgorithmGroup)
         {
-            return await DeleteInputAsync(selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.TotalCount);
+            return await DeleteInputAsync(selectedAlgorithmGroup.NumberOfSet, selectedAlgorithmGroup.Dimension, selectedAlgorithmGroup.MaxCount);
         }
 
         //----------------------------------------------------------------------------------------------------------------------
@@ -143,6 +143,100 @@ GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]";
             }
         }
 
+        public async Task<List<(string Algorithname,int Count)>> GetGeedyAlgorithmGroupDimensionsAsync(int dimension, int numberOfSet, long maxCount)
+        {
+            try
+            {
+                List<(string Algorithname, int Count)> algorithmGroups = new List<(string Algorithname, int Count)>();
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    string sql = $@"SELECT [Algorithm],  COUNT(*) as TotalCount 
+FROM [dbo].[RepresentativesPerfomance] AS rp
+INNER JOIN [dbo].[RepresentativesInput] AS ri
+ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
+WHERE [NumberOfSet] = {numberOfSet} AND [Dimension] = {dimension} AND [MaxCount] = {maxCount} AND [Algorithm] IN ('RepresentativesGreedyImprove','RepresentativesGreedyImproveRD','RepresentativesGreedyRelation','RepresentativesGreedySimple','RepresentativesBranchAndBoundByValue')
+GROUP BY [Algorithm] 
+";
+                    algorithmGroups = (await db.QueryAsync<(string Algorithname, int Count)>(sql, commandTimeout: 180)).ToList();
+                }
+                return algorithmGroups;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+                //return new List<RepresentativeAlgorithmGroupDimension>();
+            }
+        }
+
+
+        public async Task SetGeedyComparisonAsync(int dimension, int numberOfSet, long maxCount)
+        {
+            try
+            {
+                
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    string sql = $@"
+UPDATE ri 
+  SET ri.GreedyComparison = 
+	 CASE
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND  r.BestValue = rgd.BestValue
+				THEN 0
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND  r.BestValue <> rgd.BestValue
+				THEN 1
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 2
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 3
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 4
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 5
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 6
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 7
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 8
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 9
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 10
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 11
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 12
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 13
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 14
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 15
+	END 
+  FROM [BioAlgorithm].[dbo].[RepresentativesInput] AS ri
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as r
+  ON r.RepresentativesInputId = ri.RepresentativesInputId AND r.Algorithm = 'RepresentativesBranchAndBoundByValue' AND ri.Dimension = {dimension} AND ri.NumberOfSet = {numberOfSet} AND ri.MaxCount = {maxCount} 
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgs
+  ON rgs.RepresentativesInputId = ri.RepresentativesInputId AND rgs.Algorithm = 'RepresentativesGreedySimple' AND ri.Dimension = {dimension} AND ri.NumberOfSet = {numberOfSet}  AND ri.MaxCount = {maxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgr
+  ON rgr.RepresentativesInputId = ri.RepresentativesInputId AND rgr.Algorithm = 'RepresentativesGreedyRelation' AND ri.Dimension = {dimension} AND ri.NumberOfSet = {numberOfSet}  AND ri.MaxCount = {maxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgi
+  ON rgi.RepresentativesInputId = ri.RepresentativesInputId AND rgi.Algorithm = 'RepresentativesGreedyImprove' AND ri.Dimension = {dimension} AND ri.NumberOfSet = {numberOfSet}  AND ri.MaxCount = {maxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgd
+  ON rgd.RepresentativesInputId = ri.RepresentativesInputId AND rgd.Algorithm = 'RepresentativesGreedyImproveRD' AND ri.Dimension = {dimension} AND ri.NumberOfSet = {numberOfSet}  AND ri.MaxCount = {maxCount}
+";
+                    await db.ExecuteAsync(sql, commandTimeout: 180);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+                //return new List<RepresentativeAlgorithmGroupDimension>();
+            }
+        }
+
         public async Task<List<HittingSetInputGroup>> GetHittingSetInputGroupAsync(string algorithmGroupListSort)
         {
             try
@@ -150,9 +244,16 @@ GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]";
                 List<HittingSetInputGroup> groups = new List<HittingSetInputGroup>();
                 using (IDbConnection db = new SqlConnection(_connectionString))
                 {
-                    string sql = $@"SELECT [NumberOfSet], [Dimension], [MaxCount], COUNT(*) as TotalCount 
+                    string sql = $@"WITH CTE 
+AS
+(
+SELECT [NumberOfSet], [Dimension], [MaxCount], COUNT(*) as TotalCount, SUM (IIF([TypeTask] > 0, 1, 0)) AS SumTypaTask,
+SUM (IIF([Isomorphic] IS NOT NULL, 1, 0)) AS SumIsomorphic, SUM (IIF(IsomorphicBipart IS NOT NULL, 1, 0)) AS SumIsomorphicBipart
 FROM [dbo].[RepresentativesInput] AS ri
-GROUP BY [NumberOfSet], [Dimension], [MaxCount] ";
+GROUP BY [NumberOfSet], [Dimension], [MaxCount]
+)
+SELECT [NumberOfSet], [Dimension], [MaxCount], TotalCount, SumTypaTask, SUBSTRING(CAST(CAST(SumTypaTask AS NUMERIC(19,4))/TotalCount AS VARCHAR),1,5) AS TypeTaskRelation, SumIsomorphic, SumIsomorphicBipart
+FROM CTE ";
                     if (!string.IsNullOrEmpty(algorithmGroupListSort))
                         sql += $@"ORDER BY {algorithmGroupListSort}
 ";
@@ -233,7 +334,7 @@ GROUP BY [Algorithm]";
             {
                 whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
             }
-            if (representativesPerfomanceFilter.Step.HasValue)
+            if (representativesPerfomanceFilter.Step.HasValue && representativesPerfomanceFilter.Step.Value > 0)
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
@@ -305,7 +406,7 @@ ORDER BY {order}";
         }
 
         //----------------------------------------------------------------------------------------------------------------------
-        public async Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
+        public async Task<List<RepresentativesInputDao>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
         {
             string top = "";
             if (representativesPerfomanceFilter.Top.HasValue)
@@ -322,7 +423,7 @@ ORDER BY {order}";
             {
                 whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
             }
-            if (representativesPerfomanceFilter.Step.HasValue)
+            if (representativesPerfomanceFilter.Step.HasValue && representativesPerfomanceFilter.Step.Value > 0)
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
@@ -338,6 +439,7 @@ ORDER BY {order}";
             {
                 whereList.Add($"[InputLenSort] = '{representativesPerfomanceFilter.InputLenSort}'");
             }
+
             if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Or")
             {
                 whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0");
@@ -346,21 +448,140 @@ ORDER BY {order}";
             {
                 whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter}");
             }
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Exact =")
+            {
+                whereList.Add($"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})");
+            }
+
             if (whereList.Count > 0)
             {
                 where = "WHERE " + string.Join(" AND ", whereList);
             }
-            List<RepresentativesInput> representativesInputs = new List<RepresentativesInput>();
+            List<RepresentativesInputDao> representativesInputs = new List<RepresentativesInputDao>();
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
                 string query = $@"SELECT {top} RepresentativesInputId, [NumberOfSet],[Dimension],[Step],MaxCount,[InputLen],[InputLenSort]
-      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, IsomorphismResult, IsomorphismBipartResult, TypeTask
+      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, IsomorphismResult, IsomorphismBipartResult, TypeTask, GreedyComparison
 FROM [dbo].[RepresentativesInput] AS ri
 {where}
 ORDER BY {order}";
-                representativesInputs = (await db.QueryAsync<RepresentativesInput>(query, commandTimeout: 180)).ToList();
+                representativesInputs = (await db.QueryAsync<RepresentativesInputDao>(query, commandTimeout: 180)).ToList();
             }
             updateIsomorphicDict.Clear();
+            return representativesInputs;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        public async Task<List<InputDataGreedyComparison>> GetInputDataGreedyComparisonsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
+        {
+            string top = "";
+            if (representativesPerfomanceFilter.Top.HasValue)
+            {
+                top = $"TOP ({representativesPerfomanceFilter.Top})";
+            }
+            string where = "";
+            List<string> whereList = new List<string>();
+            whereList.Add($"[NumberOfSet] = {representativesPerfomanceFilter.NumberOfSet}");
+            whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
+            whereList.Add($"[MaxCount] = {representativesPerfomanceFilter.MaxCount}");
+            if (!string.IsNullOrWhiteSpace(representativesPerfomanceFilter.InputLen))
+            {
+                whereList.Add($"[InputLen] = '{representativesPerfomanceFilter.InputLen}'");
+            }
+            if (!string.IsNullOrWhiteSpace(representativesPerfomanceFilter.InputLenSort))
+            {
+                whereList.Add($"[InputLenSort] = '{representativesPerfomanceFilter.InputLenSort}'");
+            }
+
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Or")
+            {
+                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0");
+            }
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "And")
+            {
+                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter}");
+            }
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Exact =")
+            {
+                whereList.Add($"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})");
+            }
+
+            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "Or")
+            {
+                whereList.Add($"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) != 0");
+            }
+            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "And")
+            {
+                whereList.Add($"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) = {representativesPerfomanceFilter.GreedyComparisonFilter}");
+            }
+            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "Exact =")
+            {
+                whereList.Add($"([GreedyComparison] = {representativesPerfomanceFilter.GreedyComparisonFilter})");
+            }
+
+            if (whereList.Count > 0)
+            {
+                where = "WHERE " + string.Join(" AND ", whereList);
+            }
+            List<InputDataGreedyComparison> representativesInputs = new List<InputDataGreedyComparison>();
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                string query = $@"
+  SELECT ri.RepresentativesInputId, 
+     r.[Algorithm], r.BestValue, 
+	 CASE
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND  r.BestValue = rgd.BestValue
+				THEN 0
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND  r.BestValue <> rgd.BestValue
+				THEN 1
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 2
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 3
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 4
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 5
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 6
+		WHEN r.BestValue = rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 7
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 8
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 9
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 10
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue = rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 11
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 12
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue = rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 13
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue = rgd.BestValue
+				THEN 14
+		WHEN r.BestValue <> rgs.BestValue AND r.BestValue <> rgr.BestValue AND r.BestValue <> rgi.BestValue AND r.BestValue <> rgd.BestValue
+				THEN 15
+	END AS GreedyComparisonCalc, GreedyComparison,
+	rgs.[Algorithm] as AlgorithmSimple, rgs.BestValue as BestValueSimple, 
+	rgr.[Algorithm] as AlgorithmRelation, rgr.BestValue as BestValueRelation, 
+	rgi.[Algorithm] as AlgorithmImprove, rgi.BestValue as BestValueImprove, 
+	rgd.[Algorithm] as AlgorithmImproveRD, rgd.BestValue as BestValueImproveRD, 
+	TypeTask,InputData, [NumberOfSet], [Dimension], MAXCOUNT
+  FROM [BioAlgorithm].[dbo].[RepresentativesInput] AS ri
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as r 
+  ON r.RepresentativesInputId = ri.RepresentativesInputId AND r.Algorithm = 'RepresentativesBranchAndBoundByValue' AND ri.Dimension = {representativesPerfomanceFilter.Dimension} AND ri.NumberOfSet = {representativesPerfomanceFilter.NumberOfSet} AND ri.MaxCount = {representativesPerfomanceFilter.MaxCount} 
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgs
+  ON rgs.RepresentativesInputId = ri.RepresentativesInputId AND rgs.Algorithm = 'RepresentativesGreedySimple' AND ri.Dimension = {representativesPerfomanceFilter.Dimension} AND ri.NumberOfSet = {representativesPerfomanceFilter.NumberOfSet}  AND ri.MaxCount = {representativesPerfomanceFilter.MaxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgr
+  ON rgr.RepresentativesInputId = ri.RepresentativesInputId AND rgr.Algorithm = 'RepresentativesGreedyRelation' AND ri.Dimension = {representativesPerfomanceFilter.Dimension} AND ri.NumberOfSet = {representativesPerfomanceFilter.NumberOfSet}  AND ri.MaxCount = {representativesPerfomanceFilter.MaxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgi
+  ON rgi.RepresentativesInputId = ri.RepresentativesInputId AND rgi.Algorithm = 'RepresentativesGreedyImprove' AND ri.Dimension = {representativesPerfomanceFilter.Dimension} AND ri.NumberOfSet = {representativesPerfomanceFilter.NumberOfSet}  AND ri.MaxCount = {representativesPerfomanceFilter.MaxCount}
+  INNER JOIN [BioAlgorithm].[dbo].[RepresentativesPerfomance] as rgd
+  ON rgd.RepresentativesInputId = ri.RepresentativesInputId AND rgd.Algorithm = 'RepresentativesGreedyImproveRD' AND ri.Dimension = {representativesPerfomanceFilter.Dimension} AND ri.NumberOfSet = {representativesPerfomanceFilter.NumberOfSet} AND ri.MaxCount = {representativesPerfomanceFilter.MaxCount}
+{where}
+ORDER BY {order}";
+                representativesInputs = (await db.QueryAsync<InputDataGreedyComparison>(query, commandTimeout: 180)).ToList();
+            }
             return representativesInputs;
         }
 
@@ -591,7 +812,7 @@ ra.[Algorithm] = '{representativesPerfomanceCompareFilter.Algorithm1}' AND rb.[A
             {
                 whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
             }
-            if (representativesPerfomanceFilter.Step.HasValue)
+            if (representativesPerfomanceFilter.Step.HasValue && representativesPerfomanceFilter.Step.Value > 0)
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }
@@ -637,7 +858,7 @@ SET [IsomorphicBipart] = NULL, [IsomorphismBipartResult] = NULL
             {
                 whereList.Add($"[Dimension] = {representativesPerfomanceFilter.Dimension}");
             }
-            if (representativesPerfomanceFilter.Step.HasValue)
+            if (representativesPerfomanceFilter.Step.HasValue && representativesPerfomanceFilter.Step.Value > 0)
             {
                 whereList.Add($"[Step] = {representativesPerfomanceFilter.Step}");
             }

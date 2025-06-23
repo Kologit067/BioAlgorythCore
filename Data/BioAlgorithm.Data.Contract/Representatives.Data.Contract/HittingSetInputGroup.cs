@@ -8,5 +8,9 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
         public long Step { get; set; }
         public long MaxCount { get; set; }
         public long TotalCount { get; set; }
+        public long SumTypaTask { get; set; }
+        public string TypeTaskRelation { get; set; }
+        public long SumIsomorphic { get; set; }
+        public long SumIsomorphicBipart { get; set; }
     }
 }

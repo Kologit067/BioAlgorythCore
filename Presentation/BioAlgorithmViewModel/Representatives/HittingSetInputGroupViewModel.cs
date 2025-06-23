@@ -4,16 +4,17 @@ using BioAlgorithmViewModel.Common;
 using BioAlgorithmViewModel.Mappings;
 using BioAlgorithmViewModel.Representatives.Messages;
 using BioAlgorithmViewModel.Representatives.Utility;
-using Representatives.Data.Contract;
 using System.Windows.Input;
 using BioAlgorithm.Data.Contract.Representatives.Data.Contract;
+using BioAlgorithmViewModel.Interfaces;
+using Representatives.Data.Contract;
 
 namespace BioAlgorithmViewModel.Representatives
 {
     //----------------------------------------------------------------------------------------------------------------------
     // class HittingSetInputGroupViewModel
     //----------------------------------------------------------------------------------------------------------------------
-    public class HittingSetInputGroupViewModel : HittingSetBaseViewModel
+    public class HittingSetInputGroupViewModel : HittingSetBaseViewModel, IInputAlgorithmViewModel
     {
         //----------------------------------------------------------------------------------------------------------------------
         private ObservableCollection<HittingSetInputGroup> hittingSetInputGroups;
@@ -233,18 +234,27 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         private async void DeleteGroupAction()
         {
-            ExecutionState = "Operation running...";
-            refreshHittingSetInputGroupEnable = false;
-            string? result = await representativesRepository.DeleteHittingSetInputGroupAsync(SelectedHittingSetInputGroup);
-            if (string.IsNullOrEmpty(result))
+            Messenger.Default.Send<DeleteAlgorithmInputMessage>(new DeleteAlgorithmInputMessage()
             {
-                HittingSetInputGroups.Remove(SelectedHittingSetInputGroup);
-                ExecutionState = "Operation completed";
-            }
-            {
-                ExecutionState = $"Operation failed: {result}";
-            }
-            refreshHittingSetInputGroupEnable = true;
+                DeleteAlgorithmInputType = DeleteAlgorithmInputTypeEnum.Input,
+                InputAlgorithmViewModel = this,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+            }, typeof(DeleteAlgorithmInputMessage));
+
+            //ExecutionState = "Operation running...";
+            //refreshHittingSetInputGroupEnable = false;
+            //string? result = await representativesRepository.DeleteHittingSetInputGroupAsync(SelectedHittingSetInputGroup);
+            //if (string.IsNullOrEmpty(result))
+            //{
+            //    HittingSetInputGroups.Remove(SelectedHittingSetInputGroup);
+            //    ExecutionState = "Operation completed";
+            //}
+            //{
+            //    ExecutionState = $"Operation failed: {result}";
+            //}
+            //refreshHittingSetInputGroupEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanDeleteGroupAction()
@@ -252,6 +262,224 @@ namespace BioAlgorithmViewModel.Representatives
             return true;
         }
         //----------------------------------------------------------------------------------------------------------------------
+        public void DeleteSelectedItem()
+        {
+            HittingSetInputGroups.Remove(SelectedHittingSetInputGroup);
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runTaskInputCommand;
+        public ICommand RunTaskInputCommand
+        {
+            get
+            {
+                if (runTaskInputCommand == null)
+                {
+                    runTaskInputCommand = new DelegateCommand(RunTaskInputAction, CanRunTaskInputAction);
+                }
+                return runTaskInputCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunTaskInputAction()
+        {
+            Messenger.Default.Send<StartTaskMessage>(new StartTaskMessage()
+            {
+                Algorithm = null,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount,
+            }, typeof(StartTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunTaskInputAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runTaskStepInputCommand;
+        public ICommand RunTaskStepInputCommand
+        {
+            get
+            {
+                if (runTaskStepInputCommand == null)
+                {
+                    runTaskStepInputCommand = new DelegateCommand(RunTaskStepInputAction, CanRunTaskStepInputAction);
+                }
+                return runTaskStepInputCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunTaskStepInputAction()
+        {
+            Messenger.Default.Send<StartTaskStepMessage>(new StartTaskStepMessage()
+            {
+                Algorithm = null,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(StartTaskStepMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunTaskStepInputAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runIsomorphismCommand;
+        public ICommand RunIsomorphismCommand
+        {
+            get
+            {
+                if (runIsomorphismCommand == null)
+                {
+                    runIsomorphismCommand = new DelegateCommand(RunIsomorphismAction, CanRunIsomorphismAction);
+                }
+                return runIsomorphismCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunIsomorphismAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.Isomorphism,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunIsomorphismAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runIsomorphismBiPartCommand;
+        public ICommand RunIsomorphismBiPartCommand
+        {
+            get
+            {
+                if (runIsomorphismBiPartCommand == null)
+                {
+                    runIsomorphismBiPartCommand = new DelegateCommand(RunIsomorphismBiPartAction, CanRunIsomorphismBiPartAction);
+                }
+                return runIsomorphismBiPartCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunIsomorphismBiPartAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.IsomorphismByPart,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunIsomorphismBiPartAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runTypeTaskCommand;
+        public ICommand RunTypeTaskCommand
+        {
+            get
+            {
+                if (runTypeTaskCommand == null)
+                {
+                    runTypeTaskCommand = new DelegateCommand(RunTypeTaskAction, CanRunTypeTaskAction);
+                }
+                return runTypeTaskCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunTypeTaskAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.DefineTypeTask,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(StartInputTaskMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunTypeTaskAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runGreedyComparisonCommand;
+        public ICommand RunGreedyComparisonCommand
+        {
+            get
+            {
+                if (runGreedyComparisonCommand == null)
+                {
+                    runGreedyComparisonCommand = new DelegateCommand(RunGreedyComparisonAction, CanRunGreedyComparisonAction);
+                }
+                return runGreedyComparisonCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunGreedyComparisonAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.DefineGreedyComparison,
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(StartInputTaskMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunGreedyComparisonAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand toInputGeedyComparisonCommand;
+        public ICommand ToInputGeedyComparisonCommand
+        {
+            get
+            {
+                if (toInputGeedyComparisonCommand == null)
+                {
+                    toInputGeedyComparisonCommand = new DelegateCommand(ToInputGeedyComparisonAction, CanToInputGeedyComparisonAction);
+                }
+                return toInputGeedyComparisonCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private void ToInputGeedyComparisonAction()
+        {
+            Messenger.Default.Send<RepresentativeTabChangeMessage>(new RepresentativeTabChangeMessage()
+            {
+                RepresentativeTabName = "InputDataGreedyComparison"
+            }, typeof(RepresentativeTabChangeMessage));
+            Messenger.Default.Send<InputDataGreedyComparisonToFilterMessage>(new InputDataGreedyComparisonToFilterMessage()
+            {
+                Dimension = SelectedHittingSetInputGroup.Dimension,
+                NumberOfSet = SelectedHittingSetInputGroup.NumberOfSet,
+                Step = SelectedHittingSetInputGroup.Step,
+                MaxCount = SelectedHittingSetInputGroup.MaxCount
+            }, typeof(InputDataGreedyComparisonToFilterMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanToInputGeedyComparisonAction()
+        {
+            return true;
+        }
     }
 
 }

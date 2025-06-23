@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Accumulators\" />
-    <Folder Include="Savers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Algorithm\Base\BaseContract\BaseContract.csproj" />
     <ProjectReference Include="..\..\Data\BioAlgorithm.Data.Contract\BioAlgorithm.Data.Contract.csproj" />
     <ProjectReference Include="..\..\Data\BioAlgorithm.Data\BioAlgorithm.Data.csproj" />

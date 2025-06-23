@@ -66,7 +66,7 @@ namespace BioAlgorithmViewModel.Common
         }
 
         //----------------------------------------------------------------------------------------------------------------------
-        private string executionState;
+        protected string executionState;
         public string ExecutionState
         {
             get

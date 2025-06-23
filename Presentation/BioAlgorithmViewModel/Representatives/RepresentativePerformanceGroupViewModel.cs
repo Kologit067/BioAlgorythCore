@@ -6,13 +6,14 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using BioAlgorithm.Data.Representatives.Data;
 using Representatives.Data.Contract;
+using BioAlgorithmViewModel.Interfaces;
 
 namespace BioAlgorithmViewModel.Representatives
 {
     //----------------------------------------------------------------------------------------------------------------------
     // class RepresentativePerformanceGroupViewModel
     //----------------------------------------------------------------------------------------------------------------------
-    public class RepresentativePerformanceGroupViewModel : HittingSetBaseViewModel
+    public class RepresentativePerformanceGroupViewModel : HittingSetBaseViewModel, IInputAlgorithmViewModel
     {
         //----------------------------------------------------------------------------------------------------------------------
         private ObservableCollection<RepresentativeAlgorithmGroupDimension> representativeAlgorithmGroupByDimensions;
@@ -78,7 +79,7 @@ namespace BioAlgorithmViewModel.Representatives
             AlgorithmGroupSortItems = new List<string>()
             {
                 "Algorithm, Dimension, NumberOfSet",
-                "Algorithm, NumberOfSet, NumberOfSet",
+                "Algorithm, NumberOfSet, Dimension",
                 "Dimension, NumberOfSet, Algorithm",
                 "NumberOfSet, Dimension, Algorithm"
             };
@@ -224,6 +225,39 @@ namespace BioAlgorithmViewModel.Representatives
             return true;
         }
         //----------------------------------------------------------------------------------------------------------------------
+        private ICommand toInputGeedyComparisonCommand;
+        public ICommand ToInputGeedyComparisonCommand
+        {
+            get
+            {
+                if (toInputGeedyComparisonCommand == null)
+                {
+                    toInputGeedyComparisonCommand = new DelegateCommand(ToInputGeedyComparisonAction, CanToInputGeedyComparisonAction);
+                }
+                return toInputGeedyComparisonCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private void ToInputGeedyComparisonAction()
+        {
+            Messenger.Default.Send<RepresentativeTabChangeMessage>(new RepresentativeTabChangeMessage()
+            {
+                RepresentativeTabName = "InputDataGreedyComparison"
+            }, typeof(RepresentativeTabChangeMessage));
+            Messenger.Default.Send<InputDataGreedyComparisonToFilterMessage>(new InputDataGreedyComparisonToFilterMessage()
+            {
+                Dimension = SelectedAlgorithmGroup.Dimension,
+                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
+                Step = SelectedAlgorithmGroup.Step,
+                MaxCount = SelectedAlgorithmGroup.MaxCount
+            }, typeof(InputDataGreedyComparisonToFilterMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanToInputGeedyComparisonAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private ICommand openInWindowCommand;
         public ICommand OpenInWindowCommand
         {
@@ -269,21 +303,66 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         private async void DeleteGroupAction()
         {
-            ExecutionState = "Operation running...";
-            refreshRepresentativeAlgorithmGroupEnable = false;
-            string? result = await representativesRepository.DeleteRepresentativeAlgorithmGroupAsync(SelectedAlgorithmGroup);
-            if (string.IsNullOrEmpty(result))
+            Messenger.Default.Send<DeleteAlgorithmInputMessage>(new DeleteAlgorithmInputMessage()
             {
-                RepresentativeAlgorithmGroupByDimensions.Remove(SelectedAlgorithmGroup);
-                ExecutionState = "Operation completed";
-            }
-            {
-                ExecutionState = $"Operation failed: {result}";
-            }
-            refreshRepresentativeAlgorithmGroupEnable = true;
+                DeleteAlgorithmInputType = DeleteAlgorithmInputTypeEnum.AlgorithmInput,
+                InputAlgorithmViewModel = this,
+                Algorithm = SelectedAlgorithmGroup.Algorithm,
+                MaxCount = SelectedAlgorithmGroup.MaxCount,
+                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
+                Dimension = SelectedAlgorithmGroup.Dimension,
+            }, typeof(DeleteAlgorithmInputMessage));
+
+            //ExecutionState = "Operation running...";
+            //refreshRepresentativeAlgorithmGroupEnable = false;
+            //string? result = await representativesRepository.DeleteRepresentativeAlgorithmGroupAsync(SelectedAlgorithmGroup);
+            //if (string.IsNullOrEmpty(result))
+            //{
+            //    RepresentativeAlgorithmGroupByDimensions.Remove(SelectedAlgorithmGroup);
+            //    ExecutionState = "Operation completed";
+            //}
+            //{
+            //    ExecutionState = $"Operation failed: {result}";
+            //}
+            //refreshRepresentativeAlgorithmGroupEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanDeleteGroupAction()
+        {
+            return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        public void DeleteSelectedItem()
+        {
+            RepresentativeAlgorithmGroupByDimensions.Remove(SelectedAlgorithmGroup);
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runGreedyComparisonCommand;
+        public ICommand RunGreedyComparisonCommand
+        {
+            get
+            {
+                if (runGreedyComparisonCommand == null)
+                {
+                    runGreedyComparisonCommand = new DelegateCommand(RunGreedyComparisonAction, CanRunGreedyComparisonAction);
+                }
+                return runGreedyComparisonCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunGreedyComparisonAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.DefineGreedyComparison,
+                Dimension = SelectedAlgorithmGroup.Dimension,
+                NumberOfSet = SelectedAlgorithmGroup.NumberOfSet,
+                Step = SelectedAlgorithmGroup.Step,
+                MaxCount = SelectedAlgorithmGroup.MaxCount
+            }, typeof(StartInputTaskMessage));
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunGreedyComparisonAction()
         {
             return true;
         }

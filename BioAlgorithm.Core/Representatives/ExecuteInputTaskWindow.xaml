@@ -5,32 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BioAlgorithm.Core.Representatives"
         mc:Ignorable="d"
-        Title="Prepare And Execute tasks on Input table" Height="150" Width="700"
+        Title="Prepare And Execute tasks on Input table" Height="180" Width="700"
         Loaded="Window_Loaded" WindowStartupLocation="CenterScreen"
         >
     <Grid Background="#EEF2EE">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="31*" />
+            <ColumnDefinition Width="129*"/>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="80*"/>
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" FontSize="13" Content="{Binding Content}" Margin="2,2,2,2"/>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" FontSize="13" FontWeight="Bold" Content="{Binding Title}" Margin="2,10,2,2"/>
         <Label Grid.Row="1" Grid.Column="0" Content="Dimension" Margin="2,2,2,2"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Dimension}" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
-        <Label Grid.Row="1" Grid.Column="2" Content="NumberOfSet" Margin="2,2,2,2"/>
-        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding NumberOfSet}" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Dimension}" Margin="2,2,2,2" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+        <Label Grid.Row="1" Grid.Column="3" Content="NumberOfSet" Margin="2,2,2,2"/>
+        <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding NumberOfSet}" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
         <Label Grid.Row="2" Grid.Column="0" Content="MaxCount" Margin="2,2,2,2"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MaxCount}" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
-        <Button Grid.Row="1" Grid.Column="4" Padding="3,1,3,1" Margin="7" Content="Execute" Command="{Binding ExecuteTaskCommand}"/>
-        <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding ExecutionState}" Margin="2,2,2,2"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MaxCount}" Margin="2,2,2,2" VerticalContentAlignment="Center" Grid.ColumnSpan="2"/>
+        <Button Grid.Row="1" Grid.Column="5" Padding="3,1,3,1" Margin="7,7,7,7" Content="Execute" Command="{Binding ExecuteTaskCommand}"/>
+        <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Content="{Binding ExecutionState}" Margin="2,2,2,2"/>
     </Grid>
 </Window>

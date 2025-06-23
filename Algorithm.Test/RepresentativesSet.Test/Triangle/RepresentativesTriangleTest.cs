@@ -1,7 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BaseContract.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RepresentativesSet;
 using RepresentativesSet.BranchAndBound;
 using RepresentativesSet.Greedy;
+using RepresentativesSet.Test.Step.Base;
 using RepresentativesSet.TriangleEnumeration;
 using RepresentativesSet.TriangleEnumeration.SelectElement;
 using RepresentativesSetTest.Base;
@@ -146,9 +148,17 @@ namespace RepresentativesSetTest.Triangle
         public void RepresentativesTriangleCompareTestCase5_5()
         {
             // arrange
-            int сardinality = 5;
+            int cardinality = 5;
             int length = 5;
-            EnumerateIntegerTrangleForRepresentativesTriangleCompare enumeration = new EnumerateIntegerTrangleForRepresentativesTriangleCompare(сardinality, length);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new RepresentativesTriangle(cardinality),
+                new RepresentativesTriangleStrategy(cardinality, new SelectElementSimpleStrategy()),
+                new RepresentativesTriangleStrategy(cardinality, new SelectElementImproveStrategy()),
+                new RepresentativesTriangleStrategy(cardinality, new SelectElementImproveRDStrategy()),
+                new RepresentativesTriangleStrategy(cardinality, new SelectElementRelationStrategy())
+            };
+            HittingSetAlgorithmTestRunner enumeration = new HittingSetAlgorithmTestRunner(hittingSetAlgorithms, cardinality, length);
             // act
             enumeration.Execute();
             // assert
@@ -159,9 +169,14 @@ namespace RepresentativesSetTest.Triangle
         public void RepresentativesTriangleBBCompareTestCase5_5()
         {
             // arrange
-            int сardinality = 5;
+            int cardinality = 5;
             int length = 5;
-            EnumerateIntegerTrangleForRepresentativesTriangleBBCompare enumeration = new EnumerateIntegerTrangleForRepresentativesTriangleBBCompare(сardinality, length);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new BruteForceRepresentativesAsTree(cardinality),
+                new RepresentativesTriangleBranchAndBound(cardinality)
+            };
+            HittingSetAlgorithmTestRunner enumeration = new HittingSetAlgorithmTestRunner(hittingSetAlgorithms, cardinality, length);
             // act
             enumeration.Execute();
             // assert
@@ -172,9 +187,14 @@ namespace RepresentativesSetTest.Triangle
         public void RepresentativesTriangleBBCompareTestCase5_8()
         {
             // arrange
-            int сardinality = 5;
+            int cardinality = 5;
             int length = 8;
-            EnumerateIntegerTrangleForRepresentativesTriangleBBCompare enumeration = new EnumerateIntegerTrangleForRepresentativesTriangleBBCompare(сardinality, length);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new BruteForceRepresentativesAsTree(cardinality),
+                new RepresentativesTriangleBranchAndBound(cardinality)
+            };
+            HittingSetAlgorithmTestRunner enumeration = new HittingSetAlgorithmTestRunner(hittingSetAlgorithms, cardinality, length);
             // act
             enumeration.Execute();
             // assert
@@ -185,9 +205,14 @@ namespace RepresentativesSetTest.Triangle
         public void RepresentativesTriangleBBCompareTestCase6_6()
         {
             // arrange
-            int сardinality = 6;
+            int cardinality = 6;
             int length = 6;
-            EnumerateIntegerTrangleForRepresentativesTriangleBBCompare enumeration = new EnumerateIntegerTrangleForRepresentativesTriangleBBCompare(сardinality, length);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new BruteForceRepresentativesAsTree(cardinality),
+                new RepresentativesTriangleBranchAndBound(cardinality)
+            };
+            HittingSetAlgorithmTestRunner enumeration = new HittingSetAlgorithmTestRunner(hittingSetAlgorithms, cardinality, length);
             // act
             enumeration.Execute();
             // assert
@@ -200,147 +225,148 @@ namespace RepresentativesSetTest.Triangle
     //--------------------------------------------------------------------------------------
     // class EnumerateIntegerTrangleForRepresentativesTriangleCompare
     //--------------------------------------------------------------------------------------
-    public class EnumerateIntegerTrangleForRepresentativesTriangleCompare : EnumerateRepresentativesTestBase
-    {
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
-        private RepresentativesStatisticAccumulator _statisticAccumulatorStrategy;
-        private RepresentativesStatisticAccumulator _statisticAccumulatorImproveStrategy;
-        private RepresentativesStatisticAccumulator _statisticAccumulatorImproveRDStrategy;
-        private RepresentativesStatisticAccumulator _statisticAccumulatorRelationStrategy;
-        private BruteForceRepresentativesAsTree bruteForceAsTree;
-        private RepresentativesTriangle representativesTriangle;
-        private RepresentativesTriangleStrategy representativesTriangleStrategy;
-        private RepresentativesTriangleStrategy representativesTriangleImroveStrategy;
-        private RepresentativesTriangleStrategy representativesTriangleImroveRDStrategy;
-        private RepresentativesTriangleStrategy representativesTriangleRelationStrategy;
-        //--------------------------------------------------------------------------------------
-        public EnumerateIntegerTrangleForRepresentativesTriangleCompare(int pCardinality, int pLength, int pMinimumValue = 1, int pForwardAdditive = 1, decimal step = 1, int bufferSize = 2000)
-            : base(pCardinality, pLength, pMinimumValue, pForwardAdditive)
-        {
-            _fBreakElement = 0;
-            _fCardinality = pCardinality;
+    //public class EnumerateIntegerTrangleForRepresentativesTriangleCompare : EnumerateRepresentativesTestBase
+    //{
+    //    private RepresentativesStatisticAccumulator _statisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _statisticAccumulatorStrategy;
+    //    private RepresentativesStatisticAccumulator _statisticAccumulatorImproveStrategy;
+    //    private RepresentativesStatisticAccumulator _statisticAccumulatorImproveRDStrategy;
+    //    private RepresentativesStatisticAccumulator _statisticAccumulatorRelationStrategy;
+    //    private BruteForceRepresentativesAsTree bruteForceAsTree;
+    //    private RepresentativesTriangle representativesTriangle;
+    //    private RepresentativesTriangleStrategy representativesTriangleStrategy;
+    //    private RepresentativesTriangleStrategy representativesTriangleImroveStrategy;
+    //    private RepresentativesTriangleStrategy representativesTriangleImroveRDStrategy;
+    //    private RepresentativesTriangleStrategy representativesTriangleRelationStrategy;
+    //    //--------------------------------------------------------------------------------------
+    //    public EnumerateIntegerTrangleForRepresentativesTriangleCompare(int pCardinality, int pLength, int pMinimumValue = 1, int pForwardAdditive = 1, int bufferSize = 2000)
+    //        : base(pCardinality, pLength, pMinimumValue, pForwardAdditive)
+    //    {
+    //        _fBreakElement = 0;
+    //        _fCardinality = pCardinality;
 
-            representativesTriangle = new RepresentativesTriangle(_fCardinality);
-            representativesTriangleStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementSimpleStrategy());
-            representativesTriangleImroveStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementImproveStrategy());
-            representativesTriangleImroveRDStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementImproveRDStrategy());
-            representativesTriangleRelationStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementRelationStrategy());
+    //        representativesTriangle = new RepresentativesTriangle(_fCardinality);
+    //        representativesTriangleStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementSimpleStrategy());
+    //        representativesTriangleImroveStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementImproveStrategy());
+    //        representativesTriangleImroveRDStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementImproveRDStrategy());
+    //        representativesTriangleRelationStrategy = new RepresentativesTriangleStrategy(_fCardinality, new SelectElementRelationStrategy());
 
-            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, step, bufferSize);
-            _statisticAccumulator.DeleteAsync(representativesTriangle.AlgorithmName).Wait();
-            _statisticAccumulatorStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, step, bufferSize);
-            _statisticAccumulatorStrategy.DeleteAsync(representativesTriangleStrategy.AlgorithmName).Wait();
-            _statisticAccumulatorImproveStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, step, bufferSize);
-            _statisticAccumulatorImproveStrategy.DeleteAsync(representativesTriangleImroveStrategy.AlgorithmName).Wait();
-            _statisticAccumulatorImproveRDStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, step, bufferSize);
-            _statisticAccumulatorImproveRDStrategy.DeleteAsync(representativesTriangleImroveRDStrategy.AlgorithmName).Wait();
-            _statisticAccumulatorRelationStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, step, bufferSize);
-            _statisticAccumulatorRelationStrategy.DeleteAsync(representativesTriangleRelationStrategy.AlgorithmName).Wait();
+    //        _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 1, bufferSize);
+    //        _statisticAccumulator.DeleteAsync(representativesTriangle.AlgorithmName).Wait();
+    //        _statisticAccumulatorStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 0, 1, bufferSize);
+    //        _statisticAccumulatorStrategy.DeleteAsync(representativesTriangleStrategy.AlgorithmName).Wait();
+    //        _statisticAccumulatorImproveStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 0, 1, bufferSize);
+    //        _statisticAccumulatorImproveStrategy.DeleteAsync(representativesTriangleImroveStrategy.AlgorithmName).Wait();
+    //        _statisticAccumulatorImproveRDStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 0, 1, bufferSize);
+    //        _statisticAccumulatorImproveRDStrategy.DeleteAsync(representativesTriangleImroveRDStrategy.AlgorithmName).Wait();
+    //        _statisticAccumulatorRelationStrategy = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 0, 1, bufferSize);
+    //        _statisticAccumulatorRelationStrategy.DeleteAsync(representativesTriangleRelationStrategy.AlgorithmName).Wait();
 
-            bruteForceAsTree = new BruteForceRepresentativesAsTree(_fCardinality);
+    //        bruteForceAsTree = new BruteForceRepresentativesAsTree(_fCardinality);
 
-            representativesTriangle.StatisticAccumulator = _statisticAccumulator;
-            representativesTriangleStrategy.StatisticAccumulator = _statisticAccumulatorStrategy;
-            representativesTriangleImroveStrategy.StatisticAccumulator = _statisticAccumulatorImproveStrategy;
-            representativesTriangleImroveRDStrategy.StatisticAccumulator = _statisticAccumulatorImproveRDStrategy;
-            representativesTriangleRelationStrategy.StatisticAccumulator = _statisticAccumulatorRelationStrategy;
+    //        representativesTriangle.StatisticAccumulator = _statisticAccumulator;
+    //        representativesTriangleStrategy.StatisticAccumulator = _statisticAccumulatorStrategy;
+    //        representativesTriangleImroveStrategy.StatisticAccumulator = _statisticAccumulatorImproveStrategy;
+    //        representativesTriangleImroveRDStrategy.StatisticAccumulator = _statisticAccumulatorImproveRDStrategy;
+    //        representativesTriangleRelationStrategy.StatisticAccumulator = _statisticAccumulatorRelationStrategy;
 
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void ActAction(int[][] listOfSet)
-        {
-            bruteForceAsTree.Execute(listOfSet);
-            bruteForceAsTree.OptimalSets = bruteForceAsTree.OptimalSets.OrderBy(s => s).ToList();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void ActAction(int[][] listOfSet)
+    //    {
+    //        bruteForceAsTree.Execute(listOfSet);
+    //        bruteForceAsTree.OptimalSets = bruteForceAsTree.OptimalSets.OrderBy(s => s).ToList();
 
-            representativesTriangle.Execute(listOfSet);
-            representativesTriangle.SortSolutions();
+    //        representativesTriangle.Execute(listOfSet);
+    //        representativesTriangle.SortSolutions();
 
-            representativesTriangleStrategy.Execute(listOfSet);
-            representativesTriangleStrategy.SortSolutions();
+    //        representativesTriangleStrategy.Execute(listOfSet);
+    //        representativesTriangleStrategy.SortSolutions();
 
-            representativesTriangleImroveStrategy.Execute(listOfSet);
-            representativesTriangleImroveStrategy.SortSolutions();
+    //        representativesTriangleImroveStrategy.Execute(listOfSet);
+    //        representativesTriangleImroveStrategy.SortSolutions();
 
-            representativesTriangleImroveRDStrategy.Execute(listOfSet);
-            representativesTriangleImroveRDStrategy.SortSolutions();
+    //        representativesTriangleImroveRDStrategy.Execute(listOfSet);
+    //        representativesTriangleImroveRDStrategy.SortSolutions();
 
-            representativesTriangleRelationStrategy.Execute(listOfSet);
-            representativesTriangleRelationStrategy.SortSolutions();
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void AssertAction()
-        {
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, bruteForceAsTree.OptimalSets.Count, "Wrong number rows in result");
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleStrategy.OptimalSets.Count, "Wrong number rows in result");
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleImroveStrategy.OptimalSets.Count, "Wrong number rows in result");
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleImroveRDStrategy.OptimalSets.Count, "Wrong number rows in result");
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleRelationStrategy.OptimalSets.Count, "Wrong number rows in result");
-            for (int i = 0; i < representativesTriangle.OptimalSets.Count; i++)
-            {
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], bruteForceAsTree.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {bruteForceAsTree.OptimalSets[i]}");
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleImroveStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleImroveRDStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleRelationStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
-            }
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void PostAction()
-        {
-            _statisticAccumulator.SaveRemain();
-            _statisticAccumulatorStrategy.SaveRemain();
-        }
-        //--------------------------------------------------------------------------------------
-    }
+    //        representativesTriangleRelationStrategy.Execute(listOfSet);
+    //        representativesTriangleRelationStrategy.SortSolutions();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void AssertAction()
+    //    {
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, bruteForceAsTree.OptimalSets.Count, "Wrong number rows in result");
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleStrategy.OptimalSets.Count, "Wrong number rows in result");
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleImroveStrategy.OptimalSets.Count, "Wrong number rows in result");
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleImroveRDStrategy.OptimalSets.Count, "Wrong number rows in result");
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, representativesTriangleRelationStrategy.OptimalSets.Count, "Wrong number rows in result");
+    //        for (int i = 0; i < representativesTriangle.OptimalSets.Count; i++)
+    //        {
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], bruteForceAsTree.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {bruteForceAsTree.OptimalSets[i]}");
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleImroveStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleImroveRDStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], representativesTriangleRelationStrategy.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {representativesTriangleStrategy.OptimalSets[i]}");
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void PostAction()
+    //    {
+    //        _statisticAccumulator.SaveRemain();
+    //        _statisticAccumulatorStrategy.SaveRemain();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //}
+    
     //--------------------------------------------------------------------------------------
     // class EnumerateIntegerTrangleForRepresentativesTriangleBBCompare
     //--------------------------------------------------------------------------------------
-    public class EnumerateIntegerTrangleForRepresentativesTriangleBBCompare : EnumerateRepresentativesTestBase
-    {
-        private List<string> _result = new List<string>();
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
-        private BruteForceRepresentativesAsTree bruteForceAsTree;
-        private RepresentativesTriangleBranchAndBound representativesTriangle;
-        //--------------------------------------------------------------------------------------
-        public EnumerateIntegerTrangleForRepresentativesTriangleBBCompare(int pCardinality, int pLength, int pMinimumValue = 1, int pForwardAdditive = 1)
-            : base(pCardinality, pLength, pMinimumValue, pForwardAdditive)
-        {
-            _fBreakElement = 0;
-            _fCardinality = pCardinality;
+    //public class EnumerateIntegerTrangleForRepresentativesTriangleBBCompare : EnumerateRepresentativesTestBase
+    //{
+    //    private List<string> _result = new List<string>();
+    //    private RepresentativesStatisticAccumulator _statisticAccumulator;
+    //    private BruteForceRepresentativesAsTree bruteForceAsTree;
+    //    private RepresentativesTriangleBranchAndBound representativesTriangle;
+    //    //--------------------------------------------------------------------------------------
+    //    public EnumerateIntegerTrangleForRepresentativesTriangleBBCompare(int pCardinality, int pLength, int pMinimumValue = 1, int pForwardAdditive = 1)
+    //        : base(pCardinality, pLength, pMinimumValue, pForwardAdditive)
+    //    {
+    //        _fBreakElement = 0;
+    //        _fCardinality = pCardinality;
 
-            bruteForceAsTree = new BruteForceRepresentativesAsTree(_fCardinality);
-            representativesTriangle = new RepresentativesTriangleBranchAndBound(_fCardinality);
+    //        bruteForceAsTree = new BruteForceRepresentativesAsTree(_fCardinality);
+    //        representativesTriangle = new RepresentativesTriangleBranchAndBound(_fCardinality);
 
-            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 1, 1000);
-            _statisticAccumulator.DeleteAsync(representativesTriangle.AlgorithmName).Wait();
+    //        _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, 0, 1, 1000);
+    //        _statisticAccumulator.DeleteAsync(representativesTriangle.AlgorithmName).Wait();
 
-            representativesTriangle.StatisticAccumulator = _statisticAccumulator;
+    //        representativesTriangle.StatisticAccumulator = _statisticAccumulator;
 
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void ActAction(int[][] listOfSet)
-        {
-            bruteForceAsTree.Execute(listOfSet);
-            bruteForceAsTree.OptimalSets = bruteForceAsTree.OptimalSets.OrderBy(s => s).ToList();
-            representativesTriangle.Execute(listOfSet);
-            representativesTriangle.SortSolutions();
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void AssertAction()
-        {
-            Assert.AreEqual(representativesTriangle.OptimalSets.Count, bruteForceAsTree.OptimalSets.Count, "Wrong number rows in result");
-            for (int i = 0; i < representativesTriangle.OptimalSets.Count; i++)
-            {
-                Assert.AreEqual(representativesTriangle.OptimalSets[i], bruteForceAsTree.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {bruteForceAsTree.OptimalSets[i]}");
-            }
-        }
-        //--------------------------------------------------------------------------------------
-        protected override void PostAction()
-        {
-            _statisticAccumulator.SaveRemain();
-        }
-        //--------------------------------------------------------------------------------------
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void ActAction(int[][] listOfSet)
+    //    {
+    //        bruteForceAsTree.Execute(listOfSet);
+    //        bruteForceAsTree.OptimalSets = bruteForceAsTree.OptimalSets.OrderBy(s => s).ToList();
+    //        representativesTriangle.Execute(listOfSet);
+    //        representativesTriangle.SortSolutions();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void AssertAction()
+    //    {
+    //        Assert.AreEqual(representativesTriangle.OptimalSets.Count, bruteForceAsTree.OptimalSets.Count, "Wrong number rows in result");
+    //        for (int i = 0; i < representativesTriangle.OptimalSets.Count; i++)
+    //        {
+    //            Assert.AreEqual(representativesTriangle.OptimalSets[i], bruteForceAsTree.OptimalSets[i], $"Wrong string in position {i} - {representativesTriangle.OptimalSets[i]}. Expected - {bruteForceAsTree.OptimalSets[i]}");
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected override void PostAction()
+    //    {
+    //        _statisticAccumulator.SaveRemain();
+    //    }
+    //    //--------------------------------------------------------------------------------------
 
-    }
+    //}
 
 }

@@ -14,8 +14,8 @@ namespace BioAlgorithmViewModel.Representatives
     public class HittingSetInputDataViewModel : HittingSetBaseViewModel
     {
         //----------------------------------------------------------------------------------------------------------------------
-        private ObservableCollection<RepresentativesInput> inputDataList;
-        public ObservableCollection<RepresentativesInput> InputDataList
+        private ObservableCollection<RepresentativesInputDao> inputDataList;
+        public ObservableCollection<RepresentativesInputDao> InputDataList
         {
             get
             {
@@ -28,8 +28,8 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private RepresentativesInput selectedInputtem;
-        public RepresentativesInput SelectedInputItem
+        private RepresentativesInputDao selectedInputtem;
+        public RepresentativesInputDao SelectedInputItem
         {
             get
             {
@@ -73,7 +73,7 @@ namespace BioAlgorithmViewModel.Representatives
         //---------------------------------------------------------------------------------------------------------------------- 
         public List<string> TaskTypeFilterTypeSource
         {
-            get => new List<string>() { "Or", "And" };
+            get => new List<string>() { "Or", "And", "Exact =", "Or/Not", "And/Not", "Exact =/Not" };
         }
         //private string taskTypeFilterType;
         //public string TaskTypeFilterType
@@ -176,7 +176,7 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         public HittingSetInputDataViewModel(RepresentativesRepository representativesRepository) : base(representativesRepository)
         {
-            InputDataList = new ObservableCollection<RepresentativesInput>();
+            InputDataList = new ObservableCollection<RepresentativesInputDao>();
             InputDataSortItems = new List<string>()
             {
                 "Dimension, NumberOfSet, Step, InputDataShort",
@@ -225,8 +225,8 @@ namespace BioAlgorithmViewModel.Representatives
             RepresentativesPerfomanceFilter? representativesPerfomanceFilterDto = HittingSetFilter.Map();
             if (representativesPerfomanceFilterDto != null)
                 representativesPerfomanceFilterDto.TaskTypeFilter = taskTypeFilter;
-            List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, SelectedInputDataSort);
-            foreach (RepresentativesInput item in items)
+            List<RepresentativesInputDao> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, SelectedInputDataSort);
+            foreach (RepresentativesInputDao item in items)
                 InputDataList.Add(item);
 
             ExecutionState = "Query completed.";
@@ -473,6 +473,37 @@ namespace BioAlgorithmViewModel.Representatives
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanRunDefineTypeTaskAction()
+        {
+            return refreshRepresentativeAlgorithmGroupEnable;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private ICommand runDefineGreedyComparisonCommand;
+        public ICommand RunDefineGreedyComparisonCommand
+        {
+            get
+            {
+                if (runDefineGreedyComparisonCommand == null)
+                {
+                    runDefineGreedyComparisonCommand = new DelegateCommand(RunDefineGreedyComparisonAction, CanRunGreedyComparisonTaskAction);
+                }
+                return runDefineGreedyComparisonCommand;
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private async void RunDefineGreedyComparisonAction()
+        {
+            Messenger.Default.Send<StartInputTaskMessage>(new StartInputTaskMessage()
+            {
+                KindOfInputTask = KindOfInputTaskEnum.DefineGreedyComparison,
+                Dimension = null,
+                NumberOfSet = null,
+                Step = null,
+                MaxCount = null
+            }, typeof(StartInputTaskMessage));
+
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool CanRunGreedyComparisonTaskAction()
         {
             return refreshRepresentativeAlgorithmGroupEnable;
         }

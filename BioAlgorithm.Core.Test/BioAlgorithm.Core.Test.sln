@@ -81,6 +81,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Set", "Set", "{D2906B15-EE4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepresentativesSet", "..\Algorithm\Set\RepresentativesSet\RepresentativesSet.csproj", "{0191FBE0-FE19-4A46-AB51-682DE465B7F6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{88F5573D-8B8D-46FE-8CD1-0898A8C41090}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAlgorithm.Services", "..\Services\BioAlgorithm.Services\BioAlgorithm.Services.csproj", "{44961CF1-D655-4615-A47D-6EBA87B5BE0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +191,10 @@ Global
 		{0191FBE0-FE19-4A46-AB51-682DE465B7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0191FBE0-FE19-4A46-AB51-682DE465B7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0191FBE0-FE19-4A46-AB51-682DE465B7F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44961CF1-D655-4615-A47D-6EBA87B5BE0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44961CF1-D655-4615-A47D-6EBA87B5BE0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44961CF1-D655-4615-A47D-6EBA87B5BE0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44961CF1-D655-4615-A47D-6EBA87B5BE0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -226,5 +234,6 @@ Global
 		{5960E663-8E29-4884-A727-366B04D75A9B} = {F44D6630-DF23-4419-A8A3-0E1CD3A56195}
 		{D2906B15-EE47-48A8-9951-4ECB320C0985} = {74D44794-F608-4686-8689-EA4D14C0519B}
 		{0191FBE0-FE19-4A46-AB51-682DE465B7F6} = {D2906B15-EE47-48A8-9951-4ECB320C0985}
+		{44961CF1-D655-4615-A47D-6EBA87B5BE0F} = {88F5573D-8B8D-46FE-8CD1-0898A8C41090}
 	EndGlobalSection
 EndGlobal

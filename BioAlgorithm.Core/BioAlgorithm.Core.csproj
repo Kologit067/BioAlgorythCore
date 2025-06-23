@@ -10,13 +10,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="dna.png" />
+    <None Remove="Pictures\bipart.png" />
     <None Remove="Pictures\cone-16x16.png" />
     <None Remove="Pictures\deleteTrackFromTheMap.png" />
+    <None Remove="Pictures\dna.png" />
     <None Remove="Pictures\DOCL.ICO" />
     <None Remove="Pictures\document-export.png" />
     <None Remove="Pictures\drawOnTheMap.png" />
     <None Remove="Pictures\eraser32.ico" />
+    <None Remove="Pictures\greedy-comparison.png" />
+    <None Remove="Pictures\hs-algorithm-compare.png" />
+    <None Remove="Pictures\hs-algorithm-list.png" />
+    <None Remove="Pictures\hs-bipartite-graph.png" />
+    <None Remove="Pictures\hs-group-algorithm.png" />
+    <None Remove="Pictures\hs-group-input.png" />
+    <None Remove="Pictures\hs-input.png" />
+    <None Remove="Pictures\hs-make-graph.png" />
+    <None Remove="Pictures\hs-master-details.png" />
+    <None Remove="Pictures\hs-performance-result.png" />
+    <None Remove="Pictures\input.png" />
+    <None Remove="Pictures\isomorphism-bipart.png" />
+    <None Remove="Pictures\isomorphism.png" />
+    <None Remove="Pictures\reload.png" />
+    <None Remove="Pictures\task3.png" />
     <None Remove="Pictures\task4.png" />
+    <None Remove="Pictures\TaskType.ICO" />
+    <None Remove="Representatives\isomorphism-bipart.png" />
+    <None Remove="Representatives\isomorphism.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,11 +47,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="dna.png" />
+    <Resource Include="Pictures\bipart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Pictures\cone-16x16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Pictures\deleteTrackFromTheMap.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\dna.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Pictures\DOCL.ICO">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -44,9 +72,59 @@
     <Resource Include="Pictures\eraser32.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Pictures\greedy-comparison.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-algorithm-compare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-algorithm-list.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-bipartite-graph.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-group-algorithm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-group-input.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-input.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-make-graph.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-master-details.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\hs-performance-result.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\input.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\isomorphism-bipart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\isomorphism.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\reload.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Pictures\task3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Pictures\task4.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Pictures\TaskType.ICO">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Representatives\isomorphism-bipart.png" />
+    <Resource Include="Representatives\isomorphism.png" />
   </ItemGroup>
 
 </Project>

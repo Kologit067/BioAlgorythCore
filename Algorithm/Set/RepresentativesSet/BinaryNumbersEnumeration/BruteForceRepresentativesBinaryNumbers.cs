@@ -19,6 +19,14 @@ namespace RepresentativesSet
         private int maxNumber;
         private long[] listOfSetAsBinary;
         public IRepresentativesStatisticAccumulator StatisticAccumulator { get; set; }
+        //--------------------------------------------------------------------------------------
+        public string SolutionAsString
+        {
+            get
+            {
+                return (_fOptimalSets?.Count ?? 0) > 0 ? _fOptimalSets[0] : "";
+            }
+        }
         public BruteForceRepresentativesBinaryNumbers()
         {
             StatisticAccumulator = new FakeRepresentativesStatisticAccumulator();
@@ -195,8 +203,15 @@ namespace RepresentativesSet
             {
                 return GetType().Name;
             }
-        }        
+        }
         //--------------------------------------------------------------------------------------
+        public int CurrentMinimum
+        {
+            get
+            {
+                return _fOptimalSets.Count;
+            }
+        }
     }
     //--------------------------------------------------------------------------------------
     public class BruteForceRepresentativesBinaryNumbersVer2 : BruteForceRepresentativesBinaryNumbers

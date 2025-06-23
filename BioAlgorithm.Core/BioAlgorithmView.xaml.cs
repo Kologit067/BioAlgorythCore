@@ -21,6 +21,7 @@ namespace BioAlgorithm
             Messenger.Default.Register<StartTaskMessage>(this, OnStartTaskMessageMessageReceived, typeof(StartTaskMessage));
             Messenger.Default.Register<StartTaskStepMessage>(this, OnStartTaskStepMessageMessageReceived, typeof(StartTaskStepMessage));
             Messenger.Default.Register<StartInputTaskMessage>(this, OnStartInputTaskMessageMessageReceived, typeof(StartInputTaskMessage));
+            Messenger.Default.Register<DeleteAlgorithmInputMessage>(this, OnStartDeleteAlgorithmInputReceived, typeof(DeleteAlgorithmInputMessage));
 
         }
 
@@ -46,6 +47,12 @@ namespace BioAlgorithm
         {
             ExecuteInputTaskWindow window = new(message);
             window.Show();
+        }
+
+        private void OnStartDeleteAlgorithmInputReceived(DeleteAlgorithmInputMessage message)
+        {
+            DeleteAlgorithmInputWindow window = new(message);
+            window.ShowDialog();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

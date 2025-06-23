@@ -5,13 +5,14 @@ using BioAlgorithm.Data.Representatives.Data;
 using Representatives.Data.Contract;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BioAlgorithmViewModel.Interfaces;
 
 namespace BioAlgorithmViewModel.Representatives
 {
     //----------------------------------------------------------------------------------------------------------------------
     // class RepresentativePerformanceAlgorithmViewModel
     //----------------------------------------------------------------------------------------------------------------------
-    public class RepresentativePerformanceAlgorithmViewModel : ViewModelBase
+    public class RepresentativePerformanceAlgorithmViewModel : ViewModelBase, IInputAlgorithmViewModel
     {
         private RepresentativesRepository representativesRepository;
         //----------------------------------------------------------------------------------------------------------------------
@@ -150,23 +151,36 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         private async void DeleteAlgorithmAction()
         {
-            ExecutionState = "Operation running...";
-            refreshRepresentativeAlgorithmListEnable = false;
-            string? result = await representativesRepository.DeleteRepresentativeAlgorithmAsync(SelectedAlgorithm);
-            if (string.IsNullOrEmpty(result))
+            Messenger.Default.Send<DeleteAlgorithmInputMessage>(new DeleteAlgorithmInputMessage()
             {
-                RepresentativeAlgorithmGroups.Remove(SelectedAlgorithm);
-                ExecutionState = "Operation completed";
-            }
-            {
-                ExecutionState = $"Operation failed: {result}";
-            }
-            refreshRepresentativeAlgorithmListEnable = true;
+                DeleteAlgorithmInputType = DeleteAlgorithmInputTypeEnum.Algorithm,
+                InputAlgorithmViewModel = this,
+                Algorithm = SelectedAlgorithm.Algorithm
+            }, typeof(DeleteAlgorithmInputMessage));
+
+
+            //ExecutionState = "Operation running...";
+            //refreshRepresentativeAlgorithmListEnable = false;
+            //string? result = await representativesRepository.DeleteRepresentativeAlgorithmAsync(SelectedAlgorithm);
+            //if (string.IsNullOrEmpty(result))
+            //{
+            //    RepresentativeAlgorithmGroups.Remove(SelectedAlgorithm);
+            //    ExecutionState = "Operation completed";
+            //}
+            //{
+            //    ExecutionState = $"Operation failed: {result}";
+            //}
+            //refreshRepresentativeAlgorithmListEnable = true;
         }
         //----------------------------------------------------------------------------------------------------------------------
         private bool CanDeleteAlgorithmAction()
         {
             return true;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        public void DeleteSelectedItem()
+        {
+            RepresentativeAlgorithmGroups.Remove(SelectedAlgorithm);
         }
         //----------------------------------------------------------------------------------------------------------------------
     }

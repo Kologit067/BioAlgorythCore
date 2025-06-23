@@ -1,4 +1,5 @@
-﻿using BaseLibrary.Helpers;
+﻿
+using BaseLibrary.Helpers;
 
 namespace StatisticsStorage.Accumulators.Objects
 {

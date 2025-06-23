@@ -28,8 +28,11 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract.Interfaces
         Task<string> CompleteUpdateTypeTaskAsync();
 
         Task ClearIsomorphicAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, bool isBipart = false);
-        Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order);
+        Task<List<RepresentativesInputDao>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order);
 
         Task ClearTaskTypeAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter);
+        Task<List<(string Algorithname, int Count)>> GetGeedyAlgorithmGroupDimensionsAsync(int dimension, int numberOfSet, long maxCount);
+        Task SetGeedyComparisonAsync(int dimension, int numberOfSet, long maxCount);
+        Task<List<InputDataGreedyComparison>> GetInputDataGreedyComparisonsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order);
     }
 }

@@ -13,7 +13,19 @@ namespace BioAlgorithmViewModel.Representatives
     {
         protected readonly RepresentativesRepository representativesRepository;
         private readonly KindOfInputTaskEnum KindOfInputTask;
-
+        private string title;
+        public string Title
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                title = value;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
         //----------------------------------------------------------------------------------------------------------------------
         public ExecuteInputTaskViewModel(StartInputTaskMessage message)
         {
@@ -40,6 +52,13 @@ namespace BioAlgorithmViewModel.Representatives
             }
             representativesRepository = new RepresentativesRepository();
 
+            Title = message.KindOfInputTask switch
+            {
+                KindOfInputTaskEnum.Isomorphism => "Define Isomorphism of Graph",
+                KindOfInputTaskEnum.IsomorphismByPart => "Define Isomorphism of Bipartite Graph",
+                KindOfInputTaskEnum.DefineTypeTask => "Define Type of Task",
+                KindOfInputTaskEnum.DefineGreedyComparison => "Define GreedyComparison",
+            };
         }
 
  
@@ -85,6 +104,13 @@ namespace BioAlgorithmViewModel.Representatives
                         break;
                     case KindOfInputTaskEnum.DefineTypeTask:
                         error = await representativeService.DefineTaskTypeAsync(string.Empty,
+                            Dimension.Value,
+                            NumberOfSet.Value,
+                            MaxCount ?? 0);
+                        ExecutionState = !string.IsNullOrEmpty(error) ? $"Task failed: {error}" : "Task completed";
+                        break;
+                    case KindOfInputTaskEnum.DefineGreedyComparison:
+                        error = await representativeService.DefineGreedyComparisonAsync(string.Empty,
                             Dimension.Value,
                             NumberOfSet.Value,
                             MaxCount ?? 0);

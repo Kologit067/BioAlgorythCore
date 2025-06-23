@@ -2,14 +2,16 @@
 using RepresentativesSet;
 using StatisticsStorage.Accumulators;
 using StatisticsStorage.Savers;
-using RepresentativesSetTest.Base;
 using System.Numerics;
 using System.Diagnostics;
 using BaseLibrary.Helpers;
 using System.Drawing;
 using System.Collections.Generic;
+using RepresentativesSet.Test.Step.Base;
+using BaseContract.Interfaces;
+using Microsoft.Identity.Client;
 
-namespace RepresentativesSetTest.Greedy
+namespace RepresentativesSet.Test.Step.Greedy
 {
     [TestClass]
     public class RepresentativesGreedyAdvStepTests
@@ -34,8 +36,8 @@ namespace RepresentativesSetTest.Greedy
         [TestMethod]
         public void CombinationAlgorithmCompare_22_11_Test()
         {
-            var t1 = (10,2);
-            var t2 = (10,3);
+            var t1 = (10, 2);
+            var t2 = (10, 3);
             var h1 = t1.GetHashCode();
             var h2 = t2.GetHashCode();
 
@@ -56,10 +58,22 @@ namespace RepresentativesSetTest.Greedy
             // arrange
             int сardinality = 8;
             int length = 7;
-            EnumerateRepresentativesGreedyAdvStepGreedyImpCompare enumeration =
-                new EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(сardinality, length, 100000, 500, true);
+            //EnumerateRepresentativesGreedyAdvStepGreedyImpCompare enumeration =
+            //    new EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(сardinality, length, 100000, 500, true);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new RepresentativesBranchAndBoundByValue(сardinality),
+                new RepresentativesGreedySimple(),
+                new RepresentativesGreedyImprove(),
+                new RepresentativesGreedyRelation(),
+                new RepresentativesGreedyImproveRD()
+
+            };
+            HittingSetAlgorithmGreedyStepTestRunner runner =
+new HittingSetAlgorithmGreedyStepTestRunner(hittingSetAlgorithms, "SkipEnumerationBigInteger",
+    "Without Matrix", сardinality, length, 50000, 1000, 1, 1, true);
             // act
-            enumeration.Execute();
+            runner.ExecuteAsync().Wait();
             // assert
             int n = 1 << сardinality;
             long comb = Combinatorics.Combination(n, length);
@@ -73,7 +87,7 @@ namespace RepresentativesSetTest.Greedy
             long number = 216880080648403998;
             Combinatorics.SetCombinationMatrix(511, 9);
             // act
-            Combinatorics.GetFirstPosition(n,m,number);
+            Combinatorics.GetFirstPosition(n, m, number);
             // assert
         }
         //--------------------------------------------------------------------------------------
@@ -83,10 +97,21 @@ namespace RepresentativesSetTest.Greedy
             // arrange
             int сardinality = 9;
             int length = 9;
-            EnumerateRepresentativesGreedyAdvStepGreedyImpCompare enumeration =
-                new EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(сardinality, length, 50000, 2000, true);
+            //EnumerateRepresentativesGreedyAdvStepGreedyImpCompare enumeration =
+            //    new EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(сardinality, length, 50000, 2000, true);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new RepresentativesBranchAndBoundByValue(сardinality),
+                new RepresentativesGreedySimple(),
+                new RepresentativesGreedyImprove(),
+                new RepresentativesGreedyRelation(),
+                new RepresentativesGreedyImproveRD()
+
+            };
+            HittingSetAlgorithmGreedyStepTestRunner runner = new HittingSetAlgorithmGreedyStepTestRunner(hittingSetAlgorithms,
+                "SkipEnumerationBigInteger", "Without Matrix", сardinality, length, 50000, 2000, 1, 1, true);
             // act
-            enumeration.Execute();
+            runner.ExecuteAsync().Wait();
             // assert
             int n = 1 << сardinality;
             long comb = (long)Combinatorics.BigIntegerCombination(n, length);
@@ -98,10 +123,21 @@ namespace RepresentativesSetTest.Greedy
             // arrange
             int сardinality = 10;
             int length = 10;
-            EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare enumeration =
-                new EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(сardinality, length, 100000, 2000, true);
+            //EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare enumeration =
+            //    new EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(сardinality, length, 100000, 2000, true);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new RepresentativesBranchAndBoundByValue(сardinality),
+                new RepresentativesGreedySimple(),
+                new RepresentativesGreedyImprove(),
+                new RepresentativesGreedyRelation(),
+                new RepresentativesGreedyImproveRD()
+
+            };
+            HittingSetAlgorithmGreedyStepTestRunner runner = new HittingSetAlgorithmGreedyStepTestRunner(hittingSetAlgorithms,
+                "SkipEnumerationSaveFPImpBigInteger", "Without Matrix", сardinality, length, 50000, 2000, 1, 1, true);
             // act
-            enumeration.Execute();
+            runner.ExecuteAsync().Wait();
             // assert
             int n = 1 << сardinality;
             BigInteger comb = Combinatorics.BigIntegerCombination(n, length);
@@ -128,10 +164,21 @@ namespace RepresentativesSetTest.Greedy
             // arrange
             int сardinality = 5;
             int length = 5;
-            EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare enumeration =
-                new EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(сardinality, length, 1000, 200, true);
+            //EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare enumeration =
+            //    new EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(сardinality, length, 1000, 200, true);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+            {
+                new RepresentativesBranchAndBoundByValue(сardinality),
+                new RepresentativesGreedySimple(),
+                new RepresentativesGreedyImprove(),
+                new RepresentativesGreedyRelation(),
+                new RepresentativesGreedyImproveRD()
+
+            };
+            HittingSetAlgorithmGreedyStepTestRunner runner = new HittingSetAlgorithmGreedyStepTestRunner(hittingSetAlgorithms,
+                "SkipEnumerationSaveFPImpBigInteger", "Without Matrix", сardinality, length, 1000, 200, 1, 1, true);
             // act
-            enumeration.Execute();
+            runner.ExecuteAsync().Wait();
             // assert
             int n = 1 << сardinality;
             BigInteger comb = Combinatorics.BigIntegerCombination(n, length);
@@ -200,7 +247,7 @@ namespace RepresentativesSetTest.Greedy
             int limit = 1 << сardinality;
             long maxCount = 100000;
             long number = (long)Combinatorics.BigIntegerCombination(limit, length);
-            long step = number/ maxCount;
+            long step = number / maxCount;
             Combinatorics.SetCombinationMatrix(limit, length);
             // act
             int i = 0;
@@ -252,7 +299,7 @@ namespace RepresentativesSetTest.Greedy
                 stopWatch.Start();
                 Combinatorics combinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", limit, length);
                 var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
-                string showAsString =string.Join(",", currentSet);
+                string showAsString = string.Join(",", currentSet);
                 stopWatch.Stop();
                 long time = stopWatch.ElapsedMilliseconds;
                 allTime += time;
@@ -291,7 +338,7 @@ namespace RepresentativesSetTest.Greedy
                 stopWatchSaveFPImp.Start();
                 Combinatorics impCombinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
                 int[] currentSetSaveFPImp = impCombinatorics.SkipEnumerationBigInteger(limit, length, counter, startn, startm);
-                (startn, startm) = currentSetSaveFPImp.Select((f,ind) => (f,ind)).FirstOrDefault( a => a.f > a.ind+1 );
+                (startn, startm) = currentSetSaveFPImp.Select((f, ind) => (f, ind)).FirstOrDefault(a => a.f > a.ind + 1);
                 if (startm.HasValue)
                     startm += 1;
                 string showAsStringSaveFPImp = string.Join(",", currentSetSaveFPImp);
@@ -339,12 +386,12 @@ namespace RepresentativesSetTest.Greedy
             long allTime = 0;
             long maxTime = 0;
             long minTime = 10000000000;
-//            long allTimeNoRec = 0;
-//            long maxTimeNoRec = 0;
-//            long minTimeNoRec = 10000000000;
-//            long allTimeSaveFP = 0;
-//            long maxTimeSaveFP = 0;
-//            long minTimeSaveFP = 10000000000;
+            //            long allTimeNoRec = 0;
+            //            long maxTimeNoRec = 0;
+            //            long minTimeNoRec = 10000000000;
+            //            long allTimeSaveFP = 0;
+            //            long maxTimeSaveFP = 0;
+            //            long minTimeSaveFP = 10000000000;
             long allTimeSaveFPImp = 0;
             long maxTimeSaveFPImp = 0;
             long minTimeSaveFPImp = 10000000000;
@@ -411,7 +458,7 @@ namespace RepresentativesSetTest.Greedy
             // act
             BigInteger counter = step;
             counter = BigInteger.Multiply(counter, 973);
-            Combinatorics combinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix",limit,length);
+            Combinatorics combinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix", limit, length);
             var currentSet = combinatorics.SkipEnumerationBigInteger(limit, length, counter, null, null);
             // assert
         }
@@ -444,7 +491,7 @@ namespace RepresentativesSetTest.Greedy
             Combinatorics.SetCombinationBigIntegerMatrix(limit, length);
             Combinatorics.CreateCountForPositionMatrix(limit, length);           // act
             Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", limit, length);
-            var s = combinatorics.SkipEnumerationBigInteger(limit, length, BigInteger.Parse( "3309232088236359241539" ), null, 1);
+            var s = combinatorics.SkipEnumerationBigInteger(limit, length, BigInteger.Parse("3309232088236359241539"), null, 1);
             // assert
         }
         //--------------------------------------------------------------------------------------
@@ -468,298 +515,293 @@ namespace RepresentativesSetTest.Greedy
         }
         //--------------------------------------------------------------------------------------
     }
-    //--------------------------------------------------------------------------------------
-    // class EnumerateRepresentativesGreedyAdvStepGreedyImpCompare
-    //--------------------------------------------------------------------------------------
-    public class EnumerateRepresentativesGreedyAdvStepGreedyImpCompare : EnumerateRepresentativesAdvStepTestBase
-    {
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyStatisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyImpStatisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyImpRDStatisticAccumulator;
+    ////--------------------------------------------------------------------------------------
+    //// class EnumerateRepresentativesGreedyAdvStepGreedyImpCompare
+    ////--------------------------------------------------------------------------------------
+    //public class EnumerateRepresentativesGreedyAdvStepGreedyImpCompare : EnumerateRepresentativesAdvStepTestBase
+    //{
+    //    private RepresentativesStatisticAccumulator _statisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyStatisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyImpStatisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyImpRDStatisticAccumulator;
 
-        private RepresentativesGreedy representativesGreedy;
-        private RepresentativesGreedy representativesGreedyImp;
-        private RepresentativesGreedy representativesGreedyImpRD;
-        private RepresentativesBranchAndBoundByValue branchAndBound;
+    //    private RepresentativesGreedy representativesGreedy;
+    //    private RepresentativesGreedy representativesGreedyImp;
+    //    private RepresentativesGreedy representativesGreedyImpRD;
+    //    private RepresentativesBranchAndBoundByValue branchAndBound;
 
-        protected long _maxCount;
-        protected long number;
-        //--------------------------------------------------------------------------------------
-        protected long _step;
-        public long Step
-        {
-            get
-            {
-                return _step;
-            }
-        }
-        //--------------------------------------------------------------------------------------
-        public EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave)
-        {
-            _fLimit = (1 << pCardinality) - 1;
-            _fSize = pLength;
-            _fCardinality = pCardinality;
-            _maxCount = maxCount;
-            number = (long)Combinatorics.BigIntegerCombination(_fLimit, _fSize);
-            _step = (long)(number / _maxCount);
+    //    protected long _maxCount;
+    //    protected long number;
+    //    //--------------------------------------------------------------------------------------
+    //    protected long _step;
+    //    public long Step
+    //    {
+    //        get
+    //        {
+    //            return _step;
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public EnumerateRepresentativesGreedyAdvStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave)
+    //    {
+    //        _fLimit = (1 << pCardinality) - 1;
+    //        _fSize = pLength;
+    //        _fCardinality = pCardinality;
+    //        _maxCount = maxCount;
+    //        number = (long)Combinatorics.BigIntegerCombination(_fLimit, _fSize);
+    //        _step = number / _maxCount;
 
-            representativesGreedy = new RepresentativesGreedySimple();
-            representativesGreedyImp = new RepresentativesGreedyImprove();
-            representativesGreedyImpRD = new RepresentativesGreedyImproveRD();
-            branchAndBound = new RepresentativesBranchAndBoundByValue(_fCardinality);
+    //        branchAndBound = new RepresentativesBranchAndBoundByValue(_fCardinality);
+    //        representativesGreedy = new RepresentativesGreedySimple();
+    //        representativesGreedyImp = new RepresentativesGreedyImprove();
+    //        representativesGreedyImpRD = new RepresentativesGreedyImproveRD();
 
 
-            if (isSave)
-            {
-                _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
-                _statisticAccumulator.DeleteAsync(branchAndBound.AlgorithmName, pLength, pCardinality, _step).Wait();
-                _greedyStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
-                _greedyStatisticAccumulator.DeleteAsync(representativesGreedy.AlgorithmName, pLength, pCardinality, _step).Wait();
-                _greedyImpStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
-                _greedyImpStatisticAccumulator.DeleteAsync(representativesGreedyImp.AlgorithmName, pLength, pCardinality, _step).Wait();
-                _greedyImpRDStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
-                _greedyImpRDStatisticAccumulator.DeleteAsync(representativesGreedyImpRD.AlgorithmName, pLength, pCardinality, _step).Wait();
+    //        if (isSave)
+    //        {
+    //            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
+    //            _statisticAccumulator.DeleteAsync(branchAndBound.AlgorithmName, pLength, pCardinality, _step).Wait();
+    //            _greedyStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
+    //            _greedyStatisticAccumulator.DeleteAsync(representativesGreedy.AlgorithmName, pLength, pCardinality, _step).Wait();
+    //            _greedyImpStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
+    //            _greedyImpStatisticAccumulator.DeleteAsync(representativesGreedyImp.AlgorithmName, pLength, pCardinality, _step).Wait();
+    //            _greedyImpRDStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, _step, bufferSize);
+    //            _greedyImpRDStatisticAccumulator.DeleteAsync(representativesGreedyImpRD.AlgorithmName, pLength, pCardinality, _step).Wait();
 
-                representativesGreedy.StatisticAccumulator = _greedyStatisticAccumulator;
-                representativesGreedyImp.StatisticAccumulator = _greedyImpStatisticAccumulator;
-                representativesGreedyImpRD.StatisticAccumulator = _greedyImpRDStatisticAccumulator;
-                branchAndBound.StatisticAccumulator = _statisticAccumulator;
-            }
-            Combinatorics.SetCombinationMatrix(_fLimit, _fSize);
-        }
-        //--------------------------------------------------------------------------------------
-        public bool Execute()
-        {
-            for (long counter = _step; counter < number; counter += _step)
-            {
-                _fCurrentSet = Combinatorics.SkipEnumeration(_fLimit, _fSize, counter);
-                int[][] listOfSet = GetAndTestListOfSet();
-                if (listOfSet != null)
-                {
-                    // act
-                    ActAction(listOfSet);
-                    // assert
-                    AssertAction();
-                }
-            }
-            PostAction();
-            return false;
-        }
-        //--------------------------------------------------------------------------------------
-        protected void ActAction(int[][] listOfSet)
-        {
-            branchAndBound.Execute(listOfSet);
-            representativesGreedy.Execute(listOfSet);
-            representativesGreedyImp.Execute(listOfSet);
-            representativesGreedyImpRD.Execute(listOfSet);
-            branchAndBound.OptimalSets = branchAndBound.OptimalSets.OrderBy(s => s).ToList();
-            representativesGreedy.Solution = representativesGreedy.Solution.OrderBy(s => s).ToList();
-            representativesGreedyImp.Solution = representativesGreedyImp.Solution.OrderBy(s => s).ToList();
-            representativesGreedyImpRD.Solution = representativesGreedyImpRD.Solution.OrderBy(s => s).ToList();
+    //            representativesGreedy.StatisticAccumulator = _greedyStatisticAccumulator;
+    //            representativesGreedyImp.StatisticAccumulator = _greedyImpStatisticAccumulator;
+    //            representativesGreedyImpRD.StatisticAccumulator = _greedyImpRDStatisticAccumulator;
+    //            branchAndBound.StatisticAccumulator = _statisticAccumulator;
+    //        }
+    //        Combinatorics.SetCombinationMatrix(_fLimit, _fSize);
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public bool Execute()
+    //    {
+    //        for (long counter = _step; counter < number; counter += _step)
+    //        {
+    //            _fCurrentSet = Combinatorics.SkipEnumeration(_fLimit, _fSize, counter);
+    //            int[][] listOfSet = GetAndTestListOfSet();
+    //            if (listOfSet != null)
+    //            {
+    //                // act
+    //                ActAction(listOfSet);
+    //                // assert
+    //                AssertAction();
+    //            }
+    //        }
+    //        PostAction();
+    //        return false;
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void ActAction(int[][] listOfSet)
+    //    {
+    //        branchAndBound.Execute(listOfSet);
+    //        representativesGreedy.Execute(listOfSet);
+    //        representativesGreedyImp.Execute(listOfSet);
+    //        representativesGreedyImpRD.Execute(listOfSet);
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void AssertAction()
+    //    {
+    //        if (branchAndBound.CurrentMinimum == representativesGreedy.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedy.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultCount++;
+    //        }
+    //        if (branchAndBound.CurrentMinimum == representativesGreedyImp.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedyImp.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultImpCount++;
+    //        }
+    //        if (branchAndBound.CurrentMinimum == representativesGreedyImpRD.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedyImpRD.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultImpRDCount++;
+    //        }
 
-        }
-        //--------------------------------------------------------------------------------------
-        protected void AssertAction()
-        {
-            if (branchAndBound.CurrentMinimum == representativesGreedy.Solution.Count)
-            {
-                String solutionAsString = representativesGreedy.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultCount++;
-            }
-            if (branchAndBound.CurrentMinimum == representativesGreedyImp.Solution.Count)
-            {
-                String solutionAsString = representativesGreedyImp.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultImpCount++;
-            }
-            if (branchAndBound.CurrentMinimum == representativesGreedyImpRD.Solution.Count)
-            {
-                String solutionAsString = representativesGreedyImpRD.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultImpRDCount++;
-            }
-
-        }
-        //--------------------------------------------------------------------------------------
-        protected void PostAction()
-        {
-            _statisticAccumulator.SaveRemain();
-            _greedyStatisticAccumulator.SaveRemain();
-            _greedyImpStatisticAccumulator.SaveRemain();
-            _greedyImpRDStatisticAccumulator.SaveRemain();
-        }
-        //--------------------------------------------------------------------------------------
-        public virtual string ShowString
-        {
-            get
-            {
-                if (_fCurrentSet != null && _fCurrentSet.Length > 0)
-                    return string.Join(",", _fCurrentSet.Select(i => i));
-                return "Empty";
-            }
-        }        
-        //--------------------------------------------------------------------------------------
-    }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void PostAction()
+    //    {
+    //        _statisticAccumulator.SaveRemain();
+    //        _greedyStatisticAccumulator.SaveRemain();
+    //        _greedyImpStatisticAccumulator.SaveRemain();
+    //        _greedyImpRDStatisticAccumulator.SaveRemain();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public virtual string ShowString
+    //    {
+    //        get
+    //        {
+    //            if (_fCurrentSet != null && _fCurrentSet.Length > 0)
+    //                return string.Join(",", _fCurrentSet.Select(i => i));
+    //            return "Empty";
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //}
     //--------------------------------------------------------------------------------------
     // class EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare
     //--------------------------------------------------------------------------------------
-    public class EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare : EnumerateRepresentativesAdvStepTestBase
-    {
-        private RepresentativesStatisticAccumulator _statisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyStatisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyImpStatisticAccumulator;
-        private RepresentativesStatisticAccumulator _greedyImpRDStatisticAccumulator;
+    //public class EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare : EnumerateRepresentativesAdvStepTestBase
+    //{
+    //    private RepresentativesStatisticAccumulator _statisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyStatisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyImpStatisticAccumulator;
+    //    private RepresentativesStatisticAccumulator _greedyImpRDStatisticAccumulator;
 
-        private RepresentativesGreedy representativesGreedy;
-        private RepresentativesGreedy representativesGreedyImp;
-        private RepresentativesGreedy representativesGreedyImpRD;
-        private RepresentativesBranchAndBoundByValue branchAndBound;
+    //    private RepresentativesGreedy representativesGreedy;
+    //    private RepresentativesGreedy representativesGreedyImp;
+    //    private RepresentativesGreedy representativesGreedyImpRD;
+    //    private RepresentativesBranchAndBoundByValue branchAndBound;
 
-        protected BigInteger _maxCount;
-        protected BigInteger number;
-        //--------------------------------------------------------------------------------------
-        protected BigInteger _step;
-        public BigInteger Step
-        {
-            get
-            {
-                return _step;
-            }
-        }
-        //--------------------------------------------------------------------------------------
-        public EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave, int pMinimumValue = 1, int pForwardAdditive = 1)
-        {
-            _fLimit = (1 << pCardinality) - 1;
-            _fSize = pLength;
-            _fCardinality = pCardinality;
-            _maxCount = maxCount;
-            number = Combinatorics.BigIntegerCombination(_fLimit, _fSize);
-            _step = BigInteger.Divide(number, _maxCount);
+    //    protected BigInteger _maxCount;
+    //    protected BigInteger number;
+    //    //--------------------------------------------------------------------------------------
+    //    protected BigInteger _step;
+    //    public BigInteger Step
+    //    {
+    //        get
+    //        {
+    //            return _step;
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public EnumerateRepresentativesGreedyBigIntStepGreedyImpCompare(int pCardinality, int pLength, long maxCount, int bufferSize, bool isSave, int pMinimumValue = 1, int pForwardAdditive = 1)
+    //    {
+    //        _fLimit = (1 << pCardinality) - 1;
+    //        _fSize = pLength;
+    //        _fCardinality = pCardinality;
+    //        _maxCount = maxCount;
+    //        number = Combinatorics.BigIntegerCombination(_fLimit, _fSize);
+    //        _step = BigInteger.Divide(number, _maxCount);
 
-            representativesGreedy = new RepresentativesGreedySimple();
-            representativesGreedyImp = new RepresentativesGreedyImprove();
-            representativesGreedyImpRD = new RepresentativesGreedyImproveRD();
-            branchAndBound = new RepresentativesBranchAndBoundByValue(_fCardinality);
+    //        representativesGreedy = new RepresentativesGreedySimple();
+    //        representativesGreedyImp = new RepresentativesGreedyImprove();
+    //        representativesGreedyImpRD = new RepresentativesGreedyImproveRD();
+    //        branchAndBound = new RepresentativesBranchAndBoundByValue(_fCardinality);
 
 
-            if (isSave)
-            {
-                _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
-                _statisticAccumulator.DeleteAsync(branchAndBound.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
-                _greedyStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
-                _greedyStatisticAccumulator.DeleteAsync(representativesGreedy.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
-                _greedyImpStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
-                _greedyImpStatisticAccumulator.DeleteAsync(representativesGreedyImp.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
-                _greedyImpRDStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
-                _greedyImpRDStatisticAccumulator.DeleteAsync(representativesGreedyImpRD.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
+    //        if (isSave)
+    //        {
+    //            _statisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
+    //            _statisticAccumulator.DeleteAsync(branchAndBound.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
+    //            _greedyStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
+    //            _greedyStatisticAccumulator.DeleteAsync(representativesGreedy.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
+    //            _greedyImpStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
+    //            _greedyImpStatisticAccumulator.DeleteAsync(representativesGreedyImp.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
+    //            _greedyImpRDStatisticAccumulator = new RepresentativesStatisticAccumulator(new RepresentativesSaver(), pLength, pCardinality, (decimal)_step, bufferSize);
+    //            _greedyImpRDStatisticAccumulator.DeleteAsync(representativesGreedyImpRD.AlgorithmName, pLength, pCardinality, (decimal)_step).Wait();
 
-                representativesGreedy.StatisticAccumulator = _greedyStatisticAccumulator;
-                representativesGreedyImp.StatisticAccumulator = _greedyImpStatisticAccumulator;
-                representativesGreedyImpRD.StatisticAccumulator = _greedyImpRDStatisticAccumulator;
-                branchAndBound.StatisticAccumulator = _statisticAccumulator;
-            }
-            Combinatorics.SetCombinationBigIntegerMatrix(_fLimit, _fSize);
-            Combinatorics.CreateCountForPositionMatrix(_fLimit, _fSize);
-        }
-        //--------------------------------------------------------------------------------------
-        public bool Execute()
-        {
-            int? startn = null;
-            int? startm = null;
-            for (BigInteger counter = _step; counter < number; counter += _step)
-            {
-                Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", _fLimit, _fSize);
-                _fCurrentSet = combinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, counter, startn, startm);
-                (startn, startm) = _fCurrentSet.Select((f, ind) => (f, ind)).FirstOrDefault(a => a.f > a.ind + 1);
-                if (startm.HasValue)
-                    startm += 1;
-                int[][] listOfSet = GetAndTestListOfSet();
-                if (listOfSet != null)
-                {
-                    // act
-                    ActAction(listOfSet);
-                    // assert
-                    AssertAction();
-                }
-            }
-            PostAction();
-            return false;
-        }
-        //--------------------------------------------------------------------------------------
-        protected void ActAction(int[][] listOfSet)
-        {
-            branchAndBound.Execute(listOfSet);
-            representativesGreedy.Execute(listOfSet);
-            representativesGreedyImp.Execute(listOfSet);
-            representativesGreedyImpRD.Execute(listOfSet);
-            branchAndBound.OptimalSets = branchAndBound.OptimalSets.OrderBy(s => s).ToList();
-            representativesGreedy.Solution = representativesGreedy.Solution.OrderBy(s => s).ToList();
-            representativesGreedyImp.Solution = representativesGreedyImp.Solution.OrderBy(s => s).ToList();
-            representativesGreedyImpRD.Solution = representativesGreedyImpRD.Solution.OrderBy(s => s).ToList();
+    //            representativesGreedy.StatisticAccumulator = _greedyStatisticAccumulator;
+    //            representativesGreedyImp.StatisticAccumulator = _greedyImpStatisticAccumulator;
+    //            representativesGreedyImpRD.StatisticAccumulator = _greedyImpRDStatisticAccumulator;
+    //            branchAndBound.StatisticAccumulator = _statisticAccumulator;
+    //        }
+    //        Combinatorics.SetCombinationBigIntegerMatrix(_fLimit, _fSize);
+    //        Combinatorics.CreateCountForPositionMatrix(_fLimit, _fSize);
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public bool Execute()
+    //    {
+    //        int? startn = null;
+    //        int? startm = null;
+    //        for (BigInteger counter = _step; counter < number; counter += _step)
+    //        {
+    //            Combinatorics combinatorics = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", _fLimit, _fSize);
+    //            _fCurrentSet = combinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, counter, startn, startm);
+    //            (startn, startm) = _fCurrentSet.Select((f, ind) => (f, ind)).FirstOrDefault(a => a.f > a.ind + 1);
+    //            if (startm.HasValue)
+    //                startm += 1;
+    //            int[][] listOfSet = GetAndTestListOfSet();
+    //            if (listOfSet != null)
+    //            {
+    //                // act
+    //                ActAction(listOfSet);
+    //                // assert
+    //                AssertAction();
+    //            }
+    //        }
+    //        PostAction();
+    //        return false;
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void ActAction(int[][] listOfSet)
+    //    {
+    //        branchAndBound.Execute(listOfSet);
+    //        representativesGreedy.Execute(listOfSet);
+    //        representativesGreedyImp.Execute(listOfSet);
+    //        representativesGreedyImpRD.Execute(listOfSet);
+    //        branchAndBound.OptimalSets = branchAndBound.OptimalSets.OrderBy(s => s).ToList();
+    //        representativesGreedy.Solution = representativesGreedy.Solution.OrderBy(s => s).ToList();
+    //        representativesGreedyImp.Solution = representativesGreedyImp.Solution.OrderBy(s => s).ToList();
+    //        representativesGreedyImpRD.Solution = representativesGreedyImpRD.Solution.OrderBy(s => s).ToList();
 
-        }
-        //--------------------------------------------------------------------------------------
-        protected void AssertAction()
-        {
-            if (branchAndBound.CurrentMinimum == representativesGreedy.Solution.Count)
-            {
-                String solutionAsString = representativesGreedy.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultCount++;
-            }
-            if (branchAndBound.CurrentMinimum == representativesGreedyImp.Solution.Count)
-            {
-                String solutionAsString = representativesGreedyImp.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultImpCount++;
-            }
-            if (branchAndBound.CurrentMinimum == representativesGreedyImpRD.Solution.Count)
-            {
-                String solutionAsString = representativesGreedyImpRD.SolutionAsString;
-                Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
-            }
-            else
-            {
-                _wrongResultImpRDCount++;
-            }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void AssertAction()
+    //    {
+    //        if (branchAndBound.CurrentMinimum == representativesGreedy.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedy.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultCount++;
+    //        }
+    //        if (branchAndBound.CurrentMinimum == representativesGreedyImp.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedyImp.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultImpCount++;
+    //        }
+    //        if (branchAndBound.CurrentMinimum == representativesGreedyImpRD.Solution.Count)
+    //        {
+    //            string solutionAsString = representativesGreedyImpRD.SolutionAsString;
+    //            Assert.IsTrue(branchAndBound.OptimalSets.Any(o => o == solutionAsString));
+    //        }
+    //        else
+    //        {
+    //            _wrongResultImpRDCount++;
+    //        }
 
-        }
-        //--------------------------------------------------------------------------------------
-        protected void PostAction()
-        {
-            _statisticAccumulator.SaveRemain();
-            _greedyStatisticAccumulator.SaveRemain();
-            _greedyImpStatisticAccumulator.SaveRemain();
-            _greedyImpRDStatisticAccumulator.SaveRemain();
-        }
-        //--------------------------------------------------------------------------------------
-        public virtual string ShowString
-        {
-            get
-            {
-                if (_fCurrentSet != null && _fCurrentSet.Length > 0)
-                    return string.Join(",", _fCurrentSet.Select(i => i));
-                return "Empty";
-            }
-        }
-        //--------------------------------------------------------------------------------------
-    }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    protected void PostAction()
+    //    {
+    //        _statisticAccumulator.SaveRemain();
+    //        _greedyStatisticAccumulator.SaveRemain();
+    //        _greedyImpStatisticAccumulator.SaveRemain();
+    //        _greedyImpRDStatisticAccumulator.SaveRemain();
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //    public virtual string ShowString
+    //    {
+    //        get
+    //        {
+    //            if (_fCurrentSet != null && _fCurrentSet.Length > 0)
+    //                return string.Join(",", _fCurrentSet.Select(i => i));
+    //            return "Empty";
+    //        }
+    //    }
+    //    //--------------------------------------------------------------------------------------
+    //}
 
 }

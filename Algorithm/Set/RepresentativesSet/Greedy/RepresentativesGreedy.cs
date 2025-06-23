@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace RepresentativesSet.Greedy
 {
-    public abstract class RepresentativesGreedy
+    public abstract class RepresentativesGreedy : IHittingSetAlgorithm
     {
         protected List<List<int>> listOfSet;
         protected long[] listOfSetAsNumber;
@@ -86,6 +86,14 @@ namespace RepresentativesSet.Greedy
                 return GetType().Name;
             }
         }
+        //--------------------------------------------------------------------------------------
+        public List<string> OptimalSets
+        {
+            get
+            {
+                return null;
+            }
+        }
         public RepresentativesGreedy()
         {
             StatisticAccumulator = new FakeRepresentativesStatisticAccumulator();
@@ -112,6 +120,12 @@ namespace RepresentativesSet.Greedy
             double count = listOfSet.Where(s => !s.Contains(i)).Sum(s => s.Count);
             double distinct = listOfSet.Where(s => !s.Contains(i)).SelectMany(s => s).Distinct().Count();
             return count / distinct;
+        }
+        public int CurrentMinimum { 
+            get
+            {
+                return Solution.Count;
+            }
         }
 
     }

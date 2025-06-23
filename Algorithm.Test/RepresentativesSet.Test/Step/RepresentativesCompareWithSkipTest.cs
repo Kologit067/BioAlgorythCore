@@ -1,13 +1,11 @@
 ﻿using BaseLibrary;
 using BaseLibrary.Helpers;
-using RepresentativesSet;
 using StatisticsStorage.Accumulators;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 
 
-namespace RepresentativesSetTest
+namespace RepresentativesSet.Test.Step
 {
     [TestClass]
     public class RepresentativesCompareWithSkipTest
@@ -20,12 +18,12 @@ namespace RepresentativesSetTest
             int сardinality = 4;
             int length = 4;
             long number = BruteForceRepresentativesBinaryNumbers.GetNumberLeafOfTriangleTree(length, сardinality);
-            int step = (int)(number/100);
+            int step = (int)(number / 100);
             EnumerateIntegerTrangleRepresentativesCompare enumeration = new EnumerateIntegerTrangleRepresentativesCompare(сardinality, length, step);
             // act
             enumeration.Execute();
             // assert
-            File.WriteAllLines("selected.txt",enumeration.Selected);
+            File.WriteAllLines("selected.txt", enumeration.Selected);
 
         }
         //--------------------------------------------------------------------------------------
@@ -42,7 +40,7 @@ namespace RepresentativesSetTest
             enumeration.Execute();
             // assert
             File.WriteAllLines("selected.txt", enumeration.Selected);
-//            File.WriteAllLines("result.txt", enumeration.Result);
+            //            File.WriteAllLines("result.txt", enumeration.Result);
 
         }
         //--------------------------------------------------------------------------------------
@@ -60,28 +58,28 @@ namespace RepresentativesSetTest
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             long ticks = stopWatch.ElapsedTicks;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
 
             stopWatch.Restart();
             long[,] matrixByBigNumber = Combinatorics.CreateCombinationMatrixByBigInteger(n, m);
             stopWatch.Stop();
             TimeSpan tsByBigNumber = stopWatch.Elapsed;
             long ticksByBigNumber = stopWatch.ElapsedTicks;
-            string elapsedTimeByBigNumber = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByBigNumber.Hours, tsByBigNumber.Minutes, tsByBigNumber.Seconds, tsByBigNumber.Milliseconds / 10);
+            string elapsedTimeByBigNumber = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByBigNumber.Hours, tsByBigNumber.Minutes, tsByBigNumber.Seconds, tsByBigNumber.Milliseconds / 10);
 
             stopWatch.Restart();
             long[,] matrixByRec = Combinatorics.CreateCombinationMatrixByRec(n, m);
             stopWatch.Stop();
             TimeSpan tsByRec = stopWatch.Elapsed;
             long ticksByRec = stopWatch.ElapsedTicks;
-            string elapsedTimeByRec = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByRec.Hours, tsByRec.Minutes, tsByRec.Seconds, tsByRec.Milliseconds / 10);
+            string elapsedTimeByRec = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByRec.Hours, tsByRec.Minutes, tsByRec.Seconds, tsByRec.Milliseconds / 10);
 
             stopWatch.Restart();
             long[,] matrixRed = Combinatorics.CreateCombinationReductionMatrix(n, m);
             stopWatch.Stop();
             TimeSpan tsRed = stopWatch.Elapsed;
             long ticksRed = stopWatch.ElapsedTicks;
-            string elapsedTimeRed = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsRed.Hours, tsRed.Minutes, tsRed.Seconds, tsRed.Milliseconds / 10);
+            string elapsedTimeRed = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsRed.Hours, tsRed.Minutes, tsRed.Seconds, tsRed.Milliseconds / 10);
 
             //stopWatch.Restart();
             //long[,] matrixRec = Combinatorics.CreateCombinationRecMatrix(n, m);
@@ -116,21 +114,21 @@ namespace RepresentativesSetTest
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             long ticks = stopWatch.ElapsedTicks;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
 
             stopWatch.Restart();
             BigInteger[,] matrixByRec = Combinatorics.CreateCombinationBigIntegerMatrixByRec(n, m);
             stopWatch.Stop();
             TimeSpan tsByRec = stopWatch.Elapsed;
             long ticksByRec = stopWatch.ElapsedTicks;
-            string elapsedTimeByRec = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByRec.Hours, tsByRec.Minutes, tsByRec.Seconds, tsByRec.Milliseconds / 10);
+            string elapsedTimeByRec = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsByRec.Hours, tsByRec.Minutes, tsByRec.Seconds, tsByRec.Milliseconds / 10);
 
             stopWatch.Restart();
             BigInteger[,] matrixRed = Combinatorics.CreateCombinationReductionBigIntegerMatrix(n, m);
             stopWatch.Stop();
             TimeSpan tsRed = stopWatch.Elapsed;
             long ticksRed = stopWatch.ElapsedTicks;
-            string elapsedTimeRed = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsRed.Hours, tsRed.Minutes, tsRed.Seconds, tsRed.Milliseconds / 10);
+            string elapsedTimeRed = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", tsRed.Hours, tsRed.Minutes, tsRed.Seconds, tsRed.Milliseconds / 10);
 
             // assert
             for (int i = 0; i < n; i++)
@@ -154,15 +152,15 @@ namespace RepresentativesSetTest
                 //                long longResult44_12 = Combinatorics.Combination(44, 12);
                 long longResult57_11 = Combinatorics.Combination(57, 11);
                 long longResult58_11 = Combinatorics.Combination(58, 11);
-//                long longResult59_11 = Combinatorics.Combination(59, 11);
-//                long longResult60_11 = Combinatorics.Combination(60, 11);
+                //                long longResult59_11 = Combinatorics.Combination(59, 11);
+                //                long longResult60_11 = Combinatorics.Combination(60, 11);
                 //                long longResult37_13 = Combinatorics.Combination(37, 13);
                 //               long longResult36_13 = Combinatorics.Combination(36, 13);
                 long longResult35_13 = Combinatorics.Combination(35, 13);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());   
+                Console.WriteLine(ex.ToString());
             }
 
             long longRedResult43_12 = 0;
@@ -285,7 +283,7 @@ namespace RepresentativesSetTest
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             long ticks = stopWatch.ElapsedTicks;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
 
             // assert
             File.WriteAllLines("selected.txt", enumeration.Selected);
@@ -305,8 +303,8 @@ namespace RepresentativesSetTest
         private List<string> _selected = new List<string>();
         private RepresentativesStatisticAccumulator _statisticAccumulator;
         public List<string> Result
-        { 
-            get { return _result; } 
+        {
+            get { return _result; }
         }
         public List<string> Selected
         {
@@ -318,8 +316,8 @@ namespace RepresentativesSetTest
         {
             _fBreakElement = 0;
             _fCardinality = pCardinality;
-            _step= step;
-            _result = new List<string>();   
+            _step = step;
+            _result = new List<string>();
             _selected = new List<string>();
         }
         //--------------------------------------------------------------------------------------
@@ -376,7 +374,7 @@ namespace RepresentativesSetTest
             _step = step;
             _result = new List<string>();
             _selected = new List<string>();
-            Combinatorics.SetCombinationMatrix(pLimit,pLength);
+            Combinatorics.SetCombinationMatrix(pLimit, pLength);
             Combinatorics.SetCombinationBigIntegerMatrix(pLimit, pLength);
         }
         //--------------------------------------------------------------------------------------
@@ -391,7 +389,7 @@ namespace RepresentativesSetTest
                     _stepCounter = 0;
                     int[] skipList = Combinatorics.SkipEnumeration(_fLimit, _fSize, _counter);
                     Combinatorics simpleleCombinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", _fLimit, _fSize);
-                    int[] skipListBigInteger = simpleleCombinatorics.SkipEnumerationBigInteger(_fLimit, _fSize,new BigInteger( _counter), null, null);
+                    int[] skipListBigInteger = simpleleCombinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
                     Combinatorics noRecCombinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix", _fLimit, _fSize);
                     int[] skipListNoRecBigInteger = noRecCombinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
                     string strRepresenttion = string.Join(",", _fCurrentSet);

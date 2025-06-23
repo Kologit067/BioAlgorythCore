@@ -37,6 +37,21 @@ namespace RepresentativesSet
                 return _inputDataShort;
             }
         }
+        //--------------------------------------------------------------------------------------
+        public string SolutionAsString
+        {
+            get
+            {
+                return (_fOptimalSets?.Count ?? 0) > 0 ? _fOptimalSets[0] : "";
+            }
+        }
+        public List<string> OptimalSets 
+        { 
+            get
+            {
+                return _fOptimalSets;
+            }
+        }
         public IRepresentativesStatisticAccumulator StatisticAccumulator { get; set; }
         public RepresentativesAsTree(int pLength) : base(pLength)
         {

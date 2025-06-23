@@ -49,6 +49,7 @@ namespace RepresentativesSet.Greedy
             _fDurationMilliSeconds = stopwatch.ElapsedMilliseconds;
             StatisticAccumulator.SaveStatisticData(ElapsedTicks, DurationMilliSeconds, DateTime.Now,
                 false, SolutionAsString, new List<string> { SolutionAsString }, Solution.Count);
+            Solution = Solution.OrderBy(s => s).ToList();
         }
     }
 }

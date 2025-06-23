@@ -1,6 +1,5 @@
 ﻿using BaseContract.Interfaces;
 using StatisticsStorage.Accumulators.Objects;
-using StatisticsStorage.Savers;
 using System.Diagnostics;
 
 namespace StatisticsStorage.Accumulators
@@ -8,11 +7,11 @@ namespace StatisticsStorage.Accumulators
     //--------------------------------------------------------------------------------------------------------------------
     // class RepresentativesStatisticAccumulator
     //--------------------------------------------------------------------------------------------------------------------
-    public class RepresentativesStatisticAccumulator : IRepresentativesStatisticAccumulator
+    public class RepresentativesStatisticAccumulator : IRepresentativesStatisticAccumulator 
     {
         protected List<RepresentativesPerfomance> _representativesPerfomances;
         protected RepresentativesPerfomance _currentRepresentativesPerfomance;
-        protected RepresentativesSaver _representativesSaver;
+        protected IRepresentativesSaver _representativesSaver;
         protected int _bufferSize;
         protected int _numberOfSet;
         protected int _dimension;
@@ -21,7 +20,7 @@ namespace StatisticsStorage.Accumulators
         Stopwatch stopWatchSave;
         Stopwatch stopWatchCalc;
         //--------------------------------------------------------------------------------------------------------------------
-        public RepresentativesStatisticAccumulator(RepresentativesSaver representativesSaver, int numberOfSet, int dimension, decimal maxCount = 0, decimal step = 1, int bufferSize = 100)
+        public RepresentativesStatisticAccumulator(IRepresentativesSaver representativesSaver, int numberOfSet, int dimension, decimal maxCount = 0, decimal step = 1, int bufferSize = 100)
         {
             _numberOfSet = numberOfSet;
             _dimension = dimension;

@@ -11,6 +11,7 @@ namespace RepresentativesSetTest.Base
     {
         protected int _fCardinality;
         protected int _gapCount = 0;
+        protected bool _isSave;
         public int GapCount
         {
             get

@@ -13,6 +13,6 @@ namespace BioAlgorithm.Services.Contract
         Task ExecuteAlgorithmAsync(string algorithm, string algorithmDetail, int dimension, int numberOfSet);
         Task ExecuteAlgorithmStepAsync(string algorithm, string algorithmDetail, string CalculationStep, string CombinationType,
             int dimension, int numberOfSet, long maxCount);
-        Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string SelectedInputDataSort);
+        Task<List<RepresentativesInputDao>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string SelectedInputDataSort);
    }
 }

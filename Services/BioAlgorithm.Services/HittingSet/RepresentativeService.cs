@@ -12,6 +12,7 @@ using RepresentativesSet.BinaryTreeEnumeration;
 using RepresentativesSet.Greedy;
 using RepresentativesSet.TriangleEnumeration;
 using RepresentativesSet.TriangleEnumeration.SelectElement;
+using System.Security.Cryptography;
 
 namespace BioAlgorithm.Services.HittingSet
 {
@@ -40,7 +41,7 @@ namespace BioAlgorithm.Services.HittingSet
                     MaxCount = maxCount
                 };
                 await representativesRepository.ClearIsomorphicAsync(representativesPerfomanceFilterDto, isBipart);
-                List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
+                List<RepresentativesInputDao> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
                 if (!isBipart)
                 {
                     items.ForEach(item =>
@@ -59,14 +60,14 @@ namespace BioAlgorithm.Services.HittingSet
                 }
                 for (int i = 0; i < items.Count; i++)
                 {
-                    RepresentativesInput itemOut = items[i];
+                    RepresentativesInputDao itemOut = items[i];
                     MultiGraph graph1 = new MultiGraph(itemOut.InputData);
                     BipartiteGraph bipartiteGraph1 = new BipartiteGraph(itemOut.InputData);
                     if (itemOut.Isomorphic == null)
                     {
                         for (int j = i; j < items.Count; j++)
                         {
-                            RepresentativesInput itemIn = items[j];
+                            RepresentativesInputDao itemIn = items[j];
                             if (itemIn.Isomorphic == null)
                             {
                                 bool result = true;
@@ -127,14 +128,14 @@ namespace BioAlgorithm.Services.HittingSet
                     MaxCount = maxCount
                 };
                 await representativesRepository.ClearTaskTypeAsync(representativesPerfomanceFilterDto);
-                List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
+                List<RepresentativesInputDao> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, "InputDataShort");
                 items.ForEach(item =>
                 {
                     item.TypeTask = 0;
                 });
                 for (int i = 0; i < items.Count; i++)
                 {
-                    RepresentativesInput itemOut = items[i];
+                    RepresentativesInputDao itemOut = items[i];
                     MultiGraph graph = new MultiGraph(itemOut.InputData);
 //                    BipartiteGraph bipartiteGraph1 = new BipartiteGraph(itemOut.InputData);
                     int taskType = graph.DefineType();
@@ -155,6 +156,56 @@ namespace BioAlgorithm.Services.HittingSet
         }
 
         //----------------------------------------------------------------------------------------------------------------------
+        public async Task<string> DefineGreedyComparisonAsync(string algorithmName, int dimension, int numberOfSet, long maxCount)
+        {
+            string error = string.Empty;
+            try
+            {
+                List<(string Algorithname, int Count)> nameList = await representativesRepository.GetGeedyAlgorithmGroupDimensionsAsync(dimension, numberOfSet, maxCount);
+                if (nameList.Count < 5)
+                {
+                    if (maxCount == 0)
+                    {
+                        List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+                        {
+                            new RepresentativesBranchAndBoundByValue(dimension),
+                            new RepresentativesGreedySimple(),
+                            new RepresentativesGreedyImprove(),
+                            new RepresentativesGreedyRelation(),
+                            new RepresentativesGreedyImproveRD()
+
+                        };
+
+                        HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithms, dimension, numberOfSet, 1000, 1, 1);
+                        await enumeration.ExecuteAsync();
+
+                    }
+                    else
+                    {
+                        List<IHittingSetAlgorithm> hittingSetAlgorithms = new List<IHittingSetAlgorithm>()
+                        {
+                            new RepresentativesBranchAndBoundByValue(dimension),
+                            new RepresentativesGreedySimple(),
+                            new RepresentativesGreedyImprove(),
+                            new RepresentativesGreedyRelation(),
+                            new RepresentativesGreedyImproveRD()
+
+                        };
+                        HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithms,
+    "SkipEnumerationBigInteger", "Without Matrix", dimension, numberOfSet, maxCount, 1000, 1, 1);
+                        await enumerationStep.ExecuteAsync();
+
+                    }
+                }
+                await representativesRepository.SetGeedyComparisonAsync(dimension, numberOfSet, maxCount);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+            return error;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativeAlgorithmGroup>> GetAlgorithmsAsync()
         {
             return await representativesRepository.GetAlgorithmsAsync();
@@ -166,9 +217,9 @@ namespace BioAlgorithm.Services.HittingSet
         }
 
         //----------------------------------------------------------------------------------------------------------------------
-        public async Task<List<RepresentativesInput>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string SelectedInputDataSort)
+        public async Task<List<RepresentativesInputDao>> GetRepresentativeInputsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string SelectedInputDataSort)
         {
-            List<RepresentativesInput> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilter, SelectedInputDataSort);
+            List<RepresentativesInputDao> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilter, SelectedInputDataSort);
             return items;
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -176,8 +227,9 @@ namespace BioAlgorithm.Services.HittingSet
         {
             int сardinality = dimension;
             int length = numberOfSet;
-            IHittingSetAlgorithm hittingSetAlgorithm = GetAlgorithm(algorithm, algorithmDetail, dimension);
-            HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithm, сardinality, length, 1000);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = GetAlgorithm(algorithm, algorithmDetail, dimension);
+
+            HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithms, сardinality, length, 1000, 1, 1);
             await enumeration.ExecuteAsync();
         }
         //----------------------------------------------------------------------------------------------------------------------
@@ -186,34 +238,37 @@ namespace BioAlgorithm.Services.HittingSet
         {
             int сardinality = dimension;
             int length = numberOfSet;
-            IHittingSetAlgorithm hittingSetAlgorithm = GetAlgorithm(algorithm, algorithmDetail, dimension);
+            List<IHittingSetAlgorithm> hittingSetAlgorithms = GetAlgorithm(algorithm, algorithmDetail, dimension);
            
-            HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithm, CalculationStep, CombinationType, CalculationStep, CombinationType,  сardinality, length, maxCount, 1000);
+            HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithms, 
+                CalculationStep, CombinationType, сardinality, length, maxCount, 1000, 1, 1);
             await enumerationStep.ExecuteAsync();
             
         }
         //----------------------------------------------------------------------------------------------------------------------
-        private IHittingSetAlgorithm GetAlgorithm(string algorithm, string algorithmDetail, int dimension)
+        private List<IHittingSetAlgorithm> GetAlgorithm(string algorithm, string algorithmDetail, int dimension)
         {
-            IHittingSetAlgorithm hittingSetAlgorithm = new { algorithm, algorithmDetail } switch
+            List<IHittingSetAlgorithm> hittingSetAlgorithm = new { algorithm, algorithmDetail } switch
             {
-                { algorithm: "BruteForceRepresentativesBinaryNumbers", algorithmDetail: _ } => new BruteForceRepresentativesBinaryNumbers(),
-                { algorithm: "BruteForceRepresentativesBinaryNumbersVer2", algorithmDetail: _ } => new BruteForceRepresentativesBinaryNumbersVer2(),
-                { algorithm: "BruteForceRepresentativesAsTree", algorithmDetail: _ } => new BruteForceRepresentativesAsTree(dimension),
-                { algorithm: "BruteForceRepresentativesAsTreeDirect", algorithmDetail: _ } => new BruteForceRepresentativesAsTreeDirect(dimension),
-                { algorithm: "RepresentativesBranchAndBound", algorithmDetail: _ } => new RepresentativesBranchAndBound(dimension),
-                { algorithm: "RepresentativesBranchAndBoundByValue", algorithmDetail: _ } => new RepresentativesBranchAndBoundByValue(dimension),
-                { algorithm: "RepresentativesBranchAndBoundFirst", algorithmDetail: _ } => new RepresentativesBranchAndBoundFirst(dimension),
-                { algorithm: "RepresentativesGreedySimple", algorithmDetail: _ } => new RepresentativesGreedySimple(),
-                { algorithm: "RepresentativesGreedyImprove", algorithmDetail: _ } => new RepresentativesGreedyImprove(),
-                { algorithm: "RepresentativesGreedyRelation", algorithmDetail: _ } => new RepresentativesGreedyRelation(),
-                { algorithm: "RepresentativesGreedyImproveRD", algorithmDetail: _ } => new RepresentativesGreedyImproveRD(),
-                { algorithm: "RepresentativesTriangleBranchAndBound", algorithmDetail: _ } => new RepresentativesTriangleBranchAndBound(dimension),
-                { algorithm: "RepresentativesTriangle", algorithmDetail: _ } => new RepresentativesTriangle(dimension),
-                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementSimpleStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementSimpleStrategy()),
-                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementRelationStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementRelationStrategy()),
-                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementImproveStrategy()),
-                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveRDStrategy" } => new RepresentativesTriangleStrategy(dimension, new SelectElementImproveRDStrategy()),
+                { algorithm: "BruteForceRepresentativesBinaryNumbers", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new BruteForceRepresentativesBinaryNumbers() },
+                { algorithm: "BruteForceRepresentativesBinaryNumbersVer2", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new BruteForceRepresentativesBinaryNumbersVer2() },
+                { algorithm: "BruteForceRepresentativesAsTree", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new BruteForceRepresentativesAsTree(dimension) },
+                { algorithm: "BruteForceRepresentativesAsTreeDirect", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new BruteForceRepresentativesAsTreeDirect(dimension) },
+                { algorithm: "RepresentativesBranchAndBound", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesBranchAndBound(dimension) },
+                { algorithm: "RepresentativesBranchAndBoundByValue", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesBranchAndBoundByValue(dimension) },
+                { algorithm: "RepresentativesBranchAndBoundFirst", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesBranchAndBoundFirst(dimension) },
+                { algorithm: "RepresentativesGreedySimple", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesGreedySimple() },
+                { algorithm: "RepresentativesGreedyImprove", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesGreedyImprove() },
+                { algorithm: "RepresentativesGreedyRelation", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesGreedyRelation() },
+                { algorithm: "RepresentativesGreedyImproveRD", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesGreedyImproveRD() },
+                { algorithm: "RepresentativesTriangleBranchAndBound", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangleBranchAndBound(dimension) },
+                { algorithm: "RepresentativesTriangle", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangle(dimension) },
+                { algorithm: "Empty", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new EmptyHSAlgorithm(dimension) },
+                { algorithm: "AllGreedy", algorithmDetail: _ } => new List<IHittingSetAlgorithm>() { new RepresentativesGreedySimple(), new RepresentativesGreedyImprove(), new RepresentativesGreedyRelation(), new RepresentativesGreedyImproveRD() },
+                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementSimpleStrategy" } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangleStrategy(dimension, new SelectElementSimpleStrategy()) },
+                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementRelationStrategy" } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangleStrategy(dimension, new SelectElementRelationStrategy()) },
+                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveStrategy" } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangleStrategy(dimension, new SelectElementImproveStrategy()) },
+                { algorithm: "RepresentativesTriangleStrategy", algorithmDetail: "SelectElementImproveRDStrategy" } => new List<IHittingSetAlgorithm>() { new RepresentativesTriangleStrategy(dimension, new SelectElementImproveRDStrategy()) },
             };
             return hittingSetAlgorithm;
         }

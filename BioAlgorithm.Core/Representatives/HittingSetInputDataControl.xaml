@@ -8,9 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="900">
     <UserControl.Resources>
         <local:TaskTypeToBrushConverter x:Key="taskTypeToBrushConverter"/>
+        <local:TaskTypeToBinaryConverter x:Key="taskTypeToBinaryConverter"/>
+        <local:GreedyComparisonToBinaryConverter x:Key="greedyComparisonToBinaryConverter"/>
     </UserControl.Resources>
     <Grid x:Name="InputDataGrid">
-        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center" Margin="5">Hitting Set Input Data</Label>
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition />
@@ -39,12 +46,27 @@
                 <Label Grid.Row="0" Grid.Column="2" Content="Top" Margin="2"/>
                 <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding HittingSetFilter.Top}" Margin="2" VerticalContentAlignment="Center"/>
                 <StackPanel Grid.Column="4" Grid.ColumnSpan="6" Orientation="Horizontal">
-                    <Button  Content="Refresh" Command="{Binding RefreshRepresentativeInputListCommand}"  Width="90" Margin="2"/>
-                    <Button  Content="Run Task" Command="{Binding RunTaskCommand}" Width="90" Margin="2"/>
-                    <Button  Content="Run TaskStep" Command="{Binding RunTaskStepCommand}" Width="90" Margin="2"/>
-                    <Button  Content="Isomorphism" Command="{Binding RunIsomorphismTaskCommand}" Width="90" Margin="2"/>
-                    <Button  Content="Isomorphism 2" Command="{Binding RunIsomorphismBipartTaskCommand}" Width="90" Margin="2"/>
-                    <Button  Content="Type task" Command="{Binding RunDefineTypeTaskCommand}" Width="90" Margin="2"/>
+                    <Button  ToolTip="Reload" Command="{Binding RefreshRepresentativeInputListCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Pictures/reload.png" ToolTip="Reload"/>
+                    </Button>
+                    <Button  ToolTip="Run Algorithm Task" Command="{Binding RunTaskCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Pictures/task3.png" ToolTip="Run Algorithm Task"/>
+                    </Button>
+                    <Button  ToolTip="Run Algorithm Task With Step" Command="{Binding RunTaskStepCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Pictures/task4.png" ToolTip="Run Algorithm Task With Step"/>
+                    </Button>
+                    <Button  ToolTip="Run Isomorphism Task" Command="{Binding RunIsomorphismTaskCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Representatives/isomorphism.png" ToolTip="Run Isomorphism Task"/>
+                    </Button>
+                    <Button  ToolTip="Run Isomorphism Bipart Graph Task" Command="{Binding RunIsomorphismBipartTaskCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Representatives/isomorphism-bipart.png" ToolTip="Run Isomorphism Bipart Graph Task"/>
+                    </Button>
+                    <Button  ToolTip="Define Type task" Command="{Binding RunDefineTypeTaskCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Pictures/TaskType.ICO" ToolTip="Define Type task"/>
+                    </Button>
+                    <Button  ToolTip="Define GreedyComparison" Command="{Binding RunDefineGreedyComparisonCommand}" Margin="2">
+                        <Image Width="25" Height="25" Source="/Pictures/input.png" ToolTip="Run Greedy Comparison"/>
+                    </Button>
                 </StackPanel>
                 <Label Grid.Column="0" Content="Sort" Margin="2"/>
                 <ComboBox Grid.Column="1" Name="cbRPOrder"  ItemsSource="{Binding InputDataSortItems}"
@@ -89,7 +111,7 @@
                                 <StackPanel>
                                     <Button ToolTip="Move To Filter of Performance Tab And Apply Filter" Margin="1" Padding="1" 
                                         Command="{Binding Path=DataContext.ToFilterCommand, ElementName=InputDataGrid}" CommandParameter="{Binding}" >
-                                        <Image Width="25" Height="25" Source="/Pictures/document-export.png" />
+                                        <Image Width="25" Height="25" Source="/Pictures/hs-performance-result.png" />
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -101,7 +123,7 @@
                                 <StackPanel>
                                     <Button ToolTip="Move Graph" Margin="1" Padding="1" 
                                         Command="{Binding Path=DataContext.MakeGraphCommand, ElementName=InputDataGrid}" CommandParameter="{Binding}" >
-                                        <Image Width="25" Height="25" Source="/Pictures/drawOnTheMap.png" />
+                                        <Image Width="25" Height="25" Source="/Pictures/hs-bipartite-graph.png" />
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -201,6 +223,30 @@
                             <DataTemplate>
                                 <Label Content="{Binding TypeTask}" VerticalContentAlignment="Center" 
                                        Background="{ Binding TypeTask, Converter={StaticResource taskTypeToBrushConverter}}"
+                                       VerticalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="50" Header="Type as Binary">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{ Binding TypeTask, Converter={StaticResource taskTypeToBinaryConverter}}" VerticalContentAlignment="Center" 
+                                       VerticalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="50" Header="GreedyComparison">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding GreedyComparison}" VerticalContentAlignment="Center" 
+                                       VerticalAlignment="Stretch"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  MinWidth="50" Header="GreedyComp as Bin">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Content="{ Binding GreedyComparison, Converter={StaticResource greedyComparisonToBinaryConverter}}" VerticalContentAlignment="Center" 
                                        VerticalAlignment="Stretch"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
