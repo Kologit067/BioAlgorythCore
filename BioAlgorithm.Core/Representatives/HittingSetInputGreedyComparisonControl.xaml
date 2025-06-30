@@ -8,8 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local:TaskTypeToBrushConverter x:Key="taskTypeToBrushConverter"/>
+        <local:TaskTypeToForeColorConverter x:Key="taskTypeToForeColorConverter"/>
         <local:TaskTypeToBinaryConverter x:Key="taskTypeToBinaryConverter"/>
+        <local:GreedyCompareToBrushConverter x:Key="greedyCompareToBrushConverter"/>
+        <local:GreedyCompareToForeColorConverter x:Key="greedyCompareToForeColorConverter"/>
         <local:GreedyComparisonToBinaryConverter x:Key="greedyComparisonToBinaryConverter"/>
+        <Style x:Key="cbTaskType">
+            <Setter Property="Control.Margin" Value="2" />
+            <Setter Property="Control.Width" Value="40" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="cbGreedyComp">
+            <Setter Property="Control.Margin" Value="2" />
+            <Setter Property="Control.Width" Value="120" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="InputDataGrid">
         <Grid.RowDefinitions>
@@ -70,21 +83,27 @@
                          Width="100"/>
                 <StackPanel Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
                     <Label Content="Input ask Type"  Width="150"/>
-                    <CheckBox Content="1" ToolTip="with element with only 1 set" IsChecked="{Binding TaskTypeFilter1}"  Width="50" Margin="2"/>
-                    <CheckBox Content="2" ToolTip="elemуnt with element.set.count >= sets.count-1" IsChecked="{Binding TaskTypeFilter2}"  Width="50" Margin="2"/>
-                    <CheckBox Content="4" ToolTip="set with only 1 element" IsChecked="{Binding TaskTypeFilter4}"  Width="50" Margin="2"/>
-                    <CheckBox Content="8" ToolTip="there is set that contans all elements" IsChecked="{Binding TaskTypeFilter8}"  Width="50" Margin="2"/>
-                    <CheckBox Content="16" ToolTip="other division on 2 separate part of sets" IsChecked="{Binding TaskTypeFilter16}"  Width="50" Margin="2"/>
-                    <CheckBox Content="32" ToolTip="if set of sets that contain element e1 is subset of set of sets that contain element el2" IsChecked="{Binding TaskTypeFilter32}"  Width="50" Margin="2"/>
+                    <CheckBox Content="1" ToolTip="with element with only 1 set" IsChecked="{Binding TaskTypeFilter1}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="2" ToolTip="elemуnt with element.set.count >= sets.count-1" IsChecked="{Binding TaskTypeFilter2}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="4" ToolTip="set with only 1 element" IsChecked="{Binding TaskTypeFilter4}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="8" ToolTip="there is set that contans all elements" IsChecked="{Binding TaskTypeFilter8}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="16" ToolTip="other division on 2 separate part of sets" IsChecked="{Binding TaskTypeFilter16}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="32" ToolTip="if set of sets that contain element e1 is subset of set of sets that contain element el2" IsChecked="{Binding TaskTypeFilter32}"  Style="{StaticResource cbTaskType}"/>
                     <ComboBox Name="cbTaskTypeFilter"  ItemsSource="{Binding TaskTypeFilterTypeSource}"
                     SelectedItem="{Binding HittingSetFilter.TaskTypeFilterType}" IsEditable="true" IsReadOnly="true"/>
                 </StackPanel>
+                <Label Grid.Row="2" Grid.Column="2" Content="Pair Comparison" Margin="2"/>
+                <ComboBox Grid.Row="2" Grid.Column="3" Name="cbPairComparison"  ItemsSource="{Binding PairComparisonItems}"
+                                  SelectedItem="{Binding HittingSetFilter.PairComparison}" IsEditable="true" IsReadOnly="true"/>
+                <Label Grid.Row="2" Grid.Column="4" Content="Worse Greedy" Margin="2"/>
+                <ComboBox Grid.Row="2" Grid.Column="5" Name="cbSelectGreedy"  ItemsSource="{Binding SelectGreedyItems}"
+                                  SelectedItem="{Binding HittingSetFilter.SelectedGreedy}" IsEditable="true" IsReadOnly="true"/>
                 <StackPanel Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
                     <Label Content="Differ From Optimap" Width="150"/>
-                    <CheckBox Content="GreedySimple" ToolTip="GreedySimple worse than optimal value" IsChecked="{Binding GreedySimpleFilter}"  Width="100" Margin="2"/>
-                    <CheckBox Content="GreedyRelation" ToolTip="GreedyRelation worse than optimal value" IsChecked="{Binding GreedyRelationFilter}"  Width="100" Margin="2"/>
-                    <CheckBox Content="GreedyImprove" ToolTip="GreedyImprove worse than optimal value" IsChecked="{Binding GreedyImproveFilter}"  Width="100" Margin="2"/>
-                    <CheckBox Content="GreedyImproveRD" ToolTip="GreedyImproveRD worse than optimal value" IsChecked="{Binding GreedyImproveRDFilter}"  Width="100" Margin="2"/>
+                    <CheckBox Content="GreedySimple" ToolTip="GreedySimple worse than optimal value" IsChecked="{Binding GreedySimpleFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyRelation" ToolTip="GreedyRelation worse than optimal value" IsChecked="{Binding GreedyRelationFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyImprove" ToolTip="GreedyImprove worse than optimal value" IsChecked="{Binding GreedyImproveFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyImproveRD" ToolTip="GreedyImproveRD worse than optimal value" IsChecked="{Binding GreedyImproveRDFilter}"  Style="{StaticResource cbGreedyComp}"/>
                     <ComboBox Name="cbGreedyComparisonFilter"  ItemsSource="{Binding GreedyComparisonFilterTypeSource}"
                   SelectedItem="{Binding HittingSetFilter.GreedyComparisonFilterType}" IsEditable="true" IsReadOnly="true"/>
                 </StackPanel>
@@ -157,6 +176,7 @@
                             <DataTemplate>
                                 <Label Content="{Binding TypeTask}" VerticalContentAlignment="Center" 
                                        Background="{ Binding TypeTask, Converter={StaticResource taskTypeToBrushConverter}}"
+                                       Foreground="{ Binding TypeTask, Converter={StaticResource taskTypeToForeColorConverter}}"
                                        VerticalAlignment="Stretch"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -189,6 +209,8 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Content="{ Binding GreedyComparison, Converter={StaticResource greedyComparisonToBinaryConverter}}" VerticalContentAlignment="Center" 
+                                       Background="{ Binding GreedyComparison, Converter={StaticResource greedyCompareToBrushConverter}}"
+                                       Foreground="{ Binding GreedyComparison, Converter={StaticResource greedyCompareToForeColorConverter}}"
                                        VerticalAlignment="Stretch"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -231,7 +253,9 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
-                <TextBlock Text="{Binding ExecutionState}"/>
+                <TextBlock Text="{Binding ExecutionState}" VerticalAlignment="Center"/>
+                <Label Content="Total number of rows" Margin="10,0,5,0"/>
+                <TextBlock Text="{Binding TotalNumberRows}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Grid>

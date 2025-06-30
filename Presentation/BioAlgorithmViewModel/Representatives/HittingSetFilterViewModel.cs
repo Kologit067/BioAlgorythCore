@@ -172,6 +172,34 @@
                 OnPropertyChanged(nameof(GreedyComparisonFilterType));
             }
         }
+        //----------------------------------------------------------------------------------------------------------------------
+        private string pairComparison;
+        public string PairComparison
+        {
+            get
+            {
+                return pairComparison;
+            }
+            set
+            {
+                pairComparison = value;
+                OnPropertyChanged(nameof(PairComparison));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private string selectedGreedy;
+        public string SelectedGreedy
+        {
+            get
+            {
+                return selectedGreedy;
+            }
+            set
+            {
+                selectedGreedy = value;
+                OnPropertyChanged(nameof(SelectedGreedy));
+            }
+        }
 
         public HittingSetFilterViewModel()
         {

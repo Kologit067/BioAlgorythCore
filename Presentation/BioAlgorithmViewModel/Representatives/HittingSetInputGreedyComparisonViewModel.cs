@@ -72,6 +72,16 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //---------------------------------------------------------------------------------------------------------------------- 
+        public List<string> PairComparisonItems
+        {
+            get => new List<string>() { "N/A", "1<2", "1<3", "1<4", "2<1", "2<3", "2<4", "3<1", "3<2", "3<4", "4<1", "4<2", "4<3" };
+        }
+        //---------------------------------------------------------------------------------------------------------------------- 
+        public List<string> SelectGreedyItems
+        {
+            get => new List<string>() { "N/A", "1", "2", "3", "4" };
+        }
+        //---------------------------------------------------------------------------------------------------------------------- 
         public List<string> TaskTypeFilterTypeSource
         {
             get => new List<string>() { "Or", "And", "Exact =", "Or/Not", "And/Not", "Exact =/Not" };
@@ -234,6 +244,8 @@ namespace BioAlgorithmViewModel.Representatives
             SelectedInputDataSort = InputDataSortItems[0];
             HittingSetFilter.TaskTypeFilterType = TaskTypeFilterTypeSource[0];
             HittingSetFilter.GreedyComparisonFilterType = GreedyComparisonFilterTypeSource[0];
+            HittingSetFilter.PairComparison = PairComparisonItems[0];
+            HittingSetFilter.SelectedGreedy = SelectGreedyItems[0];
             Messenger.Default.Register<InputDataGreedyComparisonToFilterMessage>(this, OnInputDataGreedyComparisonToFilterMessageReceived, typeof(InputDataGreedyComparisonToFilterMessage));
         }
         private bool refreshRepresentativeAlgorithmGroupEnable = true;
@@ -292,6 +304,7 @@ namespace BioAlgorithmViewModel.Representatives
             List<InputDataGreedyComparison> items = await representativesRepository.GetInputDataGreedyComparisonsAsync(representativesPerfomanceFilter, SelectedInputDataSort);
             foreach (InputDataGreedyComparison item in items)
                 InputDataList.Add(item);
+            TotalNumberRows = items.Count;
 
             ExecutionState = "Query completed.";
             refreshRepresentativeAlgorithmGroupEnable = true;

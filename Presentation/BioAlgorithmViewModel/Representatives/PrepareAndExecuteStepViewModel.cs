@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BioAlgorithm.Core.Representatives;
 using BioAlgorithm.Data.Representatives.Data;
 using BioAlgorithm.Services.Contract;
 using BioAlgorithm.Services.HittingSet;
@@ -73,10 +74,15 @@ namespace BioAlgorithmViewModel.Representatives
         //----------------------------------------------------------------------------------------------------------------------
         public PrepareAndExecuteStepViewModel(StartTaskStepMessage message)
         {
-            if (message.Algorithm != null && (algorithmItems?.Contains(message.Algorithm) ?? false))
+            if (message.Algorithm != null && algorithmItems != null)
             {
-                Algorithm = message.Algorithm;
+                AlgorithmDetailViewModel? messageAlgorithm = algorithmItems.FirstOrDefault(a => a.Algorithm == message.Algorithm);
+                if (messageAlgorithm != null)
+                {
+                    messageAlgorithm.IsSelected = true;
+                }
             }
+
             if (message.NumberOfSet != null)
             {
                 NumberOfSet = message.NumberOfSet;
@@ -138,8 +144,17 @@ namespace BioAlgorithmViewModel.Representatives
 
             IRepresentativeService representativeService = new RepresentativeService(representativesRepository);
             if (Dimension.HasValue && NumberOfSet.HasValue)
-                await representativeService.ExecuteAlgorithmStepAsync(Algorithm, AlgorithmDetail, CalculationStep, CombinationType, Dimension.Value, NumberOfSet.Value, MaxCount ?? 0);
-
+            {
+                var selectedAlgoriths = AlgorithmItems.Where(a => a.IsSelected).Select(a => (a.Algorithm, a.AlgorithmDetail)).ToList();
+                if (selectedAlgoriths.Count > 0)
+                    await representativeService.ExecuteAlgorithmStepAsync(selectedAlgoriths, CalculationStep, CombinationType, Dimension.Value, NumberOfSet.Value, MaxCount ?? 0);
+                else
+                {
+                    ExecutionState = "Algoriths are not selected.";
+                    ExecuteAlgorithmEnable = true;
+                    return;
+                }
+            }
             ExecutionState = "Task completed.";
             ExecuteAlgorithmEnable = true;
         }

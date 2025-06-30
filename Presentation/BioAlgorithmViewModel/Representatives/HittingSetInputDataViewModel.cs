@@ -75,6 +75,11 @@ namespace BioAlgorithmViewModel.Representatives
         {
             get => new List<string>() { "Or", "And", "Exact =", "Or/Not", "And/Not", "Exact =/Not" };
         }
+        //---------------------------------------------------------------------------------------------------------------------- 
+        public List<string> GreedyComparisonFilterTypeSource
+        {
+            get => new List<string>() { "Or", "And", "Exact =", "Or/Not", "And/Not", "Exact =/Not" };
+        }
         //private string taskTypeFilterType;
         //public string TaskTypeFilterType
         //{
@@ -173,6 +178,63 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
 
+
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool greedySimpleFilter;
+        public bool GreedySimpleFilter
+        {
+            get
+            {
+                return greedySimpleFilter;
+            }
+            set
+            {
+                greedySimpleFilter = value;
+                OnPropertyChanged(nameof(GreedySimpleFilter));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool greedyRelationFilter;
+        public bool GreedyRelationFilter
+        {
+            get
+            {
+                return greedyRelationFilter;
+            }
+            set
+            {
+                greedyRelationFilter = value;
+                OnPropertyChanged(nameof(GreedyRelationFilter));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool greedyImproveFilter;
+        public bool GreedyImproveFilter
+        {
+            get
+            {
+                return greedyImproveFilter;
+            }
+            set
+            {
+                greedyImproveFilter = value;
+                OnPropertyChanged(nameof(GreedyImproveFilter));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
+        private bool greedyImproveRDFilter;
+        public bool GreedyImproveRDFilter
+        {
+            get
+            {
+                return greedyImproveRDFilter;
+            }
+            set
+            {
+                greedyImproveRDFilter = value;
+                OnPropertyChanged(nameof(GreedyImproveRDFilter));
+            }
+        }
         //----------------------------------------------------------------------------------------------------------------------
         public HittingSetInputDataViewModel(RepresentativesRepository representativesRepository) : base(representativesRepository)
         {
@@ -186,6 +248,7 @@ namespace BioAlgorithmViewModel.Representatives
             };
             SelectedInputDataSort = InputDataSortItems[0];
             HittingSetFilter.TaskTypeFilterType = TaskTypeFilterTypeSource[0];
+            HittingSetFilter.GreedyComparisonFilterType = GreedyComparisonFilterTypeSource[0];
             Messenger.Default.Register<AlgorithmGroupToFilterInputDataMessage>(this, OnAlgorithmGroupToFilterInputDataMessageReceived, typeof(AlgorithmGroupToFilterInputDataMessage));
         }
         private bool refreshRepresentativeAlgorithmGroupEnable = true;
@@ -222,12 +285,27 @@ namespace BioAlgorithmViewModel.Representatives
                 taskTypeFilter = taskTypeFilter | 16;
             if (TaskTypeFilter32)
                 taskTypeFilter = taskTypeFilter | 32;
+
+            int greedyComparisonFilter = 0;
+            if (greedyImproveRDFilter)
+                greedyComparisonFilter = greedyComparisonFilter | 1;
+            if (greedyImproveFilter)
+                greedyComparisonFilter = greedyComparisonFilter | 2;
+            if (GreedyRelationFilter)
+                greedyComparisonFilter = greedyComparisonFilter | 4;
+            if (GreedySimpleFilter)
+                greedyComparisonFilter = greedyComparisonFilter | 8;
+
             RepresentativesPerfomanceFilter? representativesPerfomanceFilterDto = HittingSetFilter.Map();
             if (representativesPerfomanceFilterDto != null)
+            {
                 representativesPerfomanceFilterDto.TaskTypeFilter = taskTypeFilter;
+                representativesPerfomanceFilterDto.GreedyComparisonFilter = greedyComparisonFilter;
+            }
             List<RepresentativesInputDao> items = await representativesRepository.GetRepresentativeInputsAsync(representativesPerfomanceFilterDto, SelectedInputDataSort);
             foreach (RepresentativesInputDao item in items)
                 InputDataList.Add(item);
+            TotalNumberRows = items.Count;
 
             ExecutionState = "Query completed.";
             refreshRepresentativeAlgorithmGroupEnable = true;

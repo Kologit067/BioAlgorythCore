@@ -117,7 +117,9 @@
 
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
-                <TextBlock Text="{Binding ExecutionState}"/>
+                <TextBlock Text="{Binding ExecutionState}" VerticalAlignment="Center"/>
+                <Label Content="Total number of rows" Margin="10,0,5,0"/>
+                <TextBlock Text="{Binding TotalNumberRows}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 

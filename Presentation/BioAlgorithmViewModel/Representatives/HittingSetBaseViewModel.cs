@@ -14,6 +14,20 @@ namespace BioAlgorithmViewModel.Representatives
     {
         protected readonly RepresentativesRepository representativesRepository;
         //----------------------------------------------------------------------------------------------------------------------
+        private int totalNumberRows;
+        public int TotalNumberRows
+        {
+            get
+            {
+                return totalNumberRows;
+            }
+            set
+            {
+                totalNumberRows = value;
+                OnPropertyChanged(nameof(TotalNumberRows));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         private HittingSetFilterViewModel hittingSetDataFilter;
         public HittingSetFilterViewModel HittingSetFilter
         {

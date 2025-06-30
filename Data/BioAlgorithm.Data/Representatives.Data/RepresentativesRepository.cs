@@ -1,11 +1,11 @@
-﻿
-using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Data;
 using BioAlgorithm.Data.Contract.Representatives.Data.Contract;
 using BioAlgorithm.Data.Contract.Representatives.Data.Contract.Interfaces;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Representatives.Data.Contract;
+using System.Configuration;
 
 namespace BioAlgorithm.Data.Representatives.Data
 {
@@ -19,7 +19,13 @@ namespace BioAlgorithm.Data.Representatives.Data
         {
             if (string.IsNullOrEmpty(connectionString))
             {
-                _connectionString = ConfigurationManager.ConnectionStrings["BioAlgorithm"].ConnectionString;
+                //_connectionString = ConfigurationManager.ConnectionStrings["BioAlgorithm"].ConnectionString;
+                //ConfigurationManager configurationManager = new ConfigurationManager();
+                var builder = new ConfigurationBuilder().AddXmlFile("app.config");
+
+                var appConfiguration = builder.Build();
+                IConfigurationSection connStrings = appConfiguration.GetSection("ConnectionStrings");
+                _connectionString = connStrings.GetSection("BioAlgorithm").Value;
             }
             else
             {
@@ -127,7 +133,8 @@ namespace BioAlgorithm.Data.Representatives.Data
 FROM [dbo].[RepresentativesPerfomance] AS rp
 INNER JOIN [dbo].[RepresentativesInput] AS ri
 ON (rp.RepresentativesInputId = ri.RepresentativesInputId)
-GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]";
+GROUP BY [Algorithm], [NumberOfSet], [Dimension], [MaxCount]
+";
                     if (!string.IsNullOrEmpty(algorithmGroupListSort))
                         sql += $@"ORDER BY {algorithmGroupListSort}
 ";
@@ -440,17 +447,52 @@ ORDER BY {order}";
                 whereList.Add($"[InputLenSort] = '{representativesPerfomanceFilter.InputLenSort}'");
             }
 
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Or")
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0 )
             {
-                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0");
+                string[] taskTypeFilterTypeArr = representativesPerfomanceFilter.TaskTypeFilterType.Split('/');
+                string whereTaskType = null;
+                if (taskTypeFilterTypeArr[0] == "Or")
+                {
+                    whereTaskType = $"(([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0)";
+                }
+                if (taskTypeFilterTypeArr[0] == "And")
+                {
+                    whereTaskType = $"(([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter})";
+                }
+                if (taskTypeFilterTypeArr[0] == "Exact =")
+                {
+                    whereTaskType = $"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})";
+                }
+                if (!string.IsNullOrEmpty(whereTaskType))
+                {
+                    if (taskTypeFilterTypeArr.Length > 1)
+                        whereTaskType = $"NOT {whereTaskType}";
+                    whereList.Add(whereTaskType);
+                }
             }
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "And")
+
+            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0)
             {
-                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter}");
-            }
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Exact =")
-            {
-                whereList.Add($"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})");
+                string[] greedyComparisonFilterTypeArr = representativesPerfomanceFilter.GreedyComparisonFilterType.Split('/');
+                string whereGreedyComparison = null;
+                if (greedyComparisonFilterTypeArr[0] == "Or")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) != 0";
+                }
+                if (greedyComparisonFilterTypeArr[0] == "And")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) = {representativesPerfomanceFilter.GreedyComparisonFilter}";
+                }
+                if (greedyComparisonFilterTypeArr[0] == "Exact =")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] = {representativesPerfomanceFilter.GreedyComparisonFilter})";
+                }
+                if (!string.IsNullOrEmpty(whereGreedyComparison))
+                {
+                    if (greedyComparisonFilterTypeArr.Length > 1)
+                        whereGreedyComparison = $"NOT {whereGreedyComparison}";
+                    whereList.Add(whereGreedyComparison);
+                }
             }
 
             if (whereList.Count > 0)
@@ -492,30 +534,68 @@ ORDER BY {order}";
                 whereList.Add($"[InputLenSort] = '{representativesPerfomanceFilter.InputLenSort}'");
             }
 
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Or")
+            if (representativesPerfomanceFilter.TaskTypeFilter != 0)
             {
-                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0");
-            }
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "And")
-            {
-                whereList.Add($"([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter}");
-            }
-            if (representativesPerfomanceFilter.TaskTypeFilter != 0 && representativesPerfomanceFilter.TaskTypeFilterType == "Exact =")
-            {
-                whereList.Add($"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})");
+                string[] taskTypeFilterTypeArr = representativesPerfomanceFilter.TaskTypeFilterType.Split('/');
+                string whereTaskType = null;
+                if (taskTypeFilterTypeArr[0] == "Or")
+                {
+                    whereTaskType = $"(([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) != 0)";
+                }
+                if (taskTypeFilterTypeArr[0] == "And")
+                {
+                    whereTaskType = $"(([TypeTask] & {representativesPerfomanceFilter.TaskTypeFilter}) = {representativesPerfomanceFilter.TaskTypeFilter})";
+                }
+                if (taskTypeFilterTypeArr[0] == "Exact =")
+                {
+                    whereTaskType = $"([TypeTask] = {representativesPerfomanceFilter.TaskTypeFilter})";
+                }
+                if (!string.IsNullOrEmpty(whereTaskType))
+                {
+                    if (taskTypeFilterTypeArr.Length > 1)
+                        whereTaskType = $"NOT {whereTaskType}";
+                    whereList.Add(whereTaskType);
+                }
             }
 
-            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "Or")
+            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 )
             {
-                whereList.Add($"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) != 0");
+                string[] greedyComparisonFilterTypeArr = representativesPerfomanceFilter.GreedyComparisonFilterType.Split('/');
+                string whereGreedyComparison = null;
+                if (greedyComparisonFilterTypeArr[0] == "Or")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) != 0";
+                }
+                if (greedyComparisonFilterTypeArr[0] == "And")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) = {representativesPerfomanceFilter.GreedyComparisonFilter}";
+                }
+                if (greedyComparisonFilterTypeArr[0] == "Exact =")
+                {
+                    whereGreedyComparison = $"([GreedyComparison] = {representativesPerfomanceFilter.GreedyComparisonFilter})";
+                }
+                if (!string.IsNullOrEmpty(whereGreedyComparison))
+                {
+                    if (greedyComparisonFilterTypeArr.Length > 1)
+                        whereGreedyComparison = $"NOT {whereGreedyComparison}";
+                    whereList.Add(whereGreedyComparison);
+                }
             }
-            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "And")
+
+            if (!string.IsNullOrEmpty(representativesPerfomanceFilter.PairComparison) && representativesPerfomanceFilter.PairComparison != "N/A")
             {
-                whereList.Add($"([GreedyComparison] & {representativesPerfomanceFilter.GreedyComparisonFilter}) = {representativesPerfomanceFilter.GreedyComparisonFilter}");
+                List<int> pairComparisonArr = representativesPerfomanceFilter.PairComparison.Split("<").Select(p => int.Parse(p)).ToList();
+                whereList.Add($" {algorithmGreedyBestValueNames[pairComparisonArr[0] - 1]} < {algorithmGreedyBestValueNames[pairComparisonArr[1] - 1]}");
             }
-            if (representativesPerfomanceFilter.GreedyComparisonFilter != 0 && representativesPerfomanceFilter.GreedyComparisonFilterType == "Exact =")
+
+            if (!string.IsNullOrEmpty(representativesPerfomanceFilter.SelectedGreedy) && representativesPerfomanceFilter.SelectedGreedy != "N/A")
             {
-                whereList.Add($"([GreedyComparison] = {representativesPerfomanceFilter.GreedyComparisonFilter})");
+                int greedy = int.Parse(representativesPerfomanceFilter.SelectedGreedy) - 1;
+                for (int i = 0; i < algorithmGreedyBestValueNames.Length; i++)
+                {
+                    if (i != greedy)
+                        whereList.Add($" {algorithmGreedyBestValueNames[greedy]} > {algorithmGreedyBestValueNames[i]}");
+                }
             }
 
             if (whereList.Count > 0)
@@ -584,7 +664,7 @@ ORDER BY {order}";
             }
             return representativesInputs;
         }
-
+        private readonly string[] algorithmGreedyBestValueNames = new string[] { "rgs.BestValue", "rgr.BestValue", "rgi.BestValue", "rgd.BestValue" };
         //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<RepresentativesPerfomanceCompare>> GetRepresentativePerformanceCompareListAsync(RepresentativesPerfomanceCompareFilter representativesPerfomanceCompareFilter)
         {

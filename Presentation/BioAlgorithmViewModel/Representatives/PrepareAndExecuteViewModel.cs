@@ -4,6 +4,7 @@ using BioAlgorithmViewModel.Common;
 using System.Collections.ObjectModel;
 using BioAlgorithmViewModel.Representatives.Messages;
 using BioAlgorithm.Services.HittingSet;
+using BioAlgorithm.Core.Representatives;
 
 namespace BioAlgorithmViewModel.Representatives
 {
@@ -13,22 +14,9 @@ namespace BioAlgorithmViewModel.Representatives
     public class PrepareAndExecuteViewModel : CaseDefinitionViewModel
     {
         protected RepresentativesRepository representativesRepository;
-        protected string algorithmDetail;
-        public string AlgorithmDetail
-        {
-            get
-            {
-                return algorithmDetail;
-            }
-            set
-            {
-                algorithmDetail = value;
-                OnPropertyChanged(nameof(AlgorithmDetail));
-            }
-        }
         //----------------------------------------------------------------------------------------------------------------------
-        protected ObservableCollection<string> algorithmItems;
-        public ObservableCollection<string> AlgorithmItems
+        protected ObservableCollection<AlgorithmDetailViewModel> algorithmItems;
+        public ObservableCollection<AlgorithmDetailViewModel> AlgorithmItems
         {
             get
             {
@@ -41,42 +29,19 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
-        protected ObservableCollection<string> algorithmDetailItems;
-        public ObservableCollection<string> AlgorithmDetailItems
-        {
-            get
-            {
-                return algorithmDetailItems;
-            }
-            set
-            {
-                algorithmDetailItems = value;
-                OnPropertyChanged(nameof(AlgorithmDetailItems));
-            }
-        }
-        protected bool algorithmDetailReadOnly;
-        public bool AlgorithmDetailReadOnly
-        {
-            get
-            {
-                return algorithmDetailReadOnly;
-            }
-            set
-            {
-                algorithmDetailReadOnly = value;
-                OnPropertyChanged(nameof(AlgorithmDetailReadOnly));
-            }
-        }
-        //----------------------------------------------------------------------------------------------------------------------
         public PrepareAndExecuteViewModel()
         {
 
         }
         public PrepareAndExecuteViewModel(StartTaskMessage message)
         {
-            if (message.Algorithm != null && (algorithmItems?.Contains(message.Algorithm) ?? false))
+            if (message.Algorithm != null && algorithmItems != null)
             {
-                Algorithm = message.Algorithm;
+                AlgorithmDetailViewModel? messageAlgorithm = algorithmItems.FirstOrDefault( a => a.Algorithm == message.Algorithm);
+                if (messageAlgorithm != null)
+                {
+                    messageAlgorithm.IsSelected = true;
+                }
             }
             if (message.NumberOfSet != null)
             {
@@ -94,48 +59,35 @@ namespace BioAlgorithmViewModel.Representatives
         protected void FillAlgorithm()
         {
 
-            AlgorithmItems = new ObservableCollection<string>()
+            AlgorithmItems = new ObservableCollection<AlgorithmDetailViewModel>()
             {
-                "BruteForceRepresentativesBinaryNumbers",
-                "BruteForceRepresentativesBinaryNumbersVer2",
-                "BruteForceRepresentativesAsTree",
-                "BruteForceRepresentativesAsTreeDirect",
-                "RepresentativesBranchAndBound",
-                "RepresentativesBranchAndBoundByValue",
-                "RepresentativesBranchAndBoundFirst",
-                "RepresentativesGreedySimple",
-                "RepresentativesGreedyImprove",
-                "RepresentativesGreedyRelation",
-                "RepresentativesGreedyImproveRD",
-                "AllGreedy",
-                "RepresentativesTriangleBranchAndBound",
-                "RepresentativesTriangle",
-                "RepresentativesTriangleStrategy",
-                "Empty"
+                new AlgorithmDetailViewModel() {Algorithm = "BruteForceRepresentativesBinaryNumbers" },
+                new AlgorithmDetailViewModel() {Algorithm = "BruteForceRepresentativesBinaryNumbersVer2" },
+                new AlgorithmDetailViewModel() {Algorithm = "BruteForceRepresentativesAsTree" },
+                new AlgorithmDetailViewModel() {Algorithm = "BruteForceRepresentativesAsTreeDirect" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesBranchAndBound" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesBranchAndBoundByValue" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesBranchAndBoundFirst" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesGreedySimple" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesGreedyImprove" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesGreedyRelation" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesGreedyImproveRD" },
+                new AlgorithmDetailViewModel() {Algorithm = "AllGreedy" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangleBranchAndBound" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangle" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangleStrategy", AlgorithmDetail = "SelectElementSimpleStrategy" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangleStrategy", AlgorithmDetail = "SelectElementRelationStrategy" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangleStrategy", AlgorithmDetail = "SelectElementImproveStrategy" },
+                new AlgorithmDetailViewModel() {Algorithm = "RepresentativesTriangleStrategy", AlgorithmDetail = "SelectElementImproveRDStrategy" },
+                new AlgorithmDetailViewModel() {Algorithm = "Empty" }
             };
-            AlgorithmDetailItems = new ObservableCollection<string>()
-            {
-                "SelectElementSimpleStrategy",
-                "SelectElementRelationStrategy",
-                "SelectElementImproveStrategy",
-                "SelectElementImproveRDStrategy"
-            };
-            Algorithm = AlgorithmItems[0];
-            AlgorithmDetail = AlgorithmDetailItems[0];
-            AlgorithmDetailReadOnly = true;
+            
         }
         protected void PrepareAndExecuteViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Algorithm))
             {
-                if (e.PropertyName == "RepresentativesTriangleStrategy")
-                {
-                    AlgorithmDetailReadOnly = false;
-                }
-                else
-                {
-                    AlgorithmDetailReadOnly = true;
-                }
+                
             }
         }
 
@@ -161,7 +113,17 @@ namespace BioAlgorithmViewModel.Representatives
 
             RepresentativeService representativeService = new RepresentativeService(representativesRepository);
             if (Dimension.HasValue && NumberOfSet.HasValue)
-                await representativeService.ExecuteAlgorithmAsync(Algorithm, AlgorithmDetail, Dimension.Value, NumberOfSet.Value);
+            {
+                var selectedAlgoriths = AlgorithmItems.Where(a => a.IsSelected).Select(a => (a.Algorithm, a.AlgorithmDetail)).ToList();
+                if (selectedAlgoriths.Count > 0)
+                    await representativeService.ExecuteAlgorithmAsync(selectedAlgoriths, Dimension.Value, NumberOfSet.Value);
+                else
+                {
+                    ExecutionState = "Algoriths are not selected.";
+                    ExecuteAlgorithmEnable = true;
+                    return;
+                }
+            }
 
             ExecutionState = "Task completed.";
             ExecuteAlgorithmEnable = true;

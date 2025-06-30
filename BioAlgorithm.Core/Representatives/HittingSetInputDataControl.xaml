@@ -8,8 +8,19 @@
              d:DesignHeight="450" d:DesignWidth="900">
     <UserControl.Resources>
         <local:TaskTypeToBrushConverter x:Key="taskTypeToBrushConverter"/>
+        <local:TaskTypeToForeColorConverter x:Key="taskTypeToForeColorConverter"/>
         <local:TaskTypeToBinaryConverter x:Key="taskTypeToBinaryConverter"/>
         <local:GreedyComparisonToBinaryConverter x:Key="greedyComparisonToBinaryConverter"/>
+        <Style x:Key="cbTaskType">
+            <Setter Property="Control.Margin" Value="2" />
+            <Setter Property="Control.Width" Value="40" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="cbGreedyComp">
+            <Setter Property="Control.Margin" Value="2" />
+            <Setter Property="Control.Width" Value="120" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="InputDataGrid">
         <Grid.RowDefinitions>
@@ -33,18 +44,20 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="200"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="2" Content="Top" Margin="2"/>
-                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding HittingSetFilter.Top}" Margin="2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding HittingSetFilter.Top}" Margin="2" 
+                         Width="70" VerticalContentAlignment="Center"/>
                 <StackPanel Grid.Column="4" Grid.ColumnSpan="6" Orientation="Horizontal">
                     <Button  ToolTip="Reload" Command="{Binding RefreshRepresentativeInputListCommand}" Margin="2">
                         <Image Width="25" Height="25" Source="/Pictures/reload.png" ToolTip="Reload"/>
@@ -74,24 +87,37 @@
                 <Label Grid.Row="1" Grid.Column="0" Content="Dimension" Margin="2"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HittingSetFilter.Dimension}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="2" Content="NumberOfSet" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding HittingSetFilter.NumberOfSet}" Margin="2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding HittingSetFilter.NumberOfSet}" Margin="2" 
+                         Width="70" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="4" Content="MaxCount" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding HittingSetFilter.MaxCount}" Margin="2" VerticalContentAlignment="Center"/>
-                <Label Grid.Row="2" Grid.Column="2" Content="Step" Margin="2"/>
-                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding HittingSetFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding HittingSetFilter.MaxCount}" Margin="2" 
+                         Width="150" VerticalContentAlignment="Center"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="Step" Margin="2"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding HittingSetFilter.Step}" Margin="2" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="6" Content="InputLen" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding HittingSetFilter.InputLen}" Margin="2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding HittingSetFilter.InputLen}" Margin="2" 
+                         Width="100" VerticalContentAlignment="Center"/>
                 <Label Grid.Row="1" Grid.Column="8" Content="InputLenSort" Margin="2"/>
-                <TextBox Grid.Row="1" Grid.Column="9" Text="{Binding HittingSetFilter.InputLenSort}" Margin="2" VerticalContentAlignment="Center"/>
-                <StackPanel Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="6" Orientation="Horizontal">
-                    <ComboBox Name="cbTaskTypeFilter"  ItemsSource="{Binding TaskTypeFilterTypeSource}"
+                <TextBox Grid.Row="1" Grid.Column="9" Text="{Binding HittingSetFilter.InputLenSort}" Margin="2" 
+                         Width="100" VerticalContentAlignment="Center"/>
+                <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="5,0,0,0">
+                    <ComboBox Name="cbTaskTypeFilter"  ItemsSource="{Binding TaskTypeFilterTypeSource}" Margin="0,0,10,0"
                   SelectedItem="{Binding HittingSetFilter.TaskTypeFilterType}" IsEditable="true" IsReadOnly="true"/>
-                    <CheckBox Content="1" ToolTip="with element with only 1 set" IsChecked="{Binding TaskTypeFilter1}"  Width="50" Margin="2"/>
-                    <CheckBox Content="2" ToolTip="elemуnt with element.set.count >= sets.count-1" IsChecked="{Binding TaskTypeFilter2}"  Width="50" Margin="2"/>
-                    <CheckBox Content="4" ToolTip="set with only 1 element" IsChecked="{Binding TaskTypeFilter4}"  Width="50" Margin="2"/>
-                    <CheckBox Content="8" ToolTip="there is set that contans all elements" IsChecked="{Binding TaskTypeFilter8}"  Width="50" Margin="2"/>
-                    <CheckBox Content="16" ToolTip="other division on 2 separate part of sets" IsChecked="{Binding TaskTypeFilter16}"  Width="50" Margin="2"/>
-                    <CheckBox Content="32" ToolTip="if set of sets that contain element e1 is subset of set of sets that contain element el2" IsChecked="{Binding TaskTypeFilter32}"  Width="50" Margin="2"/>
+                    <CheckBox Content="1" ToolTip="with element with only 1 set" IsChecked="{Binding TaskTypeFilter1}" Style="{StaticResource cbTaskType}" />
+                    <CheckBox Content="2" ToolTip="elemуnt with element.set.count >= sets.count-1" IsChecked="{Binding TaskTypeFilter2}"  Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="4" ToolTip="set with only 1 element" IsChecked="{Binding TaskTypeFilter4}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="8" ToolTip="there is set that contans all elements" IsChecked="{Binding TaskTypeFilter8}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="16" ToolTip="other division on 2 separate part of sets" IsChecked="{Binding TaskTypeFilter16}"   Style="{StaticResource cbTaskType}"/>
+                    <CheckBox Content="32" ToolTip="if set of sets that contain element e1 is subset of set of sets that contain element el2" IsChecked="{Binding TaskTypeFilter32}"   Style="{StaticResource cbTaskType}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
+                    <Label Content="Differ From Optimap" Width="120"/>
+                    <CheckBox Content="GreedySimple" ToolTip="GreedySimple worse than optimal value" IsChecked="{Binding GreedySimpleFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyRelation" ToolTip="GreedyRelation worse than optimal value" IsChecked="{Binding GreedyRelationFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyImprove" ToolTip="GreedyImprove worse than optimal value" IsChecked="{Binding GreedyImproveFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <CheckBox Content="GreedyImproveRD" ToolTip="GreedyImproveRD worse than optimal value" IsChecked="{Binding GreedyImproveRDFilter}"  Style="{StaticResource cbGreedyComp}"/>
+                    <ComboBox Name="cbGreedyComparisonFilter"  ItemsSource="{Binding GreedyComparisonFilterTypeSource}"
+                  SelectedItem="{Binding HittingSetFilter.GreedyComparisonFilterType}" IsEditable="true" IsReadOnly="true"/>
                 </StackPanel>
             </Grid>
             <DataGrid Grid.Row="1" ItemsSource="{Binding InputDataList}" IsReadOnly="false" AutoGenerateColumns="False" Margin="1"
@@ -223,6 +249,7 @@
                             <DataTemplate>
                                 <Label Content="{Binding TypeTask}" VerticalContentAlignment="Center" 
                                        Background="{ Binding TypeTask, Converter={StaticResource taskTypeToBrushConverter}}"
+                                       Foreground="{ Binding TypeTask, Converter={StaticResource taskTypeToForeColorConverter}}"
                                        VerticalAlignment="Stretch"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -282,7 +309,9 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
-                <TextBlock Text="{Binding ExecutionState}"/>
+                <TextBlock Text="{Binding ExecutionState}" VerticalAlignment="Center"/>
+                <Label Content="Total number of rows" Margin="10,0,5,0"/>
+                <TextBlock Text="{Binding TotalNumberRows}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Grid>

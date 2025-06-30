@@ -23,6 +23,8 @@ namespace Representatives.Data.Contract
         public string TaskTypeFilterType { get; set; }
         public int GreedyComparisonFilter { get; set; }
         public string GreedyComparisonFilterType { get; set; }
+        public string PairComparison { get; set; }
+        public string SelectedGreedy { get; set; }
 
         public string GetStringKey()
         {

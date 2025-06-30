@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BioAlgorithm.Core.Representatives"
         mc:Ignorable="d"
-        Title="Prepare And Execute Algorithm" Height="200" Width="700"
+        Title="Prepare And Execute Algorithm" Height="500" Width="700"
         Loaded="Window_Loaded" 
         WindowStartupLocation="CenterScreen">
     <Grid Background="#EEF2EE">
@@ -20,20 +20,43 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Content="Dimension" Margin="2,2,2,2"/>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Dimension}" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
         <Label Grid.Row="0" Grid.Column="2" Content="NumberOfSet" Margin="2,2,2,2"/>
         <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding NumberOfSet}" Margin="2,2,2,2" VerticalContentAlignment="Center" Grid.ColumnSpan="3"/>
-        <Label Grid.Row="2" Grid.Column="0" Content="Algorithm" Margin="2,2,2,2"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="cbAlgorithm"  ItemsSource="{Binding AlgorithmItems}"
-                                  SelectedItem="{Binding Algorithm}" IsEditable="true" IsReadOnly="true" />
-        <Label Grid.Row="2" Grid.Column="2" Content="Detail" Margin="2,2,2,2"/>
-        <ComboBox Grid.Row="2" Grid.Column="3" Name="cbAlgorithmDetail"  ItemsSource="{Binding AlgorithmDetailItems}"
-                  IsReadOnly="{Binding AlgorithmDetailReadOnly}" SelectedItem="{Binding AlgorithmDetail}" Grid.ColumnSpan="3"  />
+        <Label Grid.Row="3" Grid.Column="0" Content="Algorithm" Margin="2,2,2,2"/>
+        <DataGrid Grid.Row="3"  Grid.ColumnSpan="4" Grid.Column="1" ItemsSource="{Binding AlgorithmItems}" IsReadOnly="false" AutoGenerateColumns="False" Margin="1"
+                           AlternationCount="2" RowBackground="#DDDDFF" AlternatingRowBackground="#CCCCEE"
+                           SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCellsPresenter}">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn  MinWidth="200" Header="Algorithm">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Algorithm}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  MinWidth="200" Header="Detail">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding AlgorithmDetail}" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn  MinWidth="80" Header="Selected" Binding="{Binding IsSelected}">
+                </DataGridCheckBoxColumn>
+            </DataGrid.Columns>
+        </DataGrid>
         <Button Grid.Column="6" Padding="3,1,3,1" Margin="3,3,3,3" Content="Execute" Command="{Binding ExecuteAlgorithmCommand}"/>
-        <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding ExecutionState}" Margin="2,2,2,2"/>
+        <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding ExecutionState}" Margin="2,2,2,2"/>
     </Grid>
 </Window>

@@ -141,6 +141,7 @@ namespace BioAlgorithmViewModel.Representatives
             List<RepresentativesPerfomance> items = await representativesRepository.GetRepresentativePerformanceListAsync(representativesPerfomanceFilterDto, SelectedRepresentativePerformanceSort);
             foreach (RepresentativesPerfomance item in items)
                 RepresentativePerformanceList.Add(item);
+            TotalNumberRows = items.Count;
 
             ExecutionState = "Query completed.";
             refreshRepresentativeAlgorithmGroupEnable = true;

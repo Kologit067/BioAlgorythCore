@@ -29,6 +29,8 @@ namespace BioAlgorithmViewModel.Mappings
                     BestValue = input.BestValue,
                     TaskTypeFilterType = input.TaskTypeFilterType,
                     GreedyComparisonFilterType = input.GreedyComparisonFilterType,
+                    PairComparison = input.PairComparison,
+                    SelectedGreedy = input.SelectedGreedy,
                 };
         }
 
@@ -55,7 +57,11 @@ namespace BioAlgorithmViewModel.Mappings
                     IsComplete = input.IsComplete,
                     CountTerminalFrom = input.CountTerminalFrom,
                     CountTerminalTo = input.CountTerminalTo,
-                    BestValue = input.BestValue
+                    BestValue = input.BestValue,
+                    TaskTypeFilterType = input.TaskTypeFilterType,
+                    GreedyComparisonFilterType = input.GreedyComparisonFilterType,
+                    PairComparison = input.PairComparison,
+                    SelectedGreedy = input.SelectedGreedy
                 };
         }
         public static IEnumerable<HittingSetFilterViewModel> ToEntity(this IEnumerable<RepresentativesPerfomanceFilter> input) => input?.Select(i => i.ToEntity()).ToList();
