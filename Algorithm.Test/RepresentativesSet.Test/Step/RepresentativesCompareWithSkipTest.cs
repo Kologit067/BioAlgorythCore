@@ -358,6 +358,23 @@ namespace RepresentativesSet.Test.Step
         private int _stepCounter = 0;
         private List<string> _result = new List<string>();
         private List<string> _selected = new List<string>();
+        Combinatorics simpleMatrix;
+        Combinatorics simpleDictionary;
+        Combinatorics simpleNoMatrix;
+
+        Combinatorics noRecMatrix;
+        Combinatorics noRecDictionary;
+        Combinatorics noRecNoMatrix;
+
+        Combinatorics saveFPMatrix;
+        Combinatorics saveFPDictionary;
+        Combinatorics saveFPNoMatrix;
+
+        Combinatorics saveFPImpMatrix;
+        Combinatorics saveFPImpDictionary;
+        Combinatorics saveFPImpNoMatrix;
+
+        List<Combinatorics> combinatorics;
         public List<string> Result
         {
             get { return _result; }
@@ -372,10 +389,43 @@ namespace RepresentativesSet.Test.Step
         {
             _fBreakElement = 0;
             _step = step;
-            _result = new List<string>();
-            _selected = new List<string>();
             Combinatorics.SetCombinationMatrix(pLimit, pLength);
             Combinatorics.SetCombinationBigIntegerMatrix(pLimit, pLength);
+
+            simpleMatrix     = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", _fLimit, _fSize);
+            simpleDictionary = new Combinatorics("SkipEnumerationBigInteger", "By Dictionary", _fLimit, _fSize);
+            simpleNoMatrix   = new Combinatorics("SkipEnumerationBigInteger", "Without Matrix", _fLimit, _fSize);
+
+            noRecMatrix     = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix", _fLimit, _fSize);
+            noRecDictionary = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Dictionary", _fLimit, _fSize);
+            noRecNoMatrix   = new Combinatorics("SkipEnumerationNoRecBigInteger", "Without Matrix", _fLimit, _fSize);
+
+            saveFPMatrix     = new Combinatorics("SkipEnumerationSaveFPBigInteger", "By Matrix", _fLimit, _fSize);
+            saveFPDictionary = new Combinatorics("SkipEnumerationSaveFPBigInteger", "By Dictionary", _fLimit, _fSize);
+            saveFPNoMatrix   = new Combinatorics("SkipEnumerationSaveFPBigInteger", "Without Matrix", _fLimit, _fSize);
+
+            saveFPImpMatrix     = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Matrix", _fLimit, _fSize);
+            saveFPImpDictionary = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "By Dictionary", _fLimit, _fSize);
+            saveFPImpNoMatrix   = new Combinatorics("SkipEnumerationSaveFPImpBigInteger", "Without Matrix", _fLimit, _fSize);
+
+            combinatorics = new List<Combinatorics>()
+            {
+                simpleMatrix,
+                simpleDictionary,
+                simpleNoMatrix,
+
+                noRecMatrix,
+                noRecDictionary,
+                noRecNoMatrix,
+
+                saveFPMatrix,
+                saveFPDictionary,
+                saveFPNoMatrix,
+
+                saveFPImpMatrix,
+                saveFPImpDictionary,
+                saveFPImpNoMatrix,
+            };
         }
         //--------------------------------------------------------------------------------------
         protected override bool MakeAction()
@@ -388,19 +438,26 @@ namespace RepresentativesSet.Test.Step
                 {
                     _stepCounter = 0;
                     int[] skipList = Combinatorics.SkipEnumeration(_fLimit, _fSize, _counter);
-                    Combinatorics simpleleCombinatorics = new Combinatorics("SkipEnumerationBigInteger", "By Matrix", _fLimit, _fSize);
-                    int[] skipListBigInteger = simpleleCombinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
-                    Combinatorics noRecCombinatorics = new Combinatorics("SkipEnumerationNoRecBigInteger", "By Matrix", _fLimit, _fSize);
-                    int[] skipListNoRecBigInteger = noRecCombinatorics.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
                     string strRepresenttion = string.Join(",", _fCurrentSet);
                     string strSkipList = string.Join(",", skipList);
-                    string strSkipListBigInteger = string.Join(",", skipListBigInteger);
-                    string strSkipListNoRecBigInteger = string.Join(",", skipListNoRecBigInteger);
-                    _selected.Add(strRepresenttion);
-                    _result.Add(strRepresenttion);
+                    foreach (Combinatorics method in combinatorics)
+                    {
+                        int[] skipyMethod = method.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
+                        string strSkipByMethod = string.Join(",", skipyMethod);
+                        Assert.AreEqual(strRepresenttion, strSkipList);
+                        Assert.AreEqual(strRepresenttion, strSkipByMethod);
+                    }
+                    /*
+                    int[] skipSimpleMatrix = simpleMatrix.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
+                    int[] skipNoRecMatrix  = noRecMatrix.SkipEnumerationBigInteger(_fLimit, _fSize, new BigInteger(_counter), null, null);
+                    string strRepresenttion = string.Join(",", _fCurrentSet);
+                    string strSkipList = string.Join(",", skipList);
+                    string strSkipSimpleMatrix = string.Join(",", skipSimpleMatrix);
+                    string strSkipNoRecMatrix = string.Join(",", skipNoRecMatrix);
                     Assert.AreEqual(strRepresenttion, strSkipList);
-                    Assert.AreEqual(strRepresenttion, strSkipListBigInteger);
-                    Assert.AreEqual(strRepresenttion, strSkipListNoRecBigInteger);
+                    Assert.AreEqual(strRepresenttion, strSkipSimpleMatrix);
+                    Assert.AreEqual(strRepresenttion, strSkipNoRecMatrix);
+                    */
                 }
             }
             return false;

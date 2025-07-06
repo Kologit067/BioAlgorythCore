@@ -513,6 +513,23 @@ ORDER BY {order}";
             return representativesInputs;
         }
         //----------------------------------------------------------------------------------------------------------------------
+        public async Task<List<InputDataSlim>> GetInputDataAsync(int dimension, int numberOfSet, long maxCount)
+        {
+            string where = $"WHERE [NumberOfSet] = {numberOfSet} AND [Dimension] = {dimension} AND [MaxCount] = {maxCount}";
+
+
+            List<InputDataSlim> representativesInputs = new List<InputDataSlim>();
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                string query = $@"SELECT RepresentativesInputId, [NumberOfSet],[Dimension],[Step],MaxCount,[InputLen],[InputLenSort]
+      ,[InputLenAvg],[InputData],[InputDataShort],Isomorphic,IsomorphicBipart, IsomorphismResult, IsomorphismBipartResult, TypeTask, GreedyComparison
+FROM [dbo].[RepresentativesInput] AS ri
+{where}";
+                representativesInputs = (await db.QueryAsync<InputDataSlim>(query, commandTimeout: 180)).ToList();
+            }
+            return representativesInputs;
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public async Task<List<InputDataGreedyComparison>> GetInputDataGreedyComparisonsAsync(RepresentativesPerfomanceFilter representativesPerfomanceFilter, string order)
         {
             string top = "";

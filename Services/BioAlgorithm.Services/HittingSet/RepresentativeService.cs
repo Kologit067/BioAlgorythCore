@@ -223,26 +223,63 @@ namespace BioAlgorithm.Services.HittingSet
             return items;
         }
         //----------------------------------------------------------------------------------------------------------------------
-        public async Task ExecuteAlgorithmAsync(List<(string algorithm,string algorithmDetail)> algorithms, int dimension, int numberOfSet)
+        public async Task ExecuteAlgorithmAsync(List<(string algorithm,string algorithmDetail)> algorithms, int dimension, int numberOfSet, bool isInputForce)
         {
             int сardinality = dimension;
             int length = numberOfSet;
             List<IHittingSetAlgorithm> hittingSetAlgorithms = GetAlgorithm(algorithms, dimension);
 
-            HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithms, сardinality, length, 1000, 1, 1);
-            await enumeration.ExecuteAsync();
+            if (isInputForce)
+            {
+                HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithms, сardinality, length, 1000, 1, 1);
+                await enumeration.ExecuteAsync();
+            }
+            else
+            {
+                List<InputDataSlim> inputDataList = await representativesRepository.GetInputDataAsync(dimension, numberOfSet, 0);
+                if (inputDataList.Count > 0)
+                {
+                    HittingSetAlgorithmDbRunner enumeration = new HittingSetAlgorithmDbRunner(hittingSetAlgorithms, inputDataList, сardinality, length, 0, 1000, 1, 1);
+                    await enumeration.ExecuteAsync();
+
+                }
+                else
+                {
+                    HittingSetAlgorithmRunner enumeration = new HittingSetAlgorithmRunner(hittingSetAlgorithms, сardinality, length, 1000, 1, 1);
+                    await enumeration.ExecuteAsync();
+                }
+            }
         }
         //----------------------------------------------------------------------------------------------------------------------
         public async Task ExecuteAlgorithmStepAsync(List<(string algorithm, string algorithmDetail)> algorithms, string CalculationStep, string CombinationType,
-            int dimension, int numberOfSet, long maxCount)
+            int dimension, int numberOfSet, long maxCount, bool isInputForce)
         {
             int сardinality = dimension;
             int length = numberOfSet;
             List<IHittingSetAlgorithm> hittingSetAlgorithms = GetAlgorithm(algorithms, dimension);
-           
-            HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithms, 
-                CalculationStep, CombinationType, сardinality, length, maxCount, 1000, 1, 1);
-            await enumerationStep.ExecuteAsync();
+
+            if (isInputForce)
+            {
+                HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithms,
+                    CalculationStep, CombinationType, сardinality, length, maxCount, 1000, 1, 1);
+                await enumerationStep.ExecuteAsync();
+            }
+            else
+            {
+                List<InputDataSlim> inputDataList = await representativesRepository.GetInputDataAsync(dimension, numberOfSet, maxCount);
+                if (inputDataList.Count > 0)
+                {
+                    HittingSetAlgorithmDbRunner enumeration = new HittingSetAlgorithmDbRunner(hittingSetAlgorithms, inputDataList, сardinality, length, maxCount, 1000, 1, 1);
+                    await enumeration.ExecuteAsync();
+                }
+                else
+                {
+                    HittingSetAlgorithmStepRunner enumerationStep = new HittingSetAlgorithmStepRunner(hittingSetAlgorithms,
+                        CalculationStep, CombinationType, сardinality, length, maxCount, 1000, 1, 1);
+                    await enumerationStep.ExecuteAsync();
+                }
+            }
+
             
         }
         //----------------------------------------------------------------------------------------------------------------------

@@ -21,4 +21,9 @@ namespace BioAlgorithm.Data.Contract.Representatives.Data.Contract
         public int TypeTask { get; set; }
         public int GreedyComparison { get; set; }
     }
+    public class InputDataSlim
+    {
+        public long RepresentativesInputId { get; set; }
+        public string InputData { get; set; }
+    }
 }

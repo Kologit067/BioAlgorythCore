@@ -69,6 +69,20 @@ namespace BioAlgorithmViewModel.Representatives
             }
         }
         //----------------------------------------------------------------------------------------------------------------------
+        protected bool isInputForce;
+        public bool IsInputForce
+        {
+            get
+            {
+                return isInputForce;
+            }
+            set
+            {
+                isInputForce = value;
+                OnPropertyChanged(nameof(IsInputForce));
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------------------
         public PrepareAndExecuteStepViewModel()
         { }
         //----------------------------------------------------------------------------------------------------------------------
@@ -147,7 +161,7 @@ namespace BioAlgorithmViewModel.Representatives
             {
                 var selectedAlgoriths = AlgorithmItems.Where(a => a.IsSelected).Select(a => (a.Algorithm, a.AlgorithmDetail)).ToList();
                 if (selectedAlgoriths.Count > 0)
-                    await representativeService.ExecuteAlgorithmStepAsync(selectedAlgoriths, CalculationStep, CombinationType, Dimension.Value, NumberOfSet.Value, MaxCount ?? 0);
+                    await representativeService.ExecuteAlgorithmStepAsync(selectedAlgoriths, CalculationStep, CombinationType, Dimension.Value, NumberOfSet.Value, MaxCount ?? 0, isInputForce);
                 else
                 {
                     ExecutionState = "Algoriths are not selected.";
